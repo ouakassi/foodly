@@ -1,0 +1,12 @@
+.user__cart {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.cart__icon {
+  transition: 0.2s;
+}
+.user__cart:hover .cart__icon {
+  transform: translateY(-2px);
+}

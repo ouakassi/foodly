@@ -1,0 +1,16 @@
+.search-bar {
+  background-color: var(--color-1);
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: white;
+
+  /* width: 50rem; */
+}
+.search-bar input {
+  background-color: initial;
+
+  border: none;
+}
+.search-icon {
+  font-size: var(--fs-m);
+}

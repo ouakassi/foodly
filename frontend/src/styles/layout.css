@@ -1,0 +1,11 @@
+.section {
+  padding-block: 2.5rem;
+  margin: 3rem 0;
+  max-width: 1250px;
+  margin: 0 auto;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 1124px;
+}

@@ -1,0 +1,82 @@
+/*==================== GOOGLE FONTS ====================*/
+
+/* @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap"); */
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300&family=Poppins:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Changa:wght@300&display=swap");
+
+/* @font-face {
+  font-family: "Cubano";
+  src: local("Cubano"), url(./fonts/Cubano.ttf) format("woff");
+} */
+
+/*==================== VARIABLES CSS ====================*/
+
+:root {
+  --header-height: 5.8rem;
+
+  /*========== Colors ==========*/
+
+  --color-1: #edeae7;
+  --color-2: #e45959;
+  --color-3: #4c7c7d;
+
+  /* text */
+  --text-color: #383634;
+
+  --background-color1: #e9e6e3;
+
+  --body-color: #f8f8f8;
+
+  /* scroll */
+
+  --scroll-bar-color: var(--body-color);
+  --scroll-thumb-color: var(--color-3);
+  --scroll-thumb-color-hover: var(--color-2);
+
+  /*========== Box Shadows  ==========*/
+
+  /*========== Font and typography ==========*/
+  --body-font: "Lato", sans-serif;
+  --font-1: "Changa", sans-serif;
+  --font-2: "Poppins", sans-serif;
+
+  --fs-6xl: 10rem;
+  --fs-5xl: 5rem;
+  --fs-4xl: 5rem;
+  --fs-3xl: 3.2rem;
+  --fs-2xl: 2.4rem;
+  --fs-xl: 2rem;
+  --fs-l: 1.8rem;
+  --fs-m: 1.5rem;
+  --fs-s: 1.3rem;
+  --fs-xs: 1.2rem;
+
+  /*========== Font weight ==========*/
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semi: 600;
+  --fw-bold: 700;
+
+  /*========== z index ==========*/
+  --z-tooltip: 10;
+  --z-fixed: 100;
+  --z-modal: 1000;
+}
+
+/* Font size for large devices */
+@media screen and (min-width: 968px) {
+  :root {
+    --fs-6xl: 12rem;
+    --fs-5xl: 8rem;
+    --fs-4xl: 6rem;
+    --fs-3xl: 4.8rem;
+    --fs-2xl: 3.8rem;
+    --fs-xl: 2.4rem;
+    --fs-l: 2rem;
+    --fs-m: 1.6rem;
+    --fs-s: 1.4rem;
+    --fs-xs: 1.3rem;
+  }
+}

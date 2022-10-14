@@ -1,0 +1,100 @@
+.product__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 1rem 2rem;
+  margin: 2rem 1rem;
+  margin-top: 45px;
+  border-radius: 10px;
+  width: fit-content;
+  gap: 1rem;
+  text-transform: capitalize;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+.product__card:hover {
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.product__card header {
+  display: flex;
+  align-items: center;
+}
+.product__card header div:first-child {
+  display: flex;
+  flex-direction: column;
+}
+.product__card header div:last-child {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.product__card-img {
+  max-width: 13rem;
+  transform: translateY(-45px);
+  box-shadow: rgba(var(--color-2), 0.16) 0px 1px 4px;
+  border-radius: 50%;
+}
+.product__card-name {
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-l);
+}
+.product__card-stars {
+  color: var(--color-3);
+  font-weight: var(--fw-bold);
+}
+.product__card-sale {
+  background-color: var(--color-2);
+  padding: 0.5rem;
+  color: white;
+  border-radius: 5px;
+  transform: rotate(12deg);
+  text-transform: uppercase;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.product__card footer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product__card footer div:last-child {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.product__card-add {
+  padding: 1rem;
+  width: 10rem;
+  color: white;
+  background-color: var(--color-3);
+  font-family: var(--font-1);
+  font-size: var(--fs-m);
+  font-weight: var(--fw-bold);
+  border-radius: 10px;
+  text-transform: capitalize;
+  cursor: pointer;
+  border: none;
+}
+.product__card-add:hover {
+  background-color: transparent;
+  border: 1px solid var(--color-3);
+  color: var(--color-3);
+}
+
+.product__card-price {
+}
+
+.product__card-discounted-price {
+  color: var(--color-2);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-l);
+}
+
+.product__card-weight {
+}
