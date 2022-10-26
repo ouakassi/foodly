@@ -1,19 +1,23 @@
 import "./Recipes.css";
-import Heading from "../Heading";
-import { TbToolsKitchen2 } from "react-icons/tb";
-import Recipe from "./Recipe";
+import Section from "../Section";
+import { SiCodechef } from "react-icons/si";
+import RecipeCard from "./RecipeCard";
 
 export default function Recipes() {
   return (
-    <section className="section">
-      <Heading
-        icon={<TbToolsKitchen2 />}
-        text="what to cook ?"
-        link="/recipes"
-      />
+    <Section
+      sectionClass="recipes"
+      icon={<SiCodechef />}
+      text="what to cook ?"
+      link="/recipes"
+    >
       <article className="recipes">
-        <Recipe />
+        <RecipeCard key={1} />
+        <RecipeCard key={2} />
+        <RecipeCard key={3} />
+        <RecipeCard key={4} />
+        {/* <RecipeCard /> */}
       </article>
-    </section>
+    </Section>
   );
 }

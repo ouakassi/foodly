@@ -1,0 +1,39 @@
+.section__more {
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+}
+.section__more h1 {
+  display: flex;
+  align-items: center;
+  font-size: var(--fs-2xl);
+  text-transform: capitalize;
+  gap: 1rem;
+  margin-bottom: 4rem;
+}
+
+/* .section__more span {
+  font-size: var(--fs-l);
+  font-weight: var(--fw-bold);
+ 
+}
+*/
+.section__more .section__view-all {
+  text-transform: capitalize;
+  font-size: var(--fs-xl);
+  font-family: var(--font-1);
+  align-self: end;
+  margin-top: 1rem;
+}
+
+.section__more .section__view-all:hover {
+  color: var(--color-2);
+}
+
+.section__more-icon {
+  transition: 0.2s;
+}
+
+.section__more .section__view-all:hover .section__more-icon {
+  transform: translateX(5px);
+}

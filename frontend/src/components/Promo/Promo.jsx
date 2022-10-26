@@ -1,7 +1,7 @@
 import MainButton from "../../components/Buttons/MainButton";
 import "./Promo.css";
 
-import driedFoodPicture from "./../../assets/images/driedFood.png";
+// import driedFoodPicture from "./images/driedFood.png";
 
 export default function Promo() {
   const date = new Date();
@@ -17,7 +17,11 @@ export default function Promo() {
           </p>
           <MainButton text="Shop now" />
         </div>
-        <img className="promo__img" src={driedFoodPicture} alt="dried food" />
+        <img
+          className="promo__img"
+          src="./images/driedFood.png"
+          alt="dried food"
+        />
       </div>
       <div className="promo__box2">
         <h1>Sale</h1>
@@ -28,6 +32,7 @@ export default function Promo() {
             color: "var(--color-2)",
           }}
           text="Shop Now"
+          link="/sale"
         />
         <p>valid until {`${date.getMonth() + 1}/${date.getFullYear()}`}</p>
       </div>

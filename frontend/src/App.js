@@ -18,6 +18,10 @@ const router = createBrowserRouter(
       <Route index element={<Home />} />
       <Route path="/cart" element={<div>cart</div>} />
       <Route path="/oils" element={<div>oils</div>} />
+      <Route path="/dried-food" element={<div>dried food</div>} />
+      <Route path="/herbs" element={<div>herbs</div>} />
+      <Route path="/sale" element={<div>sale</div>} />
+      <Route path="/recipes" element={<div>recipes</div>} />
     </Route>
   )
 );

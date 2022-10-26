@@ -1,13 +1,13 @@
 import "./UserCart.css";
-import { FiShoppingBag } from "react-icons/fi";
+import { MdOutlineShoppingCart } from "react-icons/md";
 import { Link } from "react-router-dom";
 
 export default function UserCart({ cartTotal }) {
   return (
     <Link to="/cart">
       <div className="user__cart">
-        <FiShoppingBag className="icon cart__icon" />
-        <span>Cart : {cartTotal || 0}</span>
+        <MdOutlineShoppingCart className="icon cart__icon" />
+        <span className="user__cart-total">{cartTotal || 2}</span>
       </div>
     </Link>
   );
