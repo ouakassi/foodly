@@ -1,0 +1,34 @@
+.login .form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.login .input__container:nth-child(2) {
+  margin-bottom: 2rem;
+}
+
+.login .form__footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-transform: capitalize;
+  margin-bottom: 1rem;
+}
+
+.login .form__remember {
+  display: flex;
+  gap: 5px;
+  font-weight: var(--fw-bold);
+  margin-bottom: 1rem;
+}
+.login .form__reset {
+  margin-bottom: 2rem;
+}
+input[type="checkbox" i] {
+  accent-color: var(--color-3);
+  width: 1.8rem;
+}
+
+input[type="checkbox" i]:focus-within {
+  box-shadow: 0px 0px 0px 2px #52e4ac;
+}

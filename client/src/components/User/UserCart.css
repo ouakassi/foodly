@@ -1,0 +1,30 @@
+.user__cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+  padding: 1rem 0.5rem;
+  position: relative;
+}
+
+.user__cart:hover {
+  background-color: var(--background-color1);
+}
+
+.user__cart-total {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  display: flex;
+  background-color: var(--color-2);
+  color: var(--body-color);
+  width: 0px;
+  height: 0px;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}

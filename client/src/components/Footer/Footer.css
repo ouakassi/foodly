@@ -1,0 +1,26 @@
+.footer {
+  background-color: #fff;
+  padding: 4rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.footer__logo {
+  text-transform: capitalize;
+}
+.footer__logo :first-child {
+  margin-bottom: 0.5rem;
+}
+.footer__logo .footer__rights {
+  font-size: var(--fs-s);
+  color: rgb(121, 121, 121);
+  font-family: var(--font-1);
+}
+.footer__links {
+  display: flex;
+  gap: 3rem;
+}
+
+.footer__link:hover {
+  color: var(--color-2);
+}

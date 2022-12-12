@@ -1,0 +1,12 @@
+.shipping {
+  display: flex;
+  align-items: flex-start;
+  margin: 2rem 0 8rem 0;
+  justify-content: center;
+}
+.shipping__arrow {
+  max-width: 9rem;
+  align-self: flex-end;
+  margin-right: 1rem;
+  transform: rotate(80deg) scale(1.8) translateX(-1rem);
+}

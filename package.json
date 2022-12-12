@@ -2,16 +2,18 @@
   "name": "foodly",
   "version": "1.0.0",
   "description": "e-commerce web app to but healthy food",
-  "main": "./backend/server.js",
+  "main": "./server/server.js",
   "scripts": {
-    "build-client": "cd frontend && npm run build",
-    "server": "nodemon backend/server.js --ignore ",
-    "client": "npm start --prefix frontend",
+    "build-client": "cd client && npm run build",
+    "server": "nodemon server/server.js --ignore ",
+    "client": "npm start --prefix client",
     "start": "concurrently --kill-others-on-fail \"npm run server \" \"npm run client \""
   },
   "author": "oussama ouakassi",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "@hookform/resolvers": "^2.9.10"
+  },
   "devDependencies": {
     "concurrently": "^7.4.0",
     "nodemon": "^2.0.20"

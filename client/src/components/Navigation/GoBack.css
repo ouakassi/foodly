@@ -1,0 +1,10 @@
+.navigation__goback {
+  display: flex;
+  font-size: var(--fs-2xl);
+  color: #000;
+  cursor: pointer;
+}
+.navigation__goback:hover,
+.navigation__goback:focus {
+  color: var(--color-3);
+}

@@ -1,0 +1,4 @@
+.shipping__banner__container {
+  display: flex;
+  justify-content: space-evenly;
+}

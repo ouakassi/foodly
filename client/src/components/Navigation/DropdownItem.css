@@ -1,0 +1,16 @@
+.dropdown__item {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  width: 100%;
+  text-transform: capitalize;
+}
+.dropdown__item:hover {
+  background-color: var(--background-color1);
+}
+.dropdown__item-icon {
+  margin-right: 1rem;
+  font-size: 2.5rem;
+  display: inline-flex;
+}

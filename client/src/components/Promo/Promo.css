@@ -1,0 +1,77 @@
+.promo {
+  display: flex;
+  flex-direction: column;
+  /* padding: 2rem; */
+  /* margin-top: 4rem; */
+}
+
+.promo__box {
+  padding: 4rem;
+  /* border-radius: 15px; */
+  width: 100%;
+  /* height: 40rem; */
+  background-color: var(--color-2);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  overflow-x: hidden;
+}
+
+.promo__box-sale {
+  display: flex;
+  gap: 2rem;
+}
+
+.promo__box-data {
+  display: flex;
+  gap: 2rem;
+  flex-direction: column;
+  align-items: center;
+}
+.promo__box h1 {
+  position: relative;
+  font-size: var(--fs-4xl);
+}
+
+.promo__box h1::after {
+  position: absolute;
+  bottom: -40%;
+  left: 0;
+  content: "Sale";
+  color: transparent;
+  -webkit-text-stroke: 1px white;
+}
+
+.promo__box span {
+  text-transform: capitalize;
+  font-weight: var(--fw-bold);
+}
+
+@media only screen and (max-width: 768px) {
+  .promo {
+    flex-direction: column;
+    margin-top: 2rem;
+    gap: 2rem;
+  }
+
+  .promo__box1 {
+    background-position: bottom;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .promo__data {
+    gap: 2rem;
+    width: 89%;
+  }
+  .promo__box1,
+  .promo__box2 {
+    padding: 2rem;
+    width: 100%;
+    flex-direction: column;
+  }
+}

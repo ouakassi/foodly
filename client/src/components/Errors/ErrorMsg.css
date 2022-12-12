@@ -1,0 +1,17 @@
+.input__error {
+  display: flex;
+  align-items: center;
+  color: red;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  border-radius: 15px;
+  gap: 1rem;
+  background: #ffe5e5;
+}
+.input__error svg {
+  width: fit-content;
+  font-size: var(--fs-l);
+}
+.input__error p {
+  width: 100%;
+}

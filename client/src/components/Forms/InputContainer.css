@@ -1,0 +1,73 @@
+.input__container {
+  margin: 1rem 0 3rem;
+}
+
+.input {
+  display: flex;
+  align-items: center;
+  position: relative;
+  font-family: var(--font-2);
+  text-transform: capitalize;
+  box-shadow: 0px 0px 0px 1px #000;
+  border-radius: 5px;
+  transition: 0.2s;
+  margin-bottom: 0.5rem;
+}
+.input:focus-within,
+.input:focus {
+  box-shadow: 0px 0px 0px 4px #52e4ac;
+}
+.input:hover {
+  box-shadow: 0px 0px 0px 2px #000;
+}
+
+.input label {
+  position: absolute;
+  top: -11px;
+  left: 40px;
+  padding: 0 1rem;
+  background: #fff;
+  height: 11px;
+}
+
+.input .required__icon {
+  /* vertical-align: middle; */
+  color: red;
+}
+
+.input__icon {
+  font-size: 2rem;
+  margin: 0 1rem;
+}
+.input__icon svg {
+  vertical-align: middle;
+}
+.input:focus-within .input__icon {
+  color: #52e4ac;
+}
+
+.input input {
+  padding: 1rem;
+  font-size: var(--fs-m);
+  border: none;
+  border-radius: inherit;
+  background-color: inherit;
+  width: 100%;
+  transition: inherit;
+  font-family: var(--font-3);
+}
+
+.toggle__password-icon {
+  height: inherit;
+  margin: 0 1rem;
+}
+
+.toggle__password-icon button {
+  background: none;
+  border: none;
+  font-size: 2.4rem;
+  padding: 0 0.5rem;
+  align-self: center;
+  display: flex;
+  cursor: pointer;
+}

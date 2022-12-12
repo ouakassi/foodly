@@ -1,0 +1,27 @@
+.user__head {
+  padding: 1rem 0.5rem;
+  border-radius: 25px;
+  position: relative;
+  cursor: pointer;
+}
+.user__head:hover,
+.user__head:active,
+.user__head:focus {
+  background-color: var(--background-color1);
+}
+
+.user__head-icons {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.user__head-name {
+  text-transform: capitalize;
+  margin-inline: 0.5rem;
+}
+
+@media only screen and (max-width: 375px) {
+  .user__head-name {
+    display: none;
+  }
+}

@@ -1,0 +1,25 @@
+.navigation__link {
+  background-color: white;
+  padding: 2rem 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+}
+
+.navigation__box img {
+  max-width: 4rem;
+}
+.navigation__box span {
+  font-size: var(--fs-xl);
+  font-family: var(--font-1);
+  font-weight: var(--fw-bold);
+  text-transform: capitalize;
+}
+
+@media only screen and (max-width: 870px) {
+  .navigation__link {
+    padding: 1rem 1rem;
+  }
+}

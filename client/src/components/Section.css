@@ -1,0 +1,35 @@
+.section__more {
+  margin: 5rem auto;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2rem;
+}
+.section__more h1 {
+  display: flex;
+  align-items: center;
+  font-size: var(--fs-2xl);
+  text-transform: capitalize;
+  gap: 1rem;
+  margin-bottom: 4rem;
+}
+
+.section__more .section__view-all {
+  text-transform: capitalize;
+  font-size: var(--fs-xl);
+  font-family: var(--font-1);
+  font-weight: var(--fw-bold);
+  align-self: end;
+  margin-top: 1rem;
+}
+
+.section__more .section__view-all:hover {
+  color: var(--color-3);
+}
+
+.section__more-icon {
+  transition: 0.2s;
+}
+
+.section__more .section__view-all:hover .section__more-icon {
+  transform: translateX(5px);
+}
