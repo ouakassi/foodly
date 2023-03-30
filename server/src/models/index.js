@@ -27,8 +27,8 @@ const createRoles = async () => {
 
 // relations
 
-User.belongsTo(Role);
 Role.hasMany(User);
+User.belongsTo(Role);
 
 User.hasMany(Address);
 Address.belongsTo(User);
