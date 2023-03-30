@@ -1,0 +1,9 @@
+.digit-inputs {
+  display: flex;
+  gap: 2rem;
+  padding: 0px 9rem;
+  width: 100%;
+  min-height: 15rem;
+  align-items: center;
+  justify-content: flex-end;
+}

@@ -8,13 +8,10 @@ import Banner from "./Banner";
 
 export default function ShippingBanner() {
   return (
-    <Banner>
+    <Banner isRemovable={false}>
       <div className="shipping__banner__container">
-        <ShippingBannerBox
-          icon={<FaShippingFast />}
-          text="free shipping over 40$"
-        />
-        <ShippingBannerBox icon={<GiReturnArrow />} text="free return" />
+        <ShippingBannerBox icon={<FaShippingFast />} text="free shipping " />
+        <ShippingBannerBox icon={<GiReturnArrow />} text="30 days return" />
       </div>
     </Banner>
   );

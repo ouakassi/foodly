@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.eaff3543.css",
+    "main.js": "/static/js/main.8019c751.js",
+    "static/media/bowl.png": "/static/media/bowl.c122044888944b742e0c.png",
+    "static/media/nuts2.png": "/static/media/nuts2.472e3235b4947ff263c1.png",
+    "static/media/herb.png": "/static/media/herb.6f53e20c3ab46326e4e6.png",
+    "static/media/oil.png": "/static/media/oil.b7e42d0b337bc1187010.png",
+    "static/media/packaging.png": "/static/media/packaging.0830fc15ff79d8f7a0e0.png",
+    "static/media/coffee.png": "/static/media/coffee.463e725e70723c91ec40.png",
+    "static/media/transporting.png": "/static/media/transporting.4ee706db708cab81be99.png",
+    "static/media/planting.png": "/static/media/planting.6aa924bb88ddd89abc80.png",
+    "static/media/sale.png": "/static/media/sale.0b649c9ee8ad1a82a472.png",
+    "static/media/dotted-arrow.svg": "/static/media/dotted-arrow.9ff4ddb8c14e15fa0914ab3dce4d1a8c.svg",
+    "static/media/delivery.png": "/static/media/delivery.bba1c3310cb619d916e1.png",
+    "index.html": "/index.html",
+    "main.eaff3543.css.map": "/static/css/main.eaff3543.css.map",
+    "main.8019c751.js.map": "/static/js/main.8019c751.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.eaff3543.css",
+    "static/js/main.8019c751.js"
+  ]
+}

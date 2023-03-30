@@ -1,13 +1,13 @@
 import "./Logo.css";
 import { Link } from "react-router-dom";
-import { BiStoreAlt } from "react-icons/bi";
+import { GiShop } from "react-icons/gi";
 
-export default function Logo({ style }) {
+export default function Logo({ style, logoName }) {
   return (
     <div style={style}>
       <Link className="logo" to="/">
-        <BiStoreAlt className="logo__icon" />
-        <span>FoodLY</span>
+        <GiShop className="logo__icon" />
+        <span>{logoName}</span>
       </Link>
     </div>
   );

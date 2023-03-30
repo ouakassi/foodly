@@ -1,6 +1,5 @@
 .shipping__banner-box {
-  /* display: inline-block; */
-  font-size: 2rem;
+  font-size: var(--fs-l);
   display: flex;
   align-items: center;
   padding: 1rem 2rem;
@@ -8,10 +7,20 @@
 
 .shipping__banner-icon {
   margin-right: 2rem;
-  font-size: var(--fs-xl);
+  font-size: var(--fs-2xl);
   color: var(--color-3);
 }
 
 .shipping__banner-text {
   text-transform: capitalize;
+}
+
+@media only screen and (max-width: 426px) {
+  .shipping__banner-box {
+    flex-direction: column;
+    padding: 1rem 0;
+  }
+  .shipping__banner-icon {
+    margin-right: 0;
+  }
 }

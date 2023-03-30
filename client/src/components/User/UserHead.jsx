@@ -1,3 +1,9 @@
+import { useState, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Link } from "react-router-dom";
+
+import useCheckIfClickedOutside from "../../hooks/useCheckIfClickedOutside";
+
 import "./UserHead.css";
 
 import { FiUser } from "react-icons/fi";
@@ -10,12 +16,8 @@ import {
 
 import DropdownMenu from "../Navigation/DropdownMenu";
 import DropdownItem from "../Navigation/DropdownItem";
-import MainButton from "../Buttons/MainButton";
-
-import useCheckIfClickedOutside from "../../hooks/useCheckIfClickedOutside";
-
-import { useState, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import Button from "../Buttons/Button";
+import BlurredModal from "../Navigation/BlurredModal";
 
 const data = [
   { id: 1, icon: <BsFillBookmarkHeartFill />, text: "favourite" },
@@ -27,20 +29,19 @@ const isLogged = false;
 
 export default function UserHead() {
   const [showMenu, setShowMenu] = useState(false);
-
-  const menuRef = useRef();
-
-  useCheckIfClickedOutside(showMenu, setShowMenu, menuRef);
+  const MenuRef = useRef(null);
 
   const handlClick = () => {
     setShowMenu(!showMenu);
   };
 
+  useCheckIfClickedOutside(showMenu, setShowMenu, MenuRef);
+
   return isLogged ? (
     <div
+      ref={MenuRef}
       onClick={handlClick}
       className="user__head"
-      ref={menuRef}
       style={showMenu ? { backgroundColor: "var(--background-color1)" } : null}
     >
       <div className="user__head-icons">
@@ -58,7 +59,11 @@ export default function UserHead() {
       </div>
       <AnimatePresence>
         {showMenu && (
-          <DropdownMenu>
+          <DropdownMenu
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             {data.map(({ id, icon, text }) => {
               return (
                 <DropdownItem key={id} icon={icon}>
@@ -69,8 +74,11 @@ export default function UserHead() {
           </DropdownMenu>
         )}
       </AnimatePresence>
+      <BlurredModal showModal={showMenu} />
     </div>
   ) : (
-    <MainButton text="login" link="login" style={{ padding: "1rem 2rem" }} />
+    <Link to="auth/login">
+      <Button text="login" />
+    </Link>
   );
 }

@@ -1,17 +1,16 @@
+import { useRef } from "react";
+
 import "./ProductsSlider.css";
 
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import ProductCard from "./ProductCard";
+import ArrowButton from "../Buttons/ArrowButton";
 
 import "swiper/css";
 import { Autoplay, Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-import { useRef } from "react";
-
-import ArrowButton from "../Buttons/ArrowButton";
-
-export default function ProductsSlider({ sliderArray }) {
+export default function ProductsSlider({ productsArray, isLoading }) {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 
@@ -66,29 +65,19 @@ export default function ProductsSlider({ sliderArray }) {
         }}
         className="slider__content"
       >
-        {sliderArray.map(
-          ({
-            id,
-            productImg,
-            productName,
-            productStars,
-            isSale,
-            productPrice,
-          }) => {
-            return (
-              <SwiperSlide key={id}>
-                <ProductCard
-                  link="/sale"
-                  productImg={productImg}
-                  productName={productName}
-                  productStars={productStars}
-                  isSale={isSale}
-                  productPrice={productPrice}
-                />
-              </SwiperSlide>
-            );
-          }
-        )}
+        {productsArray.map(({ id, imgUrl, title, isSale, price }) => {
+          return (
+            <SwiperSlide key={id}>
+              <ProductCard
+                link="/sale"
+                productImg={imgUrl}
+                productName={title}
+                isSale={isSale}
+                productPrice={price}
+              />
+            </SwiperSlide>
+          );
+        })}
         <div className="slider__buttons">
           <ArrowButton
             icon={<RiArrowLeftSLine />}

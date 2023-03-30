@@ -22,10 +22,10 @@ export default function HomePage() {
       <HeroSlider />
       <NavigationContainer />
       <Discounted />
-      <Herbs />
-      <SaleBanner />
+      {/* <Herbs /> */}
       <Recipes />
       <Shipping />
+      <ShippingBanner />
     </>
   );
 }

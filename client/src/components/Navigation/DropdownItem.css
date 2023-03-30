@@ -5,6 +5,7 @@
   border-radius: 10px;
   width: 100%;
   text-transform: capitalize;
+  cursor: pointer;
 }
 .dropdown__item:hover {
   background-color: var(--background-color1);

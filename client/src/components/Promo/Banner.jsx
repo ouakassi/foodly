@@ -2,25 +2,27 @@ import "./Banner.css";
 import { MdClose } from "react-icons/md";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import AnimatedIcon from "../Buttons/AnimatedIcon";
 
-export default function Banner({ children }) {
+export default function Banner({ children, isRemovable = true }) {
   const [isClosed, setIsClosed] = useState(false);
+
+  const handleClick = () => {
+    setIsClosed(true);
+  };
 
   return (
     <AnimatePresence>
       {!isClosed && (
         <motion.div exit={{ y: -50, opacity: 0 }} className="banner">
           {children}
-          <motion.span
-            onClick={() => {
-              setIsClosed(true);
-            }}
-            whileHover={{ scale: 1.4 }}
-            whileTap={{ scale: 0.9 }}
-            className="banner__close-icon"
-          >
-            <MdClose />
-          </motion.span>
+          {isRemovable && (
+            <AnimatedIcon
+              onClick={handleClick}
+              className={"banner__close-icon"}
+              icon={<MdClose />}
+            />
+          )}
         </motion.div>
       )}
     </AnimatePresence>

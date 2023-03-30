@@ -15,11 +15,11 @@ import ArrowButton from "../Buttons/ArrowButton";
 const data = [
   {
     id: 1,
-    title: "healthy oils",
-    text: "buy and enjoy our latest healthy oils",
-    img: "./images/slider2.png",
-    color: "#f0c33a",
-    bgColor: "#0d4a23",
+    title: "quality coffee",
+    text: "buy and enjoy our latest quality coffee",
+    img: "./images/slider5.png",
+    color: "#f94132",
+    bgColor: "#361e1c",
   },
   {
     id: 2,
@@ -27,7 +27,7 @@ const data = [
     text: "buy and enjoy our latest fresh nuts",
     img: "./images/slider1.png",
     color: "#ffa827",
-    bgColor: "#773b1c",
+    bgColor: "#592205",
   },
   {
     id: 3,
@@ -38,14 +38,13 @@ const data = [
     color: "#92f056",
     bgColor: "#2f085d",
   },
-
   {
     id: 4,
-    title: "quality coffee",
-    text: "buy and enjoy our latest quality coffee",
-    img: "./images/slider5.png",
-    color: "#f94132",
-    bgColor: "#361e1c",
+    title: "healthy oils",
+    text: "buy and enjoy our latest healthy oils",
+    img: "./images/slider2.png",
+    color: "#f0c33a",
+    bgColor: "#063617",
   },
 ];
 

@@ -4,6 +4,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300&family=Poppins:wght@700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Changa:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Palanquin+Dark:wght@400;600;700&display=swap");
 
 /* @font-face {
   font-family: "Cubano";
@@ -20,13 +21,19 @@
   --color-1: #edeae7;
   --color-2: #fd4755;
   --color-3: #09a866;
+  --color-3: #0ab495;
+
   --color-4: #1d81c6;
   /* --color-3: #259a2c;  */
+  --color-5: #52e4ac;
+  --color-price: #c10312;
 
   --color-3-dark: #27956b;
 
   /* text */
+  --white-color: #fff;
   --text-color: #383634;
+  --text-color: #282927;
 
   --background-color1: #e9e6e3;
 
@@ -40,10 +47,14 @@
 
   /*========== Box Shadows  ==========*/
 
+  --box-shadow-3d: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+
   /*========== Font and typography ==========*/
   --font-1: "Changa", sans-serif;
   --font-2: "Poppins", sans-serif;
   --font-3: "Lato", sans-serif;
+  --font-4: "Palanquin Dark", sans-serif;
 
   --fs-6xl: 10rem;
   --fs-5xl: 5rem;

@@ -3,22 +3,25 @@ import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState, useEffect } from "react";
+import API from "../../api/api";
 
 import "./RegisterPage.css";
 import FormContainer from "../../components/Forms/FormContainer";
 import InputContainer from "../../components/Forms/InputContainer";
+import Form from "../../components/Forms/Form";
 
-import { IoCreateOutline } from "react-icons/io5";
 import {
+  RiUserAddLine,
   RiLockPasswordLine,
   RiMailLine,
   RiLockPasswordFill,
 } from "react-icons//ri";
 import { AiOutlineUser } from "react-icons/ai";
-import SubmitButton from "../../components/Buttons/SubmitButton";
+import Button from "../../components/Buttons/Button";
 
 let validationSchema = Yup.object({
   firstName: Yup.string()
+    .nullable()
     .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ")
     .min(3, "first name should be more than 2 words")
     .max(15, "first name should be less than 15 words"),
@@ -34,7 +37,7 @@ let validationSchema = Yup.object({
     .min(6, "Password must be at least 6 characters"),
   confirmPassword: Yup.string().oneOf(
     [Yup.ref("password")],
-    "both passwords are not matching"
+    "both passwords should be matching"
   ),
 });
 
@@ -43,40 +46,53 @@ const date = new Date().toISOString().substring(0, 10);
 console.log(date);
 
 export default function RegisterPage() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [togglePasswordOne, setTogglePasswordOne] = useState(false);
+  const [togglePasswordTwo, setTogglePasswordTwo] = useState(false);
 
   const {
     register,
     handleSubmit,
     setFocus,
     formState: { errors, isValid },
-  } = useForm({ resolver: yupResolver(validationSchema), mode: "all" });
+  } = useForm({ resolver: yupResolver(validationSchema), mode: "onChange" });
 
   // focus in email input while loading the page
   useEffect(() => {
     setFocus("firstName");
   }, [setFocus]);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const { confirmPassword, ...rest } = data;
+      console.log(rest);
+      const response = await API.post("/auth/register", rest);
+
+      console.log(response.data.message);
+    } catch (err) {
+      // setIsError(true);
+      // setErrorMsg(err);
+      console.error(err.message);
+      console.error(err.request);
+      console.error(err.response);
+    }
   };
 
   return (
     <div className="register">
       <FormContainer
         headingTitle="register"
-        headingIcon={<IoCreateOutline className="icon" />}
+        headingIcon={<RiUserAddLine className="icon" />}
         headingText="insert your infos to register"
         footer={
           <>
-            Already have an account ?
-            <Link style={{ color: "var(--color-4)" }} to="/login">
+            Already have an account ?&nbsp;
+            <Link style={{ color: "var(--color-4)" }} to="/auth/login">
               Login
             </Link>
           </>
         }
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="form">
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <InputContainer
             labelText="first name"
             icon={<AiOutlineUser />}
@@ -96,7 +112,7 @@ export default function RegisterPage() {
             labelText="email"
             icon={<RiMailLine />}
             errorMsg={errors.email?.message}
-            required={true}
+            isFieldRequired={true}
           >
             <input {...register("email")} />
           </InputContainer>
@@ -105,12 +121,12 @@ export default function RegisterPage() {
             icon={<RiLockPasswordLine />}
             errorMsg={errors.password?.message}
             isPassword={true}
-            showPassword={showPassword}
-            setShowPassword={setShowPassword}
-            required={true}
+            togglePassword={togglePasswordOne}
+            setTogglePassword={setTogglePasswordOne}
+            isFieldRequired={true}
           >
             <input
-              type={showPassword ? "text" : "password"}
+              type={togglePasswordOne ? "text" : "password"}
               {...register("password")}
             />
           </InputContainer>
@@ -119,17 +135,21 @@ export default function RegisterPage() {
             icon={<RiLockPasswordFill />}
             errorMsg={errors.confirmPassword?.message}
             isPassword={true}
-            showPassword={showPassword}
-            setShowPassword={setShowPassword}
-            required={true}
+            togglePassword={togglePasswordTwo}
+            setTogglePassword={setTogglePasswordTwo}
+            isFieldRequired={true}
           >
             <input
-              type={showPassword ? "text" : "password"}
+              type={togglePasswordTwo ? "text" : "password"}
               {...register("confirmPassword")}
             />
           </InputContainer>
-          <SubmitButton disabled={!isValid} text="register" />
-        </form>
+          <Button
+            disabled={!isValid}
+            text="create account"
+            isTypeSubmit={true}
+          />
+        </Form>
       </FormContainer>
     </div>
   );

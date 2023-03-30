@@ -4,7 +4,11 @@ import { TbNorthStar } from "react-icons/tb";
 
 import ErrorMsg from "../Errors/ErrorMsg";
 
-const errorMsgStyle = { color: "red", boxShadow: "0px 0px 0px 4px red" };
+const errorMsgStyle = {
+  color: "red",
+  borderRadius: "0px",
+  boxShadow: "0px 2px 0px 0px red",
+};
 
 export default function InputContainer({
   children,
@@ -12,10 +16,10 @@ export default function InputContainer({
   isPassword = false,
   icon,
   errorMsg,
-  showPassword,
-  setShowPassword,
+  togglePassword,
+  setTogglePassword,
   toRef,
-  required,
+  isFieldRequired,
 }) {
   return (
     <div className="input__container">
@@ -24,9 +28,12 @@ export default function InputContainer({
         className="input"
         style={errorMsg ? errorMsgStyle : null}
       >
-        <label htmlFor={labelText}>
-          {labelText} {required && <span className="required__icon">*</span>}
-        </label>
+        {labelText && (
+          <label htmlFor={labelText}>
+            {labelText}{" "}
+            {isFieldRequired && <span className="required__icon">*</span>}
+          </label>
+        )}
         {icon && <span className="input__icon">{icon}</span>}
 
         {children}
@@ -35,10 +42,10 @@ export default function InputContainer({
             <button
               onClick={(e) => {
                 e.preventDefault();
-                setShowPassword(!showPassword);
+                setTogglePassword(!togglePassword);
               }}
             >
-              {showPassword ? (
+              {togglePassword ? (
                 <BiShow color="var(--color-3)" />
               ) : (
                 <BiHide color="var(--color-3)" />

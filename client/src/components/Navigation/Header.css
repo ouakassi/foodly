@@ -84,7 +84,9 @@
   text-align: center;
   cursor: pointer;
 }
-.search__item:hover {
+.search__item:hover,
+.search__item:focus,
+.search__item:active {
   background-color: var(--background-color1);
 }
 

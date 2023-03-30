@@ -1,14 +1,34 @@
+import { useState, useRef } from "react";
+import { AnimatePresence } from "framer-motion";
+
 import "./UserCart.css";
-import { BsMinecart } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { RiShoppingCartFill, RiShoppingCartLine } from "react-icons/ri";
+import CartMenu from "./CartMenu";
+import BlurredModal from "../Navigation/BlurredModal";
+import useCheckIfClickedOutside from "../../hooks/useCheckIfClickedOutside";
 
 export default function UserCart({ cartTotal }) {
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  const sidebarRef = useRef(null);
+
+  useCheckIfClickedOutside(showSidebar, setShowSidebar, sidebarRef);
+
+  const handleShowSidebar = () => {
+    setShowSidebar(!showSidebar);
+  };
   return (
-    <Link to="/cart">
-      <div className="user__cart">
-        <BsMinecart className="icon cart__icon" />
-        <span className="user__cart-total">{cartTotal || 2}</span>
-      </div>
-    </Link>
+    <div ref={sidebarRef} className="user__cart" onClick={handleShowSidebar}>
+      {showSidebar ? (
+        <RiShoppingCartFill className="cart__icon" />
+      ) : (
+        <RiShoppingCartLine className="cart__icon" />
+      )}
+      <span className="user__cart-total">{cartTotal || 2}</span>
+      <AnimatePresence>
+        {showSidebar && <CartMenu handleShowSidebar={handleShowSidebar} />}
+      </AnimatePresence>
+      <BlurredModal showModal={showSidebar} />
+    </div>
   );
 }

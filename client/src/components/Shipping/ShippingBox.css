@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   margin: 0 1rem;
+  position: relative;
 }
 
 .shipping__img {
@@ -20,4 +21,25 @@
 }
 .shipping__data p::first-letter {
   text-transform: uppercase;
+}
+.shipping__number {
+  position: absolute;
+  top: -5%;
+  left: -14%;
+  font-family: var(--font-1);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  border-radius: 50%;
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed;
+}
+
+@media only screen and (max-width: 426px) {
+  .shipping__box:not(:last-child) {
+    margin-bottom: 2rem;
+  }
 }

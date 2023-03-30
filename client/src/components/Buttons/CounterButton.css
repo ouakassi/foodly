@@ -1,0 +1,19 @@
+.counter__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-4);
+  font-family: var(--font-2);
+  color: white;
+  border-radius: 10px;
+  width: 2rem;
+  height: 2rem;
+  text-transform: capitalize;
+  font-size: var(--fs-m);
+  border: none;
+  cursor: pointer;
+  /* width: 100%; */
+}
+.counter__button:hover {
+  filter: brightness(1.2);
+}

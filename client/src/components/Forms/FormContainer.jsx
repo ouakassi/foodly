@@ -14,14 +14,16 @@ export default function FormContainer({
     <div className="form__container">
       <div className="form__card">
         <header className="form__navigation">
-          <span>
+          <span className="form__navigation-goback">
             <GoBack />
           </span>
+          <h1 className="form__navigation-heading">
+            {headingTitle}
+            {headingIcon}
+          </h1>
           <Logo />
         </header>
-        <h1>
-          {headingTitle} {headingIcon}
-        </h1>
+
         <p className="form__text">{headingText}</p>
         {children}
         <p className="form__container-footer">{footer}</p>

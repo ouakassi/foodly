@@ -1,5 +1,5 @@
 import "./HeroBox.css";
-import MainButton from "../Buttons/MainButton";
+import Button from "../Buttons/Button";
 import { motion } from "framer-motion";
 
 export default function HeroBox({ title, text, img, color, bgColor, bgImg }) {
@@ -28,7 +28,7 @@ export default function HeroBox({ title, text, img, color, bgColor, bgImg }) {
       >
         <h1 style={{ color: color }}>{title}</h1>
         <p>{text}</p>
-        <MainButton text="shop now" style={{ backgroundColor: color }} />
+        <Button text="shop now" style={{ backgroundColor: color }} />
       </motion.div>
       <motion.div
         variants={imgVaiants}

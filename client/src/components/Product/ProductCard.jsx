@@ -1,3 +1,7 @@
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { useState } from "react";
+
 import "./ProductCard.css";
 
 import { AiOutlineStar } from "react-icons/ai";
@@ -5,17 +9,7 @@ import { MdAddShoppingCart } from "react-icons/md";
 import { BsHeart, BsHeartFill } from "react-icons/bs";
 import { RiScales2Line } from "react-icons/ri";
 
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { useState } from "react";
-
-import bowlImage from "../../assets/images/bowl.png";
-
-const bowlEffect = {
-  background: `url(${bowlImage})`,
-  padding: "5px",
-  backgroundRepeat: "round",
-};
+import ProductImage from "./ProductImage";
 
 export default function ProductCard({
   style,
@@ -30,17 +24,18 @@ export default function ProductCard({
   const handleClickedIcon = () => {
     setIsIconClicked(!isIconClicked);
   };
+
+  const priceBefore = (productPrice * isSale) / 100 + productPrice;
   return (
     <article style={style} className="product__card">
       <Link to={link}>
         <header>
           <div>
             <motion.div whileHover={{ scale: 1.05 }}>
-              <img
-                style={bowlEffect}
+              <ProductImage
                 className="product__card-img"
-                src={productImg}
-                alt={productName}
+                productImg={productImg}
+                productName={productName}
               />
             </motion.div>
             <span className="product__card-name">
@@ -61,7 +56,7 @@ export default function ProductCard({
         </button>
         <div>
           <del className="product__card-price-before">
-            $ {productPrice.toFixed(2)}
+            ${priceBefore.toFixed(2)}
           </del>
           <span className="product__card-price">
             $ {productPrice.toFixed(2)}
@@ -79,7 +74,9 @@ export default function ProductCard({
       >
         {isIconClicked ? <BsHeartFill /> : <BsHeart />}
       </motion.span>
-      {isSale && <span className="product__card-sale">-70%</span>}
+      {isSale !== 0 && (
+        <span className="product__card-sale">{isSale + "%"}</span>
+      )}
       <span className="product__card-new">new</span>
     </article>
   );

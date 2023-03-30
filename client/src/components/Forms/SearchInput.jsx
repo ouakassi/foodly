@@ -1,19 +1,11 @@
+import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+
 import "./SearchInput.css";
 import { FiSearch } from "react-icons/fi";
-import { GoSignOut } from "react-icons/go";
 import { BsBackspaceReverseFill } from "react-icons/bs";
-
-import { motion } from "framer-motion";
-import { useState, useRef } from "react";
 import DropdownMenu from "../Navigation/DropdownMenu";
-import { useEffect } from "react";
 import DropdownItem from "../Navigation/DropdownItem";
-
-const data = [
-  { id: 1, icon: <GoSignOut />, text: "blabla" },
-  { id: 2, icon: <GoSignOut />, text: "blabla" },
-  { id: 3, icon: <GoSignOut />, text: "blabla" },
-];
 
 export default function SearchInput({ isSearchButtonClicked }) {
   const [isFocused, setIsFocused] = useState(false);
@@ -37,6 +29,7 @@ export default function SearchInput({ isSearchButtonClicked }) {
       style={isFocused && { width: "calc(100% + 1%)" }}
     >
       <FiSearch className="search__icon icon" />
+
       <motion.input
         type="search"
         name="search"

@@ -13,5 +13,8 @@
   font-size: var(--fs-l);
 }
 .input__error p {
-  width: 100%;
+  width: 90%;
+}
+.input__error p::first-letter {
+  text-transform: capitalize;
 }

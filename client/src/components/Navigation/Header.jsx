@@ -1,51 +1,26 @@
+import { useState, useRef, useLayoutEffect, useCallback } from "react";
+import { motion } from "framer-motion";
+
 import "./Header.css";
 import SearchInput from "../Forms/SearchInput";
 import UserCart from "../User/UserCart";
 import UserHead from "../User/UserHead";
-
-import { GiKiwiFruit, GiCoffeeBeans } from "react-icons/gi";
-
-import { TbBottle } from "react-icons/tb";
-import {
-  AiFillCloseCircle,
-  AiOutlineAlignLeft,
-  AiTwotoneFire,
-} from "react-icons/ai";
-import { GiHerbsBundle } from "react-icons/gi";
-import { FiSearch } from "react-icons/fi";
-import { FaStore } from "react-icons/fa";
-
+import NavItems from "./NavItems";
 import Logo from "./Logo";
 
-import { NavLink, Link } from "react-router-dom";
-import { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { RiSearchLine, RiSearchFill } from "react-icons/ri";
+import { AiFillCloseCircle, AiOutlineAlignLeft } from "react-icons/ai";
+
 import useCheckIfClickedOutside from "../../hooks/useCheckIfClickedOutside";
 import useMediaQuery from "../../hooks/useMediaQuery";
-import { useLayoutEffect } from "react";
-
-const navLinks = [
-  { id: 1, name: "store", icon: <FaStore /> },
-  { id: 2, name: "nuts", icon: <GiKiwiFruit /> },
-  { id: 3, name: "oils", icon: <TbBottle /> },
-  { id: 4, name: "herbs", icon: <GiHerbsBundle /> },
-  { id: 5, name: "coffee", icon: <GiCoffeeBeans /> },
-  { id: 6, name: "sale", icon: <AiTwotoneFire />, color: "var(--color-2)" },
-];
 
 export default function Header() {
   const [isSearchButtonClicked, setisSearchButtonClicked] = useState(false);
   const [isSidebarButtonClicked, setisSidebarButtonClicked] = useState(false);
 
   const searchRef = useRef();
-  const sidebarRef = useRef();
 
   const isMobile = useMediaQuery("(max-width: 820px)");
-
-  const navLinksAnimation = {
-    closed: { y: 50, opacity: 0 },
-    open: { y: 0, opacity: 1 },
-  };
 
   useCheckIfClickedOutside(
     isSearchButtonClicked,
@@ -53,15 +28,14 @@ export default function Header() {
     searchRef
   );
 
-  useCheckIfClickedOutside(
-    isSidebarButtonClicked,
-    setisSidebarButtonClicked,
-    sidebarRef
-  );
-
   useLayoutEffect(() => {
     !isMobile && setisSidebarButtonClicked(false);
   }, [isMobile, isSidebarButtonClicked]);
+
+  const updateIsSidebarClicked = useCallback(
+    (newIsSidebarClicked) => setisSidebarButtonClicked(newIsSidebarClicked),
+    []
+  );
 
   return (
     <header className="header">
@@ -75,66 +49,19 @@ export default function Header() {
               <AiOutlineAlignLeft className="icon" />
             </span>
           )}{" "}
-          <Logo />
+          <Logo logoName="FoodLY" />
         </div>
 
         {isSidebarButtonClicked || !isSearchButtonClicked ? (
-          <motion.ul
-            layout
-            ref={sidebarRef}
-            variants={navLinksAnimation}
-            initial="closed"
-            animate="open"
-            className="nav__links"
-            style={
-              isMobile && isSidebarButtonClicked
-                ? {
-                    left: "0",
-                    boxShadow: "rgb(0 0 0 / 0.2) 0px 0px 0px 50vw",
-                  }
-                : (isMobile && !isSidebarButtonClicked) ||
-                  (!isMobile && !isSidebarButtonClicked)
-                ? { left: "-100%", boxShadow: "none" }
-                : null
-            }
-          >
-            {navLinks.map(({ id, name, icon, color }) => {
-              const isSale = name === "sale";
-              return (
-                <li
-                  className="nav__item"
-                  key={id}
-                  onClick={() => setisSidebarButtonClicked(false)}
-                >
-                  <NavLink to={`/${name.replace(" ", "-")}`}>
-                    {({ isActive }) => (
-                      <div
-                        style={
-                          isSale && !isActive
-                            ? { backgroundColor: color, color: "#fff" }
-                            : null
-                        }
-                        className={`nav__link ${
-                          isActive && !isSale
-                            ? "nav__link-active"
-                            : isActive && isSale
-                            ? "nav__link-active-sale"
-                            : ""
-                        }`}
-                      >
-                        <span>{icon}</span>
-                        <span>{name}</span>
-                      </div>
-                    )}
-                  </NavLink>
-                </li>
-              );
-            })}
-          </motion.ul>
+          <NavItems
+            isMobile={isMobile}
+            isSidebarButtonClicked={isSidebarButtonClicked}
+            updateIsSidebarClicked={updateIsSidebarClicked}
+          />
         ) : null}
         {isSearchButtonClicked && (
           <motion.div
-            variants={navLinksAnimation}
+            // variants={navLinksAnimation}
             initial="closed"
             animate="open"
             // exit="closed"
@@ -157,7 +84,7 @@ export default function Header() {
             onClick={() => setisSearchButtonClicked(!isSearchButtonClicked)}
             className="search__item"
           >
-            <FiSearch />
+            {!isSearchButtonClicked ? <RiSearchLine /> : <RiSearchFill />}
           </div>
 
           <UserCart />

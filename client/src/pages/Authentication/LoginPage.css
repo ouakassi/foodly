@@ -1,8 +1,3 @@
-.login .form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
 .login .input__container:nth-child(2) {
   margin-bottom: 2rem;
 }
@@ -30,5 +25,5 @@ input[type="checkbox" i] {
 }
 
 input[type="checkbox" i]:focus-within {
-  box-shadow: 0px 0px 0px 2px #52e4ac;
+  box-shadow: 0px 0px 0px 2px var(--color-5);
 }

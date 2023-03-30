@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import "./LoginPage.css";
-import { RiLockPasswordLine, RiMailLine } from "react-icons//ri";
-import { CgLogIn } from "react-icons/cg";
+import { RiUserLine, RiLockPasswordLine, RiMailLine } from "react-icons//ri";
 
-import SubmitButton from "../../components/Buttons/SubmitButton";
+import Button from "../../components/Buttons/Button";
+
 import FormContainer from "../../components/Forms/FormContainer";
 import InputContainer from "../../components/Forms/InputContainer";
+import Form from "../../components/Forms/Form";
+import ErrorMsg from "../../components/Errors/ErrorMsg";
+import API from "../../api/api";
 
 //  validation schema
 let validationSchema = Yup.object({
@@ -21,55 +24,61 @@ let validationSchema = Yup.object({
 });
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-
+  const [togglePassword, setTogglePassword] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const {
     register,
     handleSubmit,
     setFocus,
     getValues,
     formState: { errors, isValid },
-  } = useForm({ resolver: yupResolver(validationSchema), mode: "all" });
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    mode: "onChange",
+  });
 
-  const values = getValues();
-  console.log(values);
+  const navigate = useNavigate();
 
   // focus in email input while loading the page
   useEffect(() => {
     setFocus("email");
   }, [setFocus]);
 
-  console.log("🚀 ~ file: LoginPage.jsx:48 ~ LoginPage ~ isValid", isValid);
-
-  console.log(
-    "🚀 ~ file: LoginPage.jsx:50 ~ LoginPage ~ validationSchema",
-    validationSchema
-  );
-
-  const onSubmit = (data) => {
-    console.log("🚀 ~ file: LoginPage.jsx:76 ~ onSubmit ~ data", data);
-    console.log(
-      "🚀 ~ file: LoginPage.jsx:77 ~ onSubmit ~ errors",
-      errors.email
-    );
+  const onSubmit = async (data) => {
+    try {
+      const response = await API.post("/auth/login", data, {
+        withCredentials: true,
+      });
+      navigate("/");
+      console.log(response);
+    } catch (err) {
+      if (err.response) {
+        console.log(err.response.data);
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.log("nothing");
+      }
+    }
   };
 
   return (
     <div className="login">
       <FormContainer
         headingTitle="login"
-        headingIcon={<CgLogIn className="icon" />}
+        headingIcon={<RiUserLine className="icon" />}
         headingText="enter your email and password to login"
         footer={
           <>
-            No account ?
-            <Link style={{ color: "var(--color-4)" }} to="/register">
+            don't have an account ?&nbsp;
+            <Link style={{ color: "var(--color-4)" }} to="/auth/register">
               Register
             </Link>
           </>
         }
       >
-        <form className="form" onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <InputContainer
             labelText="email"
             icon={<RiMailLine />}
@@ -79,15 +88,15 @@ export default function LoginPage() {
           </InputContainer>
 
           <InputContainer
-            showPassword={showPassword}
-            setShowPassword={setShowPassword}
+            togglePassword={togglePassword}
+            setTogglePassword={setTogglePassword}
             isPassword={true}
             labelText="password"
             icon={<RiLockPasswordLine />}
             errorMsg={errors.password?.message}
           >
             <input
-              type={showPassword ? "text" : "password"}
+              type={togglePassword ? "text" : "password"}
               {...register("password")}
             />
           </InputContainer>
@@ -96,7 +105,7 @@ export default function LoginPage() {
             <Link
               className="form__reset"
               style={{ color: "var(--color-4)" }}
-              to="/reset"
+              to="/auth/forgot-password"
             >
               forgot password ?{" "}
             </Link>
@@ -109,12 +118,16 @@ export default function LoginPage() {
               <label htmlFor="rememberInput">remember me</label>
             </div>
           </div>
-          <SubmitButton
-            disabled={!isValid}
-            style={{ marginBottom: "1rem" }}
+          <Button
+            isTypeSubmit={true}
+            isDisabled={!isValid}
+            style={{ fontSize: "var(--fs-xl)" }}
             text="login"
           />
-        </form>
+          {errorMsg && (
+            <ErrorMsg style={{ textAlign: "center" }} errorMsg={errorMsg} />
+          )}
+        </Form>
       </FormContainer>
     </div>
   );

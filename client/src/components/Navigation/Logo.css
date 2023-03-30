@@ -1,11 +1,12 @@
 .logo {
   display: flex;
-  margin-right: 2rem;
   font-size: var(--fs-xl);
   font-family: var(--font-1);
   font-weight: var(--fw-bold);
+  align-items: center;
 }
 .logo__icon {
   color: var(--color-3);
-  font-size: 4rem;
+  font-size: var(--fs-2xl);
+  margin-right: 0.5rem;
 }

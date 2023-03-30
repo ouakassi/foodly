@@ -11,6 +11,8 @@ import transportingIcon from "../../assets/icons/transporting.png";
 
 import dottedArrow from "./../../assets/icons/dotted-arrow.svg";
 
+import useMediaQuery from "../../hooks/useMediaQuery";
+
 import React from "react";
 
 const data = [
@@ -41,6 +43,8 @@ const data = [
 ];
 
 export default function Shipping() {
+  const isNotMobile = useMediaQuery("(min-width: 429px)");
+
   return (
     <Section
       sectionClass="shipping__section"
@@ -56,7 +60,12 @@ export default function Shipping() {
                 img={img}
                 text={text}
                 title={title}
-                style={id % 2 !== 1 ? { transform: "translateY(6rem)" } : null}
+                shippingNumber={id}
+                style={
+                  id % 2 !== 1 && isNotMobile
+                    ? { transform: "translateY(6rem)" }
+                    : null
+                }
               />
               {id !== data.length && (
                 <img

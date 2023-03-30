@@ -5,10 +5,10 @@ function useCheckIfClickedOutside(state, setState, ref) {
     const checkIfClickedOutside = (e) => {
       // If the menu is open and the clicked target is not within the menu,
       // then close the menu
+
       if (state && ref.current && !ref.current.contains(e.target)) {
         console.log(e.target);
-        setState(false);
-        console.log(e.target);
+        setState(!state);
       }
     };
 

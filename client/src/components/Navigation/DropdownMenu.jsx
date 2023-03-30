@@ -2,7 +2,12 @@ import "./DropdownMenu.css";
 
 import { motion } from "framer-motion";
 
-export default function DropdownMenu({ children, style }) {
+export default function DropdownMenu({
+  onClick,
+  children,
+  style,
+  className = "",
+}) {
   const animationVariants = {
     open: {
       opacity: 1,
@@ -33,8 +38,9 @@ export default function DropdownMenu({ children, style }) {
       initial="closed"
       animate="open"
       exit="closed"
-      className="dropdown__menu"
+      className={`dropdown__menu ${className}`}
       style={style}
+      onClick={onClick}
       layout
     >
       {children}

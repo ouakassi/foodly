@@ -1,0 +1,23 @@
+.button {
+  display: inline-block;
+  background-color: var(--color-3);
+  font-family: var(--font-2);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  text-transform: capitalize;
+  min-width: max-content;
+  font-size: var(--fs-m);
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.button:hover {
+  filter: brightness(1.1);
+}
+
+.button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

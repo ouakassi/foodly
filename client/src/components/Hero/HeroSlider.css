@@ -1,15 +1,11 @@
 .hero__container {
-  /* position: relative; */
-  display: flex;
-  justify-content: center;
-  /* padding: 2rem 0; */
+  /* display: flex; */
+  /* justify-content: center; */
 }
 
 .hero__slider {
   position: relative !important;
-  /* padding: 0.5rem 0 !important; */
-
-  /* width: 50rem !important; */
+  padding: 0 1rem !important;
 }
 
 .hero__slider .swiper-button-prev:hover,
@@ -25,14 +21,16 @@
 }
 
 .hero__slider .swiper-pagination {
-  bottom: 8% !important;
-  transition: 0.3s;
+  position: absolute !important;
+  bottom: 0 !important;
+  bottom: 5% !important;
+  transition: 0.3s !important;
 }
 
 .hero__slider .swiper-pagination-bullet {
   width: 10px;
   height: 10px;
-  background-color: white;
+  background-color: #fff;
 }
 
 .hero__slider .swiper-pagination-bullet-active {
