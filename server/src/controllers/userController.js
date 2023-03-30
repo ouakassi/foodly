@@ -10,7 +10,7 @@ const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({ include: [Role] });
     if (users.length === 0) {
-      return res.status(204).json({ message: "no users found" });
+      res.status(404).json({ message: "no users found" });
     } else {
       res.status(200).json(users);
     }
