@@ -24,13 +24,12 @@ const getProduct = async (req, res) => {
   try {
     const productId = req.params.id;
     const product = await Product.findOne({ where: { id: productId } });
-    if (product) {
-      res.status(200).json(product);
-    } else {
-      res
+    if (!product) {
+      return res
         .status(404)
         .json({ message: `product with id ${productId} not found ` });
     }
+    res.status(200).json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

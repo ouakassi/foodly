@@ -42,7 +42,7 @@ const connectDb = async () => {
     await db.authenticate();
     console.log("Connection has been established successfully.");
     // await db.sync({ logging: true });
-    await db.sync({ force: true, logging: true });
+    await db.sync({ alter: true, logging: true });
     await createRoles();
     console.log("All models were synchronized successfully.");
   } catch (error) {

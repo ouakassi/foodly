@@ -26,7 +26,10 @@ const getAllUsers = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await User.findByPk(userId);
+    const user = await User.findOne({
+      where: { id: userId },
+      include: [Address, Role],
+    });
 
     if (!user) {
       res.status(404).json({ message: `user with id ${userId} not found ` });
