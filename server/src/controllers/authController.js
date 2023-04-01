@@ -17,65 +17,58 @@ const roles = require("../utils/constants");
 
 const register = async (req, res) => {
   try {
-    //pass register schema to check user inputs
+    // Validate user inputs
     const { error, value } = validateRegister(req.body);
 
-    // send error message if there is any errors in user request
+    // Return error message if user input is invalid
     if (error) {
-      const errors = [];
-      error.details.map(({ message: errorMsg }) => {
-        errors.push(errorMsg);
-      });
-      res.status(400).json({ error: errors });
-      return;
+      const errors = error.details.map(({ message: errorMsg }) => errorMsg);
+      return res.status(400).json({ error: errors });
     }
 
-    // extract user data from the request body after validation
-    const bodyData = {
-      firstName: value.firstName,
-      lastName: value.lastName,
-      email: value.email,
-      password: await hashPassword(value.password),
-      role: value.role || roles.USER,
-    };
+    // Extract user data from request body after validation
+    const { firstName, lastName, email, password } = value;
+    const hashedPassword = await hashPassword(password);
+    const role = value.role || roles.USER;
 
-    // check if user exist in database
-    const isUserExist = await User.findOne({
-      where: { email: bodyData.email },
-    });
-    if (isUserExist) {
-      res
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res
         .status(400)
-        .json({ message: `user with email: ${bodyData.email} already exist` });
-      return;
+        .json({ message: `User with email ${email} already exists` });
     }
 
     // Check if the role exists
-    const isRoleExist = await Role.findOne({ where: { name: bodyData.role } });
-    console.log(isRoleExist.id);
-    if (!isRoleExist) {
-      return res.status(400).send({ message: "Invalid role" });
+    const existingRole = await Role.findOne({ where: { name: role } });
+    if (!existingRole) {
+      return res.status(400).json({ message: "Invalid role" });
     }
 
-    const { firstName, lastName, email, password } = bodyData;
-
-    // add user to database
-    const user = await User.create({
+    // Create new user in the database
+    const newUser = await User.create({
       firstName,
       lastName,
       email,
-      password,
-      roleId: isRoleExist.id,
+      password: hashedPassword,
+      roleId: existingRole.id,
     });
-    // pass payload to generate a token
-    const token = createJWT(user);
-    // send token through cookie
+
+    // Generate JWT token
+    const token = createJWT(newUser);
+
+    // Set cookie with the JWT token
     res.cookie("token", token, {
       httpOnly: true,
     });
-    res.status(201).json({ message: `user created successfully`, user });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+
+    // Return success message and user data
+    res
+      .status(201)
+      .json({ message: `User created successfully`, user: newUser });
+  } catch (error) {
+    // Return error message if an unexpected error occurs
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -85,65 +78,60 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const bodyData = {
-      email: req.body.email,
-      password: req.body.password,
-    };
+    const { email, password } = req.body;
 
-    // find if user exist in database
-    const user = await User.findOne({
-      where: { email: bodyData.email },
-    });
+    // Find user in database
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      res.status(404).json({ message: "user not found" });
-      return;
+      return res.status(404).json({ message: "User not found" });
     }
-    const isValidPassword = await comparePasswords(
-      bodyData.password,
-      user.password
-    );
+
+    // Compare password
+    const isValidPassword = await comparePasswords(password, user.password);
+
     if (!isValidPassword) {
-      res.status(401).json({ message: "wrong password" });
-      return;
+      return res.status(401).json({ message: "Wrong password" });
     }
+
+    // Generate JWT token and set cookie
     const token = createJWT(user);
+    res.cookie("token", token, { httpOnly: true });
 
-    // send token through cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-    });
-
-    const { id } = user;
-    res.status(200).json({ status: "logged in !", userId: id });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    // Return success message and user ID
+    res
+      .status(200)
+      .json({ message: "Logged in successfully!", userId: user.id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
 const loggedIn = async (req, res) => {
   try {
     const token = req.cookies.token;
-    console.log(token);
+
     if (!token) {
-      res.json(false);
-      return;
+      return res.json(false);
     }
+
+    // Verify JWT token
     verifyJWT(token);
-    res.send(true);
+
+    res.json(true);
   } catch (error) {
     res.json(false);
   }
 };
 
 const logout = async (req, res) => {
-  // clear the token from the cookie
-  res
-    .cookie("token", "", {
-      httpOnly: true,
-      expires: new Date(0),
-    })
-    .json({ message: "logout successfully" });
+  // Clear the token from the cookie
+  res.cookie("token", "", {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+
+  res.json({ message: "Logged out successfully" });
 };
 
 module.exports = {

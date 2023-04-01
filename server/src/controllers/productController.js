@@ -1,3 +1,4 @@
+const Category = require("../models/CategoryModel");
 const Product = require("../models/productModel");
 const { httpLogger } = require("../utils/logger");
 
@@ -40,15 +41,23 @@ const getProduct = async (req, res) => {
 // Public
 const createProduct = async (req, res) => {
   try {
-    const bodyData = {
-      title: req.body.title,
-      imgUrl: req.body.imgUrl,
-      price: req.body.price,
-      isSale: req.body.isSale,
-      desc: req.body.desc,
-    };
+    const { title, imgUrl, price, desc, category } = req.body;
 
-    const product = await Product.create(bodyData);
+    const productCategory = await Category.findOne({
+      where: { name: category },
+    });
+
+    if (!productCategory) {
+      return res.status(404).json({ message: "category not found" });
+    }
+
+    const product = await Product.create({
+      title,
+      imgUrl,
+      price,
+      desc,
+      productCategoryId: productCategory.id,
+    });
 
     res
       .status(201)

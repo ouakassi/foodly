@@ -18,6 +18,8 @@ const authRouter = require("./routes/authRouter");
 const userRouter = require("./routes/userRouter");
 const addressRouter = require("./routes/addressRouter");
 const adminRouter = require("./routes/adminRouter");
+const authRole = require("./middlewares/authRole");
+const roles = require("./utils/constants");
 
 const app = express();
 
@@ -43,7 +45,7 @@ app.use(cookieParser());
 connectDb();
 
 app.use("/auth", authRouter);
-app.use("/api/products", productRouter);
+app.use("/api/products", authRole(roles.ADMIN), productRouter);
 app.use("/api/users", userRouter, addressRouter);
 app.use("/api/admin", adminRouter);
 
