@@ -21,10 +21,18 @@ const loginSchema = Joi.object({
   password: Joi.string().min(6).max(20).required(),
 });
 
+// handle errors
+
+function handleValidationError(error, res) {
+  const errors = error.details.map(({ message: errorMsg }) => errorMsg);
+  return res.status(400).json({ error: errors });
+}
+
 const validateRegister = validator(registerSchema);
 const validateLogin = validator(loginSchema);
 
 module.exports = {
   validateRegister,
   validateLogin,
+  handleValidationError,
 };

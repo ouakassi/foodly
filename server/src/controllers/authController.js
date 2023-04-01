@@ -4,7 +4,11 @@ const {
   comparePasswords,
   verifyJWT,
 } = require("../utils/auth");
-const { validateRegister, validateLogin } = require("../utils/validator");
+const {
+  validateRegister,
+  validateLogin,
+  handleValidationError,
+} = require("../utils/validator");
 
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
@@ -22,8 +26,7 @@ const register = async (req, res) => {
 
     // Return error message if user input is invalid
     if (error) {
-      const errors = error.details.map(({ message: errorMsg }) => errorMsg);
-      return res.status(400).json({ error: errors });
+      return handleValidationError(error, res);
     }
 
     // Extract user data from request body after validation
@@ -83,8 +86,7 @@ const login = async (req, res) => {
 
     // Return error message if user input is invalid
     if (error) {
-      const errors = error.details.map(({ message: errorMsg }) => errorMsg);
-      return res.status(400).json({ error: errors });
+      return handleValidationError(error, res);
     }
 
     // Extract user data from request body after validation
