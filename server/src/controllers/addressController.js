@@ -7,7 +7,7 @@ const User = require("../models/userModel");
 const getAllAddresses = async (req, res) => {
   try {
     const addresses = await Address.findAll({});
-    if (addresses.length === 0) {
+    if (!addresses.length) {
       return res.status(404).json({ message: "no address found" });
     }
     res.status(200).json(addresses);
@@ -22,10 +22,12 @@ const getAllAddresses = async (req, res) => {
 const getAddresses = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.userId);
+
     if (!user) return res.status(404).json({ error: "User not found" });
+
     const userAddresses = await Address.findAll({ where: { userId: user.id } });
 
-    if (userAddresses.length === 0) {
+    if (!userAddresses.length) {
       return res
         .status(404)
         .json({ message: `User ${user.id} has no Addresses ` });
@@ -40,8 +42,9 @@ const getAddresses = async (req, res) => {
 // GET /api/users/userId/addresses/
 const getAddress = async (req, res) => {
   try {
-    const addressId = req.params.addressId;
-    const user = await User.findByPk(req.params.userId);
+    const { addressId, userId } = req.params;
+
+    const user = await User.findByPk(userId);
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -57,7 +60,6 @@ const getAddress = async (req, res) => {
       });
     }
     res.status(200).json(userAddress);
-    console.log(userAddress);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -67,10 +69,15 @@ const getAddress = async (req, res) => {
 // POST /api/users/userId/addresses/
 const createAddress = async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.userId);
+    const { userId } = req.params;
+
+    const user = await User.findByPk(userId);
+
     if (!user) return res.status(404).json({ error: "User not found" });
+
     const { addressLineOne, addressLineTwo, city, postalCode, country, phone } =
       req.body;
+
     const userAddress = await Address.create({
       addressLineOne,
       addressLineTwo,
@@ -90,11 +97,15 @@ const createAddress = async (req, res) => {
 // PUT /api/users/userId/addresses/addressId
 const updateAddress = async (req, res) => {
   try {
-    const addressId = req.params.addressId;
-    const user = await User.findByPk(req.params.userId);
+    const { addressId, userId } = req.params;
+
+    const user = await User.findByPk(userId);
+
     if (!user) return res.status(404).json({ error: "User not found" });
+
     const { addressLineOne, addressLineTwo, city, postalCode, country, phone } =
       req.body;
+
     const updatedAddress = await Address.update(
       {
         addressLineOne,
@@ -106,6 +117,11 @@ const updateAddress = async (req, res) => {
       },
       { where: { id: addressId } }
     );
+
+    if (!updatedAddress) {
+      res.status(200).json("Address not found");
+    }
+
     res.status(200).json({
       message: `address with id ${updatedAddress.id} updated successfully`,
       updatedAddress,
@@ -132,11 +148,11 @@ const deleteAddress = async (req, res) => {
 
     if (!deletedAddress) {
       return res.status(404).json({
-        message: `User ${user.id} has no Addresse with this id `,
+        message: `User ${user.id} has no Address with given id`,
       });
     }
     res.status(200).json({
-      message: `address with id ${addressId} deleted successfully`,
+      message: `Address with id ${addressId} deleted successfully`,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
