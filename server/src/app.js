@@ -45,7 +45,7 @@ app.use(cookieParser());
 connectDb();
 
 app.use("/auth", authRouter);
-app.use("/api/products", authRole(roles.ADMIN), productRouter);
+app.use("/api/products", productRouter);
 app.use("/api/users", userRouter, addressRouter);
 app.use("/api/admin", adminRouter);
 

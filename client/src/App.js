@@ -18,6 +18,7 @@ import ForgotPasswordPage from "./pages/Authentication/ForgotPasswordPage";
 import ResetPassword from "./pages/Authentication/ResetPassword";
 import EmailSent from "./pages/Authentication/EmailSent";
 import AboutPage from "./pages/About/AboutPage";
+import StorePage from "./pages/Store/StorePage";
 
 const LazyAbout = lazy(() => import("./pages/About/AboutPage"));
 
@@ -53,7 +54,7 @@ function App() {
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="store" element={<div>STORE</div>}></Route>
+        <Route path="store" element={<StorePage />}></Route>
         <Route
           path="about"
           element={

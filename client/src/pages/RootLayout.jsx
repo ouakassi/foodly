@@ -26,6 +26,7 @@ export default function RootLayout() {
       "auth/forgot-password",
       "auth/reset-password",
       "auth/email-sent",
+      "dashboard",
     ];
     if (locations.includes(pathName)) {
       setShow(false);

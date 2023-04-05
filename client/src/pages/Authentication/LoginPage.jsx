@@ -109,14 +109,14 @@ export default function LoginPage() {
             >
               forgot password ?{" "}
             </Link>
-            <div className="form__remember">
+            {/* <div className="form__remember">
               <input
                 type="checkbox"
                 id="rememberInput"
                 {...register("rememberMe")}
               />
               <label htmlFor="rememberInput">remember me</label>
-            </div>
+            </div> */}
           </div>
           <Button
             isTypeSubmit={true}
