@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:8000/api";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 export const useAxios = ({ url, method, body = null, headers = null }) => {
   const [data, setData] = useState(null);

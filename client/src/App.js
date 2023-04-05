@@ -19,6 +19,7 @@ import ResetPassword from "./pages/Authentication/ResetPassword";
 import EmailSent from "./pages/Authentication/EmailSent";
 import AboutPage from "./pages/About/AboutPage";
 import StorePage from "./pages/Store/StorePage";
+import DashboardPage from "./pages/Dashboard/DashboardPage";
 
 const LazyAbout = lazy(() => import("./pages/About/AboutPage"));
 
@@ -34,27 +35,12 @@ const authRoutes = [
 ];
 
 function App() {
-  // const [isLoading, setIsLoading] = useState(false);
-
-  // useEffect(() => {
-  //   document.addEventListener("load", () => {
-  //     console.log("is loading....");
-
-  //     setIsLoading(true);
-  //   });
-  //   return document.addEventListener("load", () => {
-  //     console.log("finish loading");
-  //     setIsLoading(false);
-  //   });
-  // }, [isLoading]);
-
-  // console.log(isLoading);
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
         <Route index element={<HomePage />} />
         <Route path="store" element={<StorePage />}></Route>
+        <Route path="dashboard" element={<DashboardPage />}></Route>
         <Route
           path="about"
           element={
