@@ -9,6 +9,7 @@ export default function AnimatedIcon({
   icon,
   onClick,
   hoverIcon,
+  scale = 1.4,
 }) {
   const [isHoverd, setIsHoverd] = useState(false);
 
@@ -24,7 +25,7 @@ export default function AnimatedIcon({
       onClick={onClick}
       onMouseOver={HandleonMouseOver}
       onMouseLeave={HandleonMouseLeave}
-      whileHover={{ scale: 1.4 }}
+      whileHover={{ scale: scale }}
       whileTap={{ scale: 0.9 }}
       style={style}
       className={`animated__icon ${className}`}
