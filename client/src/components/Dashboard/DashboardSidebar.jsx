@@ -7,11 +7,10 @@ import {
   CiMoneyCheck1,
   CiUser,
   CiSun,
+  CiSquareChevRight,
+  CiSquareChevLeft,
 } from "react-icons/ci";
-import {
-  TbArrowAutofitContent,
-  TbArrowAutofitContentFilled,
-} from "react-icons/tb";
+import { BsFillGridFill } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -20,6 +19,7 @@ import AnimatedIcon from "../Buttons/AnimatedIcon";
 const navItems = [
   {
     icon: <CiGrid41 />,
+
     name: "overview",
   },
   {
@@ -52,27 +52,22 @@ export default function DashboardSidebar() {
 
   return (
     <motion.div
-      animate={!toggleSidebar ? { width: "22rem" } : { width: "9rem" }}
+      initial={false}
+      animate={{ width: !toggleSidebar ? "18rem" : "6rem" }}
       className="dashboard__sidebar"
     >
       <header className="dashboard__sidebar-header">
         <AnimatedIcon
           onClick={() => setToggleSidebar(!toggleSidebar)}
-          scale={1.1}
+          scale={1.2}
           className="dashboard__sidebar-button-toggle"
-          icon={
-            toggleSidebar ? (
-              <TbArrowAutofitContent />
-            ) : (
-              <TbArrowAutofitContentFilled />
-            )
-          }
+          icon={toggleSidebar ? <CiSquareChevRight /> : <CiSquareChevLeft />}
         />
-        <Logo
+        {/* <Logo
           link={"/dashboard"}
           logoName={!toggleSidebar && "Foodly"}
           className={"dashboard__sidebar-logo"}
-        />
+        /> */}
       </header>
 
       <main className="dashboard__sidebar-main">
@@ -89,6 +84,15 @@ export default function DashboardSidebar() {
                 <li key={i} className="dashboard__sidebar-navitem">
                   <span className="dashboard__sidebar-icon">{icon}</span>
                   <span className="dashboard__sidebar-text">{name}</span>
+                  {toggleSidebar && (
+                    <motion.span
+                      initial={{ opacity: 0.5, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      className="dashboard__sidebar-tooltip"
+                    >
+                      {name}
+                    </motion.span>
+                  )}
                 </li>{" "}
               </NavLink>
             );
@@ -98,12 +102,12 @@ export default function DashboardSidebar() {
       <footer>
         {/* <h3>admin settings</h3> */}
         <ul className="dashboard__sidebar-navlist">
-          <a href="#d" className="dashboard__sidebar-navlink">
+          <NavLink to={"settings"} className="dashboard__sidebar-navlink">
             <li className="dashboard__sidebar-navitem">
               <CiSun className="dashboard__sidebar-icon" />
               <span className="dashboard__sidebar-text">settings</span>
             </li>
-          </a>
+          </NavLink>
         </ul>
       </footer>
     </motion.div>
