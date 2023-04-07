@@ -7,7 +7,7 @@ export default function Logo({ link = "/", className, style, logoName }) {
     <div style={style}>
       <Link className={`logo ${className}`} to={link}>
         <GiShop className="logo__icon" />
-        <span>{logoName}</span>
+        {logoName && <span className="logo__text">{logoName}</span>}
       </Link>
     </div>
   );

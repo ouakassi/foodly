@@ -8,5 +8,7 @@
 .logo__icon {
   color: var(--color-3);
   font-size: var(--fs-2xl);
-  margin-right: 0.5rem;
+}
+.logo__text {
+  margin-left: 0.5rem;
 }
