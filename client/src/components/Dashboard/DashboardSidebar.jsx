@@ -11,6 +11,15 @@ import {
   CiSquareChevLeft,
 } from "react-icons/ci";
 import {
+  HiOutlineUsers,
+  HiOutlineTemplate,
+  HiOutlineCash,
+  HiOutlineArchive,
+  HiOutlineDocumentReport,
+  HiMenuAlt2,
+  HiMenuAlt3,
+} from "react-icons/hi";
+import {
   TbLayoutSidebarLeftExpand,
   TbLayoutSidebarLeftCollapse,
 } from "react-icons/tb";
@@ -21,30 +30,41 @@ import AnimatedIcon from "../Buttons/AnimatedIcon";
 
 const navItems = [
   {
-    icon: <CiGrid41 />,
-
+    icon: <HiOutlineTemplate />,
+    // HiTemplate
     name: "overview",
+    link: "overview",
   },
   {
-    icon: <CiMoneyCheck1 />,
+    icon: <HiOutlineCash />,
+    // HiCash
     name: "orders",
+    link: "orders",
   },
   {
-    icon: <CiUser />,
-    name: "customers",
-  },
-  {
-    icon: <CiShoppingCart />,
+    icon: <HiOutlineArchive />,
+    // HiArchive
     name: "products",
+    link: "products",
   },
   {
-    icon: <CiMemoPad />,
+    icon: <HiOutlineUsers />,
+    // HiUsers
+    name: "customers",
+    link: "customers",
+  },
+  {
+    icon: <HiOutlineDocumentReport />,
+    // HiDocumentReport
     name: "reports",
+    link: "reports",
   },
-  {
-    icon: <CiSun />,
-    name: "settings",
-  },
+
+  // {
+  //   icon: <CiSun />,
+  //   name: "settings",
+  //   link: "settings",
+  // },
 ];
 
 export default function DashboardSidebar() {
@@ -58,9 +78,14 @@ export default function DashboardSidebar() {
   }, [toggleSidebar]);
 
   return (
-    <motion.div
-      initial={false}
-      animate={{ width: !toggleSidebar ? "18rem" : "6rem" }}
+    <motion.aside
+      initial={{ x: "-6rem", opacity: 0, width: "var(--sidebar-width)" }}
+      animate={{
+        x: 0,
+        opacity: 1,
+        width: !toggleSidebar ? "18rem" : "var(--sidebar-width)",
+      }}
+      // whileInView={{ x: 0, opacity: 1 }}
       className="dashboard__sidebar"
     >
       <header className="dashboard__sidebar-header">
@@ -69,13 +94,7 @@ export default function DashboardSidebar() {
           scale={1.2}
           className="dashboard__sidebar-button-toggle"
           // hoverIcon={<BiGridHorizontal />}
-          icon={
-            toggleSidebar ? (
-              <TbLayoutSidebarLeftExpand />
-            ) : (
-              <TbLayoutSidebarLeftCollapse />
-            )
-          }
+          icon={toggleSidebar ? <HiMenuAlt2 /> : <HiMenuAlt3 />}
         />
         <Logo
           link={"/dashboard"}
@@ -87,13 +106,13 @@ export default function DashboardSidebar() {
       <main className="dashboard__sidebar-main">
         {/* <h3>menu</h3> */}
         <ul className="dashboard__sidebar-navlist ">
-          {navItems.map(({ icon, name }, i) => {
+          {navItems.map(({ icon, name, link }, i) => {
             return (
               <NavLink
                 className={({ isActive }) =>
-                  isActive ? "active" : "dashboard__sidebar-navlink"
+                  `dashboard__sidebar-navlink ${isActive && "active"}`
                 }
-                to={name}
+                to={link}
               >
                 <li key={i} className="dashboard__sidebar-navitem">
                   <span className="dashboard__sidebar-icon">{icon}</span>
@@ -129,6 +148,6 @@ export default function DashboardSidebar() {
           </NavLink>
         </ul>
       </footer> */}
-    </motion.div>
+    </motion.aside>
   );
 }

@@ -1,11 +1,12 @@
 .dashboard__sidebar {
-  position: relative;
+  position: fixed;
   display: inline-grid;
   justify-items: center;
   height: 100vh;
   padding: 2rem 0;
   background-color: rgb(255, 255, 255);
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  z-index: var(--z-fixed);
 }
 .dashboard__sidebar-header {
   display: flex;
@@ -40,7 +41,7 @@ h3 {
 }
 .dashboard__sidebar .active::before {
   content: "";
-  background-color: var(--color-3);
+  background-color: var(--color-5);
   height: 40%;
   width: 5px;
   border-radius: 10px;
@@ -49,6 +50,7 @@ h3 {
   top: 0;
   bottom: 0;
   margin: auto;
+  transition: 0.2s;
 }
 
 .dashboard__sidebar-navlink {
@@ -94,6 +96,7 @@ h3 {
   border-radius: 10px;
   align-items: center;
   text-transform: capitalize;
+  z-index: var(--z-tooltip);
   /* font-family: var(--font-1); */
 }
 .dashboard__sidebar-tooltip::before {
