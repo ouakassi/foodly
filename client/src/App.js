@@ -71,7 +71,9 @@ function App() {
           <Route path="customers" element={<CustomersPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="reports" element={<ReportsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
+          <Route path="settings">
+            <Route index path="profile" element={<div>profile</div>} />
+          </Route>
         </Route>
         <Route path="auth">
           {authRoutes.map(({ path, element }, key) => {

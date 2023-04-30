@@ -1,11 +1,14 @@
 import { Outlet, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 
 import DashboardSidebar from "../components/Dashboard/DashboardSidebar";
-import Header from "../components/Navigation/Header";
+
 import { useEffect, useState } from "react";
+import DashboardNavbar from "../components/Dashboard/DashboardNavbar";
+import Breadcrumbs from "../components/Navigation/Breadcrumbs";
 
 const mainStyle = {
-  padding: "var(--header-height) 0 0 var(--sidebar-width)",
+  paddingLeft: "var(--sidebar-width)",
 };
 
 export default function DashboardLayout() {
@@ -19,9 +22,24 @@ export default function DashboardLayout() {
   return (
     <div className="dashboard">
       <DashboardSidebar />
-      {/* <Header /> */}
+      {/* <DashboardNavbar />  */}
       <main style={mainStyle}>
-        <Outlet />
+        <Breadcrumbs />
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          style={{
+            backgroundColor: "white",
+            borderRadius: "10px",
+            margin: "1rem",
+            padding: "1rem",
+          }}
+          className="content"
+        >
+          <Outlet />
+        </motion.div>
       </main>
     </div>
   );

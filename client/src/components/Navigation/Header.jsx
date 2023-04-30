@@ -1,5 +1,6 @@
 import { useState, useRef, useLayoutEffect, useCallback } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 import "./Header.css";
 import SearchInput from "../Forms/SearchInput";
@@ -13,8 +14,10 @@ import { AiFillCloseCircle, AiOutlineAlignLeft } from "react-icons/ai";
 
 import useCheckIfClickedOutside from "../../hooks/useCheckIfClickedOutside";
 import useMediaQuery from "../../hooks/useMediaQuery";
+import Button from "../Buttons/Button";
 
 export default function Header() {
+  const isLogged = false;
   const [isSearchButtonClicked, setisSearchButtonClicked] = useState(false);
   const [isSidebarButtonClicked, setisSidebarButtonClicked] = useState(false);
 
@@ -88,7 +91,13 @@ export default function Header() {
           </div>
 
           <UserCart />
-          <UserHead />
+          {isLogged ? (
+            <UserHead />
+          ) : (
+            <Link to="auth/login">
+              <Button text="login" />
+            </Link>
+          )}
         </ul>
       </nav>
     </header>

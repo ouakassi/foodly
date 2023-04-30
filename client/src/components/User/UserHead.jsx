@@ -25,8 +25,6 @@ const data = [
   { id: 3, icon: <GoSignOut />, text: "sign out" },
 ];
 
-const isLogged = false;
-
 export default function UserHead() {
   const [showMenu, setShowMenu] = useState(false);
   const MenuRef = useRef(null);
@@ -37,7 +35,7 @@ export default function UserHead() {
 
   useCheckIfClickedOutside(showMenu, setShowMenu, MenuRef);
 
-  return isLogged ? (
+  return (
     <div
       ref={MenuRef}
       onClick={handlClick}
@@ -76,9 +74,5 @@ export default function UserHead() {
       </AnimatePresence>
       <BlurredModal showModal={showMenu} />
     </div>
-  ) : (
-    <Link to="auth/login">
-      <Button text="login" />
-    </Link>
   );
 }

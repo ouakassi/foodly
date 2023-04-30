@@ -1,5 +1,12 @@
 import "./DashboardNavbar.css";
+import UserHead from "../User/UserHead";
 
 export default function DashboardNavbar() {
-  return <div>DashboardNavbar</div>;
+  return (
+    <header className="dashboard__navbar">
+      <nav>
+        <UserHead />
+      </nav>
+    </header>
+  );
 }

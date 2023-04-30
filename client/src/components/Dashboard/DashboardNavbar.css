@@ -1,0 +1,15 @@
+.dashboard__navbar {
+  height: var(--header-height);
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  position: fixed;
+  width: 100%;
+  width: calc(100% - var(--sidebar-width) - 2rem);
+  border-radius: 0 0 30px 30px;
+  right: 1rem;
+}
+
+.dashboard__navbar nav {
+  padding: 1rem 2rem;
+  display: flex;
+}

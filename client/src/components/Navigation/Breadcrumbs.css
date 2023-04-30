@@ -1,0 +1,47 @@
+/* breadcrumbs */
+.breadcrumbs {
+  display: flex;
+  align-items: baseline;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  font-family: var(--font-1);
+}
+.breadcrumbs > * {
+  display: inline-block;
+  margin-right: 1rem;
+  text-transform: capitalize;
+}
+.breadcrumbs div:first-child a svg {
+  font-size: 2.5rem;
+  vertical-align: sub;
+  color: var(--color-3);
+}
+.breadcrumbs .crumb:after {
+  content: ">";
+  margin-left: 1rem;
+  font-weight: var(--fw-bold);
+  font-family: var(--font-4);
+  font-size: 2rem;
+}
+.breadcrumbs div:last-child a {
+  color: black;
+  color: var(--color-3);
+  font-weight: var(--fw-bold);
+  border-radius: 5px;
+}
+.breadcrumbs div.crumb:not(:first-child):hover a,
+.breadcrumbs div:first-child a svg:hover {
+  color: var(--color-4);
+  text-decoration-line: underline;
+}
+.breadcrumbs .crumb:last-child:after {
+  display: none;
+}
+.breadcrumbs .crumb a {
+  transition: 0.2s;
+}
+
+.breadcrumbs .crumb a,
+.breadcrumbs {
+  color: var(--color-6);
+}
