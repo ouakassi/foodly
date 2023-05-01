@@ -19,7 +19,6 @@
 .breadcrumbs .crumb:after {
   content: ">";
   margin-left: 1rem;
-  font-weight: var(--fw-bold);
   font-family: var(--font-4);
   font-size: 2rem;
 }
@@ -42,6 +41,7 @@
 }
 
 .breadcrumbs .crumb a,
-.breadcrumbs {
+.breadcrumbs,
+.breadcrumbs div:first-child a svg {
   color: var(--color-6);
 }

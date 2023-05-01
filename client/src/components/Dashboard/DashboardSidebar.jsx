@@ -132,11 +132,12 @@ export default function DashboardSidebar() {
                   <>
                     {isActive && (
                       <motion.span
-                        initial={{ x: -20, opacity: 0 }}
+                        initial={{ height: "0%", opacity: 0 }}
                         animate={{
-                          x: 0,
+                          height: "50%",
                           opacity: 1,
                         }}
+                        transition={{ duration: 0.5, damping: 0.8 }}
                         className="tab__active"
                       ></motion.span>
                     )}
