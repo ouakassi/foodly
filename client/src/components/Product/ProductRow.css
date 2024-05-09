@@ -1,0 +1,86 @@
+.row {
+  display: flex;
+  font-family: var(--font-1);
+  font-weight: var(--fw-semi);
+  /* border-bottom: 2px solid #efefef; */
+  background: var(--white-color);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px;
+  transition: 0.2s;
+}
+.row:hover {
+  border-radius: 15px;
+  background-color: #fff2e8;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.row .cell {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.row .product__img {
+  max-width: 8rem;
+}
+.row .cell span {
+  display: flex;
+}
+
+.cell.name {
+  /* Styles for the 'name' cell */
+  font-weight: bold; /* Example: Make the text bold */
+  /* text-align: left; */
+  justify-content: baseline;
+}
+
+.cell.status span {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  text-transform: capitalize;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-weight: var(--fw-bold);
+  min-width: 9rem;
+  box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+}
+
+.status span.active {
+  color: #079b65;
+  background: #c3ffe9;
+}
+
+.status span.inactive {
+  color: #b90129;
+  background: #ffb8c7;
+}
+
+.cell.stock {
+}
+.cell.orders {
+}
+
+.cell.price {
+  font-weight: var(--fw-bold);
+  /* color: #078053; */
+}
+
+.cell.discount {
+}
+
+.cell.category {
+}
+
+.cell.rating {
+  color: #d19a00;
+}
+
+.cell.published {
+}
+
+.cell.action {
+}

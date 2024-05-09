@@ -6,6 +6,8 @@ export default function Button({
   style,
   className = "",
   text,
+  icon,
+  scaleOnTap = 0.9,
   isDisabled,
   onClick,
   isTypeSubmit,
@@ -14,12 +16,12 @@ export default function Button({
     <motion.button
       disabled={isDisabled}
       onClick={onClick}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.9 }}
+      whileTap={{ scale: scaleOnTap }}
       style={style}
       className={`button ${className}`}
       type={isTypeSubmit ? "submit" : null}
     >
+      {icon && <span className="button__icon">{icon}</span>}
       {text || "submit"}
     </motion.button>
   );

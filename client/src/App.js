@@ -30,9 +30,8 @@ import DashboardLayout from "./pages/DashboardLayout";
 import OverviewPage from "./pages/Dashboard/OverviewPage";
 import CustomersPage from "./pages/Dashboard/CustomersPage";
 import OrdersPage from "./pages/Dashboard/OrdersPage";
-import ProductsPage from "./pages/Dashboard/ProductsPage";
+import ProductsPage from "./pages/Dashboard/Products/ProductsPage";
 import ReportsPage from "./pages/Dashboard/ReportsPage";
-import SettingsPage from "./pages/Dashboard/SettingsPage";
 
 const LazyAbout = lazy(() => import("./pages/About/AboutPage"));
 
@@ -69,7 +68,7 @@ function App() {
           <Route index path="overview" element={<OverviewPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="customers" element={<CustomersPage />} />
-          <Route path="products" element={<ProductsPage />} />
+          <Route path="products" element={<ProductsPage />}></Route>
           <Route path="reports" element={<ReportsPage />} />
           <Route path="settings">
             <Route index path="profile" element={<div>profile</div>} />

@@ -1,7 +1,12 @@
 import { motion } from "framer-motion";
 import "./ProductImage.css";
 
-export default function ProductImage({ className, productImg, productName }) {
+export default function ProductImage({
+  className,
+  style,
+  productImg,
+  productName,
+}) {
   return (
     <motion.span
       initial={{ opacity: 1, scale: 0.8, rotate: 25 }}
@@ -11,7 +16,9 @@ export default function ProductImage({ className, productImg, productName }) {
         rotate: 0,
         transition: { duration: 0.5 },
       }}
-      // viewport={{ once: true }}
+      viewport={{ once: true }}
+      className="product__img-container"
+      style={style}
     >
       <img
         className={`product__img ${className}`}

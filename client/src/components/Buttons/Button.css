@@ -4,13 +4,14 @@
   font-family: var(--font-2);
   color: white;
   padding: 1rem 2rem;
-  border-radius: 15px;
+  border-radius: 25px;
   text-transform: capitalize;
   min-width: max-content;
   font-size: var(--fs-m);
   border: none;
   cursor: pointer;
   width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }
 
 .button:hover {
@@ -20,4 +21,10 @@
 .button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+.button span {
+  margin-right: 0.5rem;
+}
+.button span svg {
+  vertical-align: middle;
 }

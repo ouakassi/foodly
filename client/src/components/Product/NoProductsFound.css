@@ -1,0 +1,14 @@
+.noproducts-container {
+  display: flex;
+  /* max-width: 35rem; */
+  width: 100%;
+  margin: 35vh 0;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.noproducts-container button {
+  flex: 0;
+  text-transform: capitalize;
+  background: var(--color-7);
+}

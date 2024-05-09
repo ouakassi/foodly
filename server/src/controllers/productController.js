@@ -1,4 +1,4 @@
-const Category = require("../models/CategoryModel");
+const Category = require("../models/categoryModel");
 const Product = require("../models/productModel");
 const { httpLogger } = require("../utils/logger");
 
@@ -7,7 +7,7 @@ const { httpLogger } = require("../utils/logger");
 // Public
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.findAll({ where: { status: "active" } });
+    const products = await Product.findAll({});
     if (products.length === 0) {
       return res.status(404).json({ message: "no products found" });
     } else {
@@ -41,7 +41,7 @@ const getProduct = async (req, res) => {
 // Public
 const createProduct = async (req, res) => {
   try {
-    const { title, imgUrl, price, desc, category } = req.body;
+    const { name, imgUrl, price, category, stock, status, discount } = req.body;
 
     const productCategory = await Category.findOne({
       where: { name: category },
@@ -52,16 +52,18 @@ const createProduct = async (req, res) => {
     }
 
     const product = await Product.create({
-      title,
+      status,
+      name,
       imgUrl,
       price,
-      desc,
+      stock,
+      discount,
       productCategoryId: productCategory.id,
     });
 
     res
       .status(201)
-      .json({ message: `product created successfully`, date: product });
+      .json({ message: `product created successfully`, data: product });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

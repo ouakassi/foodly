@@ -19,19 +19,24 @@
 
   /*========== Colors ==========*/
 
-  --color-1: #edeae7;
-  --color-6: #a5a5a5;
-
+  --color-1: #f5f5f5;
   --color-2: #fd4755;
   --color-3: #09a866;
   --color-3: #0ab495;
-
   --color-4: #1d81c6;
-  /* --color-3: #259a2c;  */
   --color-5: #52e4ac;
+  --color-6: #a5a5a5;
+  --color-7: #09aa29;
   --color-price: #c10312;
-
   --color-3-dark: #27956b;
+
+  /* alerts */
+
+  --alert-primary: #ff5733; /* Primary alert color (orange-red) */
+  --alert-secondary: #ffc300; /* Secondary alert color (yellow-orange) */
+  --alert-success: #27ae60; /* Success/confirmation color (green) */
+  --alert-info: #3498db; /* Informational color (blue) */
+  --alert-error: #e74c3c; /* Error/danger color (red) */
 
   /* text */
   --white-color: #fff;
@@ -40,7 +45,7 @@
 
   --background-color1: #e9e6e3;
 
-  --body-color: #eeeeee;
+  --body-color: #fff;
 
   /* scroll */
 
@@ -52,6 +57,9 @@
 
   --box-shadow-3d: rgba(0, 0, 0, 0.4) 0px 2px 4px,
     rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+
+  --box-shadow-1: rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
+    rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
 
   /*========== Font and typography ==========*/
   --font-1: "Changa", sans-serif;

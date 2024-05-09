@@ -1,0 +1,190 @@
+.product-form-container {
+  background: var(--white-color);
+  height: fit-content;
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  padding: 2rem;
+  font-family: var(--font-1);
+  border-radius: 15px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  /* overflow-y: auto; */
+  max-width: 50rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* max-height: 60vh; */
+}
+.product-form-container h2 {
+  text-transform: capitalize;
+  font-family: var(--font-5);
+  margin-bottom: 1rem;
+  /* align-self: start; */
+}
+.product-form-container .product-form {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  /* display: grid; */
+  /* max-width: 40rem; */
+}
+
+.product-form-container .button-holders,
+.input-holders {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.product-form-container .input__container {
+  margin-bottom: 0;
+}
+
+.cancel-button {
+  background-color: var(--color-price);
+  max-width: 10rem;
+  border-radius: 25px;
+}
+.submit-button {
+  background-color: var(--color-7);
+  border-radius: 25px;
+}
+
+/* input::file-selector-button {
+  border: none;
+  
+} */
+
+/* input[type="file"] {
+  font-size: 0;
+  background-color: transparent;
+  width: 100%;
+  padding: 1.6rem;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}
+::file-selector-button {
+  font-size: initial;
+} */
+
+.file-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.file-input + label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px dashed var(--color-6);
+  color: var(--color-3);
+
+  /* z-index: 10; */
+}
+.file-input + label * {
+  pointer-events: none;
+}
+.file-input:focus + label,
+.file-input + label:hover {
+  border: 1px solid transparent;
+  box-shadow: -4px 4px 0px 0px var(--color-3), 0px 0px 0px 1px var(--color-3);
+}
+.file-input + .selected {
+  border: 1px solid transparent;
+
+  box-shadow: 0px 0px 0px 1px var(--color-3);
+}
+.product-image {
+  width: 10rem;
+  height: 10rem;
+}
+
+.delete__button {
+  color: var(--color-6);
+  font-size: var(--fs-xl);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+.delete__button:hover {
+  color: var(--color-2);
+}
+
+.status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+/* .toggle span {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 2rem;
+  margin: 0 1rem;
+} */
+.status-buttons-container {
+  display: flex;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  background-color: var(--white-color);
+  padding: 0.5rem;
+  border-radius: 20px;
+  position: relative;
+}
+.status-buttons-container button {
+  border: 0;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 20px;
+  background-color: transparent;
+  /* color: var(--white-color); */
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-s);
+  font-family: var(--font-3);
+  transition: 0.2s;
+  z-index: 1;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  /* z-index: 100; */
+  width: 10rem;
+  text-transform: capitalize;
+}
+
+.status-buttons-container .active {
+  /* background-color: var(--white-color); */
+  /* color: var(--color-3); */
+}
+
+.active-button {
+  content: "";
+  background-color: var(--color-3);
+  z-index: 1;
+  /* padding: 0.5rem; */
+  width: 50%;
+  height: 100%;
+  border-radius: inherit;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px,
+    rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px,
+    rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  /* background-color: transparent; */
+}

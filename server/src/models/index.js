@@ -5,7 +5,7 @@ const db = require("../utils/database");
 const roles = require("../utils/constants");
 const Product = require("./productModel");
 const Inventory = require("./inventoryModel");
-const Category = require("./CategoryModel");
+const Category = require("./categoryModel");
 
 //insert roles to database
 const createRoles = async () => {
@@ -53,7 +53,7 @@ User.belongsTo(Role);
 User.hasMany(Address);
 Address.belongsTo(User);
 
-Category.hasOne(Product);
+Category.hasMany(Product);
 Product.belongsTo(Category);
 
 Product.hasOne(Inventory);

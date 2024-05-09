@@ -7,7 +7,7 @@ const Product = sequelize.define("product", {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  title: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -20,13 +20,19 @@ const Product = sequelize.define("product", {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM,
-    values: ["active", "inactive"],
-    defaultValue: "active",
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
     allowNull: false,
   },
-  desc: {
-    type: DataTypes.TEXT,
+  stock: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
+  discount: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+    max: 100,
     allowNull: false,
   },
 });

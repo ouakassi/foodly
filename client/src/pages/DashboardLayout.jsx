@@ -33,8 +33,9 @@ export default function DashboardLayout() {
           style={{
             backgroundColor: "white",
             borderRadius: "10px",
-            margin: "1rem",
+            margin: "2rem",
             padding: "1rem",
+            boxShadow: "var(--box-shadow-1)",
           }}
           className="content"
         >

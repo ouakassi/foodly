@@ -21,7 +21,7 @@
 }
 input[type="checkbox" i] {
   accent-color: var(--color-3);
-  width: 1.8rem;
+  /* width: 2rem; */
 }
 
 input[type="checkbox" i]:focus-within {

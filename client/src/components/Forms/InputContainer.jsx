@@ -20,9 +20,10 @@ export default function InputContainer({
   setTogglePassword,
   toRef,
   isFieldRequired,
+  className,
 }) {
   return (
-    <div className="input__container">
+    <div className={`input__container ${className}`}>
       <div
         ref={toRef}
         className="input"

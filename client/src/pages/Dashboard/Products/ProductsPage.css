@@ -1,0 +1,17 @@
+.products__page {
+  /* overflow-x: scroll; */
+  margin-top: 1rem;
+}
+
+.table {
+  margin-top: 2rem;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+}
+
+.table__body {
+  display: flex;
+  flex-direction: column;
+}
