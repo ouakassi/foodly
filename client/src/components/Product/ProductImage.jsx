@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import "./ProductImage.css";
+import IMAGES from "../../assets/index";
 
 export default function ProductImage({
   className,
   style,
-  productImg,
+  productImg = IMAGES.bowl,
   productName,
 }) {
   return (

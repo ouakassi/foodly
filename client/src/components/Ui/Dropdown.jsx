@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import "./Dropdown.css"; // Assuming you have CSS styles for the dropdown
@@ -7,6 +7,7 @@ import {
   TbCircleArrowDownFilled,
   TbCircleArrowUpFilled,
 } from "react-icons/tb";
+import useCheckIfClickedOutside from "../../hooks/useCheckIfClickedOutside";
 
 const Dropdown = ({
   options,
@@ -16,6 +17,7 @@ const Dropdown = ({
   defaultLabel,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleShowDropdown = () => {
     setShowDropdown(!showDropdown);
@@ -30,11 +32,25 @@ const Dropdown = ({
     event.stopPropagation(); // Prevent click propagation to parent elements
     onDelete();
   };
+  const handleKeyDown = (event) => {
+    if (event.key === "Tab") {
+      // Close dropdown when Tab key is pressed
+      setShowDropdown(true);
+    }
+    // setShowDropdown(false);
+  };
+
+  useCheckIfClickedOutside(showDropdown, setShowDropdown, dropdownRef);
 
   return (
     <div className="dropdown__holder">
-      <div className="dropdown">
-        <div className="dropdown__title" onClick={handleShowDropdown}>
+      <div className="dropdown" ref={dropdownRef}>
+        <div
+          tabIndex="0"
+          className="dropdown__title"
+          onClick={handleShowDropdown}
+          onKeyDown={handleKeyDown}
+        >
           <span>
             <TbCategory2 />
             {!selectedItem ? defaultLabel : selectedItem}
@@ -52,8 +68,12 @@ const Dropdown = ({
             className="dropdown__list"
           >
             {options.map(({ label, value }, i) => (
-              <li key={i} onClick={() => handleDropdownItem(value)}>
-                {label}
+              <li
+                tabIndex={i + 1}
+                key={i}
+                onClick={() => handleDropdownItem(value)}
+              >
+                <a href="#">{label}</a>
               </li>
             ))}
           </motion.ul>

@@ -21,8 +21,8 @@ import {
   TbBrandProducthunt,
 } from "react-icons/tb";
 import { useState } from "react";
-import AddProduct from "../../../components/Product/AddProduct";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
+import CreateProduct from "../../../components/Product/CreateProduct";
 import NoProductsFound from "../../../components/Product/NoProductsFound";
 
 const tableHeaders = [
@@ -40,12 +40,12 @@ const tableHeaders = [
 ];
 
 export default function ProductsPage() {
-  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [showCreateProduct, setShowCreateProduct] = useState(false);
 
-  const handleShowAddProduct = () => {
-    setShowAddProduct(true);
+  const handleShowCreateProduct = () => {
+    setShowCreateProduct(true);
   };
-  const handleHideAddProduct = () => setShowAddProduct(false);
+  const handleHideCreateProduct = () => setShowCreateProduct(false);
 
   const {
     data: products,
@@ -58,8 +58,8 @@ export default function ProductsPage() {
 
   return (
     <>
-      {showAddProduct && (
-        <AddProduct onCloseShowAddProduct={handleHideAddProduct} />
+      {showCreateProduct && (
+        <CreateProduct onCloseShowCreateProduct={handleHideCreateProduct} />
       )}
       {products ? (
         <section className="products__page">
@@ -71,7 +71,7 @@ export default function ProductsPage() {
                 scaleOnHover={1}
                 text="add Product"
                 icon={<BsPlusCircleFill />}
-                onClick={() => setShowAddProduct(true)}
+                onClick={() => setShowCreateProduct(true)}
               />
             }
           />
@@ -87,7 +87,7 @@ export default function ProductsPage() {
         </section>
       ) : (
         <section className="products__page">
-          <NoProductsFound onSetShowAddProduct={handleShowAddProduct} />
+          <NoProductsFound onSetShowCreateProduct={handleShowCreateProduct} />
         </section>
       )}
     </>

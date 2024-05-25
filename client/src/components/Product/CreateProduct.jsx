@@ -5,7 +5,6 @@ import Button from "../Buttons/Button";
 import InputContainer from "../Forms/InputContainer";
 import { HiOutlineReceiptPercent } from "react-icons/hi2";
 
-import IMAGES from "../../assets";
 import { RiImageAddLine } from "react-icons/ri";
 import { MdOutlineAddBox, MdLibraryAddCheck } from "react-icons/md";
 
@@ -14,17 +13,23 @@ import { TbBrandProducthunt, TbHomeSignal } from "react-icons/tb";
 import { TiCancel } from "react-icons/ti";
 import { FaRegCircleCheck, FaRegCircleXmark } from "react-icons/fa6";
 
-import "./AddProduct.css";
+import "./CreateProduct.css";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ProductImage from "./ProductImage";
-import Dropdown from "../Ui/Dropdown";
+import Dropdown from "../ui/Dropdown";
 import LoadingSpinner from "../Forms/LoadingSpinner";
 
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import api from "../../api/api";
+
+import { Cloudinary } from "@cloudinary/url-gen";
+
+const CLOUDNAME = process.env.REACT_APP_CLOUDNAME;
+const CLOUD_API_KEY = process.env.REACT_APP_CLOUDAPIKEY;
+const CLOUDINARY_SECRET = process.env.REACT_APP_CLOUDINARY_SECRET;
 
 const options = [
   { label: "Nuts", value: "1" },
@@ -40,10 +45,15 @@ let validationSchema = Yup.object({
   status: Yup.boolean(),
 });
 
-export default function AddProduct({ onCloseShowAddProduct }) {
+export default function CreateProduct({ onCloseShowCreateProduct }) {
   const [selectedProductImage, setSelectedProductImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(true);
+
+  const [cloudName] = useState("djfsxp9z0");
+
   const {
     register,
     handleSubmit,
@@ -63,6 +73,7 @@ export default function AddProduct({ onCloseShowAddProduct }) {
   const onSubmit = async (data) => {
     try {
       console.log(data);
+      console.log(data.imgUrl);
       const response = await api.post("api/products/", data);
       console.log(response);
     } catch (err) {
@@ -76,6 +87,22 @@ export default function AddProduct({ onCloseShowAddProduct }) {
     }
   };
 
+  // const imageUpload = async (file) => {
+  //   const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   formData.append("upload_preset", "docs_upload_example_us_preset");
+
+  //   let data = "";
+
+  //   await Axios.post(url, formData).then((response) => {
+  //     data = response.data["secure_url"];
+  //   });
+
+  //   return data;
+  // };
+
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
   };
@@ -83,15 +110,12 @@ export default function AddProduct({ onCloseShowAddProduct }) {
     setSelectedCategory(null);
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedProductImage(reader.result);
-        // Set selectedProductImage to the base64 data URI
-      };
-      reader.readAsDataURL(file); // Convert the selected file to data URL
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    console.log(file);
+    setSelectedProductImage(file);
+    setImagePreview(URL.createObjectURL(file));
+    if (setSelectedProductImage) {
       setValue("imgUrl", selectedProductImage);
     }
   };
@@ -101,15 +125,13 @@ export default function AddProduct({ onCloseShowAddProduct }) {
       <Modal>
         <div className="product-form-container">
           <button className="close-btn"></button>
-          <h2>Create New Product</h2>
+          <h2 className="font-bold ">Create New Product</h2>
 
           <span style={!selectedStatus ? { opacity: 0.4 } : null}>
             <ProductImage
               className="product-image"
               productName="Product Image"
-              productImg={
-                !selectedProductImage ? IMAGES.bowl : selectedProductImage
-              }
+              productImg={imagePreview ? imagePreview : null}
             />
           </span>
 
@@ -129,7 +151,7 @@ export default function AddProduct({ onCloseShowAddProduct }) {
             >
               <RiImageAddLine />
               {!selectedProductImage ? (
-                <span>Choose an image...</span>
+                <span>{isLoading ? "loading.." : "Choose an image..."}</span>
               ) : (
                 <span
                   style={{
@@ -212,13 +234,13 @@ export default function AddProduct({ onCloseShowAddProduct }) {
               </InputContainer>
             </div>
 
-            <Dropdown
+            {/* <Dropdown
               options={options}
               selectedItem={selectedCategory}
               onSelect={handleCategorySelect}
               onDelete={handleCategoryDelete}
               defaultLabel="Select Category"
-            />
+            /> */}
 
             <div className="button-holders">
               <Button
@@ -236,7 +258,7 @@ export default function AddProduct({ onCloseShowAddProduct }) {
                 className="cancel-button"
                 text="Cancel"
                 icon={<TiCancel fontSize="2rem" />}
-                onClick={onCloseShowAddProduct}
+                onClick={onCloseShowCreateProduct}
               />
             </div>
           </Form>

@@ -3,7 +3,7 @@ import Button from "../Buttons/Button";
 import { IoAlertCircleOutline } from "react-icons/io5";
 import { BsPlusCircleFill } from "react-icons/bs";
 import "./NoProductsFound.css";
-export default function NoProductsFound({ onSetShowAddProduct }) {
+export default function NoProductsFound({ onSetShowCreateProduct }) {
   return (
     <div className="noproducts-container">
       <IoAlertCircleOutline style={{ color: "var(--alert-secondary" }} />
@@ -13,7 +13,7 @@ export default function NoProductsFound({ onSetShowAddProduct }) {
         scaleOnHover={1}
         text="add Product"
         icon={<BsPlusCircleFill />}
-        onClick={onSetShowAddProduct}
+        onClick={onSetShowCreateProduct}
       />
     </div>
   );
