@@ -25,18 +25,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import api from "../../api/api";
 
-import { Cloudinary } from "@cloudinary/url-gen";
-
-const CLOUDNAME = process.env.REACT_APP_CLOUDNAME;
-const CLOUD_API_KEY = process.env.REACT_APP_CLOUDAPIKEY;
-const CLOUDINARY_SECRET = process.env.REACT_APP_CLOUDINARY_SECRET;
-
-const options = [
-  { label: "Nuts", value: "1" },
-  { label: "Option 2", value: "2" },
-  { label: "Option 3", value: "3" },
-];
-
 //  validation schema
 let validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),
