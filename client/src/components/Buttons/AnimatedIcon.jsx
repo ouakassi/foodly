@@ -28,7 +28,7 @@ export default function AnimatedIcon({
       whileHover={{ scale: scale }}
       whileTap={{ scale: 0.9 }}
       style={style}
-      className={`animated__icon ${className}`}
+      className={`animated-icon ${className}`}
     >
       {isHoverd && hoverIcon ? hoverIcon : icon}
     </motion.span>

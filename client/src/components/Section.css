@@ -1,35 +1,35 @@
-.section__more {
-  margin: 5rem auto;
+.section-more {
+  margin: 3.125rem auto;
   display: flex;
   flex-direction: column;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
 }
-.section__more h1 {
+.section-more h1 {
   display: flex;
   align-items: center;
   font-size: var(--fs-2xl);
   text-transform: capitalize;
-  gap: 1rem;
-  margin-bottom: 4rem;
+  gap: var(--gap-2);
+  margin-bottom: 2.5rem;
 }
 
-.section__more .section__view-all {
+.section-more .section-view-all {
   text-transform: capitalize;
   font-size: var(--fs-xl);
   font-family: var(--font-1);
   font-weight: var(--fw-bold);
   align-self: end;
-  margin-top: 1rem;
+  margin-top: 0.75rem;
 }
 
-.section__more .section__view-all:hover {
+.section-more .section-view-all:hover {
   color: var(--color-3);
 }
 
-.section__more-icon {
+.section-more-icon {
   transition: 0.2s;
 }
 
-.section__more .section__view-all:hover .section__more-icon {
+.section-more .section-view-all:hover .section-more-icon {
   transform: translateX(5px);
 }

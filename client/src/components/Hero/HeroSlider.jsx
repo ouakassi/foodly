@@ -53,7 +53,7 @@ export default function HeroSlider() {
   const nextRef = useRef(null);
 
   return (
-    <div className="hero__container ">
+    <div className="hero-container ">
       <Swiper
         modules={[Navigation, Autoplay, Pagination]}
         // grabCursor={true}
@@ -75,7 +75,7 @@ export default function HeroSlider() {
           swiper.navigation.init();
           swiper.navigation.update();
         }}
-        className="hero__slider"
+        className="hero-slider"
       >
         {data.map(({ id, bgImg, title, text, img, color, bgColor }, i) => {
           return (
@@ -93,7 +93,7 @@ export default function HeroSlider() {
             </AnimatePresence>
           );
         })}
-        <div className="slider__buttons">
+        <div className="slider-buttons">
           <ArrowButton
             icon={<RiArrowLeftSLine />}
             toRef={prevRef}

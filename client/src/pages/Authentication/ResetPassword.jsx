@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import Form from "../../components/Forms/Form";
 import InputContainer from "../../components/Forms/InputContainer";
-import Button from "../../components/Buttons/Button";
+import CustomButton from "../../components/Buttons/CustomButton";
 import { RiLockPasswordLine, RiLockPasswordFill } from "react-icons//ri";
 import FormContainer from "../../components/Forms/FormContainer";
 
@@ -72,7 +72,7 @@ export default function ResetPassword() {
             {...register("confirmNewPassword")}
           />
         </InputContainer>
-        <Button text="reset password" isTypeSubmit={true} />
+        <CustomButton text="reset password" isTypeSubmit={true} />
       </Form>
     </FormContainer>
   );

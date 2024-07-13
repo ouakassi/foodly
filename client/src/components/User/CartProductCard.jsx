@@ -16,30 +16,30 @@ export default function CartProductCard({
   productDiscount,
 }) {
   return (
-    <div className="cart__product-card">
+    <div className="cart-product-card">
       <ProductImage productImg={productImg} productName={productTitle} />
       <div>
-        <span className="cart__product-name">{productTitle}</span>
-        <div className="cart__product-counter">
+        <span className="cart-product-name">{productTitle}</span>
+        <div className="cart-product-counter">
           <CounterButton text={<TiMinus />} />
           <span>1kg</span>
           <CounterButton text={<TiPlus />} />
         </div>
       </div>
-      <div className="cart__product-prices">
-        <span className="cart__product-price">
-          <del className="cart__product-original-price">
+      <div className="cart-product-prices">
+        <span className="cart-product-price">
+          <del className="cart-product-original-price">
             {productOriginalPrice}$
           </del>
           {productPrice}$
         </span>
       </div>
       <AnimatedIcon
-        className="cart__delete-button"
+        className="cart-delete-button"
         icon={<MdDeleteOutline />}
         hoverIcon={<MdDelete />}
       />
-      <span className="cart__product-discount">-{productDiscount}%</span>
+      <span className="cart-product-discount">-{productDiscount}%</span>
     </div>
   );
 }

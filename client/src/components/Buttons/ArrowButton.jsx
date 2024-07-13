@@ -12,7 +12,7 @@ export default function ArrowButton({ icon, toRef, className }) {
       whileHover="whileHover"
       whileTap="whileTap"
       ref={toRef}
-      className={`arrow__button ${className}`}
+      className={`arrow-button ${className}`}
     >
       {icon}
     </motion.div>

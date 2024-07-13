@@ -1,4 +1,4 @@
-.row {
+.table-row {
   display: flex;
   font-family: var(--font-1);
   font-weight: var(--fw-semi);
@@ -7,25 +7,25 @@
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px;
   transition: 0.2s;
 }
-.row:hover {
+.table-row:hover {
   border-radius: 15px;
   background-color: #fff2e8;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
-.row .cell {
+.table-row .cell {
   flex: 1;
   text-align: center;
   padding: 0.5rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: var(--gap-1);
 }
-.row .product__img {
-  max-width: 8rem;
+.table-row .product-img {
+  max-width: 5rem;
 }
-.row .cell span {
+.table-row .cell span {
   display: flex;
 }
 
@@ -40,9 +40,9 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--gap-1);
   text-transform: capitalize;
-  padding: 0.2rem 0.5rem;
+  padding: 0.1.25rem 0.5rem;
   border-radius: 5px;
   font-weight: var(--fw-bold);
   min-width: 9rem;

@@ -17,7 +17,7 @@ import {
   RiLockPasswordFill,
 } from "react-icons//ri";
 import { AiOutlineUser } from "react-icons/ai";
-import Button from "../../components/Buttons/Button";
+import CustomButton from "../../components/Buttons/CustomButton";
 
 let validationSchema = Yup.object({
   firstName: Yup.string()
@@ -144,7 +144,7 @@ export default function RegisterPage() {
               {...register("confirmPassword")}
             />
           </InputContainer>
-          <Button
+          <CustomButton
             disabled={!isValid}
             text="create account"
             isTypeSubmit={true}

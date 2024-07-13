@@ -14,7 +14,7 @@ import { AiFillCloseCircle, AiOutlineAlignLeft } from "react-icons/ai";
 
 import useCheckIfClickedOutside from "../../hooks/useCheckIfClickedOutside";
 import useMediaQuery from "../../hooks/useMediaQuery";
-import Button from "../Buttons/Button";
+import CustomButton from "../Buttons/CustomButton";
 
 export default function Header() {
   const isLogged = false;
@@ -41,13 +41,13 @@ export default function Header() {
   );
 
   return (
-    <header className="header">
+    <header className="nav-header">
       <nav className="navbar">
         <div style={{ display: "flex" }}>
           {isMobile && (
             <span
               onClick={() => setisSidebarButtonClicked(!isSidebarButtonClicked)}
-              className="nav__items-icon"
+              className="nav-items-icon"
             >
               <AiOutlineAlignLeft className="icon" />
             </span>
@@ -68,24 +68,24 @@ export default function Header() {
             initial="closed"
             animate="open"
             // exit="closed"
-            className="search__bar__container"
+            className="search-bar-container"
             ref={searchRef}
           >
             <SearchInput isSearchButtonClicked={isSearchButtonClicked} />
             <motion.span
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.3 }}
-              className="search__close__icon"
+              className="search-close-icon"
               onClick={() => setisSearchButtonClicked(!isSearchButtonClicked)}
             >
               <AiFillCloseCircle className="icon" />
             </motion.span>
           </motion.div>
         )}
-        <ul className="board__links">
+        <ul className="board-links">
           <div
             onClick={() => setisSearchButtonClicked(!isSearchButtonClicked)}
-            className="search__item"
+            className="search-item"
           >
             {!isSearchButtonClicked ? <RiSearchLine /> : <RiSearchFill />}
           </div>
@@ -95,7 +95,7 @@ export default function Header() {
             <UserHead />
           ) : (
             <Link to="auth/login">
-              <Button text="login" />
+              <CustomButton text="login" />
             </Link>
           )}
         </ul>

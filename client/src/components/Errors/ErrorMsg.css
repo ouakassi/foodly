@@ -1,20 +1,20 @@
-.input__error {
+.input-error {
   display: flex;
   align-items: center;
   color: red;
-  padding: 0.5rem 1rem;
-  margin: 1rem 0;
+  padding: 0.5rem;
+  margin: 0.75rem 0;
   border-radius: 15px;
-  gap: 1rem;
+  gap: var(--gap-2);
   background: #ffe5e5;
 }
-.input__error svg {
+.input-error svg {
   width: fit-content;
   font-size: var(--fs-l);
 }
-.input__error p {
+.input-error p {
   width: 90%;
 }
-.input__error p::first-letter {
+.input-error p::first-letter {
   text-transform: capitalize;
 }

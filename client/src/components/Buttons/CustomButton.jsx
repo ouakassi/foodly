@@ -1,8 +1,8 @@
-import "./Button.css";
+import "./CustomButton.css";
 
 import { motion } from "framer-motion";
 
-export default function Button({
+export default function CustomButton({
   style,
   className = "",
   text,
@@ -21,7 +21,7 @@ export default function Button({
       className={`button ${className}`}
       type={isTypeSubmit ? "submit" : null}
     >
-      {icon && <span className="button__icon">{icon}</span>}
+      {icon && <span className="button-icon">{icon}</span>}
       {text || "submit"}
     </motion.button>
   );

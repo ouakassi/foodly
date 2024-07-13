@@ -11,7 +11,7 @@ export default function Recipes() {
       text="what to cook ?"
       link="/recipes"
     >
-      <article className="recipes__container">
+      <article className="recipes-container">
         <RecipeCard key={1} />
         <RecipeCard key={2} />
         <RecipeCard key={3} />

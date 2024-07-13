@@ -1,14 +1,14 @@
 .logo {
   display: flex;
-  font-size: var(--fs-xl);
+  font-size: var(--fs-l);
   font-family: var(--font-1);
   font-weight: var(--fw-bold);
   align-items: center;
 }
-.logo__icon {
+.logo-icon {
   color: var(--color-3);
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-xl);
 }
-.logo__text {
+.logo-text {
   margin-left: 0.5rem;
 }

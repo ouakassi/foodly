@@ -1,28 +1,28 @@
-.shipping__box {
+.shipping-box {
   display: flex;
   align-items: center;
-  margin: 0 1rem;
+  margin: 0 0.75rem;
   position: relative;
 }
 
-.shipping__img {
-  width: 8rem;
-  margin-right: 2rem;
+.shipping-img {
+  width: 5rem;
+  margin-right: 1.25rem;
 }
-.shipping__data {
-  width: 15rem;
+.shipping-data {
+  width: 9.375rem;
   display: flex;
   flex-direction: column;
 }
 
-.shipping__data h2 {
+.shipping-data h2 {
   text-transform: capitalize;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
-.shipping__data p::first-letter {
+.shipping-data p::first-letter {
   text-transform: uppercase;
 }
-.shipping__number {
+.shipping-number {
   position: absolute;
   top: -5%;
   left: -14%;
@@ -30,8 +30,8 @@
   font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);
   border-radius: 50%;
-  width: 5rem;
-  height: 5rem;
+  width: 3.125rem;
+  height: 3.125rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,7 +39,7 @@
 }
 
 @media only screen and (max-width: 426px) {
-  .shipping__box:not(:last-child) {
-    margin-bottom: 2rem;
+  .shipping-box:not(:last-child) {
+    margin-bottom: 1.25rem;
   }
 }

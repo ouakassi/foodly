@@ -1,17 +1,17 @@
-.products__page {
+.products-page {
   /* overflow-x: scroll; */
-  margin-top: 1rem;
+  margin-top: 0.75rem;
 }
 
 .table {
-  margin-top: 2rem;
+  margin-top: 1.25rem;
   overflow-x: auto;
   display: flex;
   flex-direction: column;
   min-width: 100%;
 }
 
-.table__body {
+.table-body {
   display: flex;
   flex-direction: column;
 }

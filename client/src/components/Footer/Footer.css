@@ -1,26 +1,26 @@
 .footer {
   background-color: #fff;
-  padding: 4rem 2rem;
+  padding: 3rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-around;
 }
-.footer__logo {
+.footer-logo {
   text-transform: capitalize;
 }
-.footer__logo :first-child {
+.footer-logo :first-child {
   margin-bottom: 0.5rem;
 }
-.footer__logo .footer__rights {
+.footer-logo .footer-rights {
   font-size: var(--fs-s);
   color: rgb(121, 121, 121);
   font-family: var(--font-1);
 }
-.footer__links {
+.footer-links {
   display: flex;
-  gap: 3rem;
+  gap: var(--gap-8);
 }
 
-.footer__link:hover {
+.footer-link:hover {
   color: var(--color-2);
 }

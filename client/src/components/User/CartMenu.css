@@ -1,4 +1,4 @@
-.cart__menu-container {
+.cart-menu-container {
   position: absolute;
   top: var(--header-height);
   right: 0;
@@ -7,68 +7,68 @@
   justify-content: space-between;
   max-height: calc(90vh - var(--header-height));
   min-height: calc(40vh - var(--header-height));
-  min-width: 40rem;
+  min-width: 25rem;
   background-color: rgb(255, 255, 255);
   background-color: var(--body-color);
-  padding: 2rem 3rem;
+  padding: 1.25rem 3rem;
   border-radius: 0 0 20px 20px;
   box-shadow: rgb(0 0 0 / 24%) 0px 2px 2px 0px;
   cursor: default;
 }
 
-.cart__menu-container header {
+.cart-menu-container header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-transform: uppercase;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   text-align: center;
 }
-.cart__heading__close-button {
+.cart-heading-close-button {
   font-size: var(--fs-xl);
   color: rgb(148, 4, 4);
 }
-.cart__menu-container main {
+.cart-menu-container main {
   justify-self: baseline;
   /* max-height: 50vh; */
   /* overflow-y: scroll; */
   overflow-y: auto;
 }
-.cart__menu-container main::-webkit-scrollbar {
+.cart-menu-container main::-webkit-scrollbar {
   display: none;
 }
-.cart__total-container {
+.cart-total-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   text-transform: uppercase;
   font-family: var(--font-2);
 }
-.cart__total-container span:last-child {
+.cart-total-container span:last-child {
   font-family: var(--font-1);
   font-weight: var(--fw-bold);
   color: #ffffff;
   font-size: var(--fs-l);
   align-self: flex-end;
   background: var(--color-price);
-  padding: 0 2rem;
+  padding: 0 1.25rem;
   border-radius: 10px;
   box-shadow: rgb(0 0 0 / 24%) 0px 3px 8px;
 }
-.cart__button {
-  margin-top: 2rem;
+.cart-button {
+  margin-top: 1.25rem;
   width: 100%;
 }
 
 @media only screen and (max-width: 768px) {
-  .cart__menu-container {
+  .cart-menu-container {
     position: fixed;
-    top: calc(var(--header-height) + 1rem);
+    top: calc(var(--header-height) + 0.75rem);
     right: 0;
     left: 0;
-    margin: 0 2rem;
-    padding: 1rem;
+    margin: 0 1.25rem;
+    padding: 0.75rem;
     min-width: auto;
   }
 }

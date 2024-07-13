@@ -18,13 +18,13 @@ export default function UserCart({ cartTotal }) {
     setShowSidebar(!showSidebar);
   };
   return (
-    <div ref={sidebarRef} className="user__cart" onClick={handleShowSidebar}>
+    <div ref={sidebarRef} className="user-cart" onClick={handleShowSidebar}>
       {showSidebar ? (
-        <RiShoppingCartFill className="cart__icon" />
+        <RiShoppingCartFill className="cart-icon" />
       ) : (
-        <RiShoppingCartLine className="cart__icon" />
+        <RiShoppingCartLine className="cart-icon" />
       )}
-      <span className="user__cart-total">{cartTotal || 2}</span>
+      <span className="user-cart-total">{cartTotal || 2}</span>
       <AnimatePresence>
         {showSidebar && <CartMenu handleShowSidebar={handleShowSidebar} />}
       </AnimatePresence>

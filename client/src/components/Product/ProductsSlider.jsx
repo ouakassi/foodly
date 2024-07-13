@@ -15,7 +15,7 @@ export default function ProductsSlider({ productsArray, isLoading }) {
   const nextRef = useRef(null);
 
   return (
-    <div className="slider__container">
+    <div className="slider-container">
       <Swiper
         modules={[Navigation, Autoplay]}
         // slideToClickedSlide={true}
@@ -63,7 +63,7 @@ export default function ProductsSlider({ productsArray, isLoading }) {
           swiper.navigation.init();
           swiper.navigation.update();
         }}
-        className="slider__content"
+        className="slider-content"
       >
         {productsArray.map(({ id, imgUrl, title, isSale, price }) => {
           return (
@@ -78,7 +78,7 @@ export default function ProductsSlider({ productsArray, isLoading }) {
             </SwiperSlide>
           );
         })}
-        <div className="slider__buttons">
+        <div className="slider-buttons">
           <ArrowButton
             icon={<RiArrowLeftSLine />}
             toRef={prevRef}

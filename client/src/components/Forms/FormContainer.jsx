@@ -11,22 +11,22 @@ export default function FormContainer({
   footer,
 }) {
   return (
-    <div className="form__container">
-      <div className="form__card">
-        <header className="form__navigation">
-          <span className="form__navigation-goback">
+    <div className="form-container">
+      <div className="form-card">
+        <header className="form-navigation">
+          <span className="form-navigation-goback">
             <GoBack />
           </span>
-          <h1 className="form__navigation-heading">
+          <h1 className="form-navigation-heading">
             {headingTitle}
             {headingIcon}
           </h1>
           <Logo />
         </header>
 
-        <p className="form__text">{headingText}</p>
+        <p className="form-text">{headingText}</p>
         {children}
-        <p className="form__container-footer">{footer}</p>
+        <p className="form-container-footer">{footer}</p>
       </div>
     </div>
   );

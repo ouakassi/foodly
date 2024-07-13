@@ -1,11 +1,11 @@
 .noproducts-container {
   display: flex;
-  /* max-width: 35rem; */
+  /* max-width: 22rem; */
   width: 100%;
   margin: 35vh 0;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: var(--gap-2);
 }
 .noproducts-container button {
   flex: 0;

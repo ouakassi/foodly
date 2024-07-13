@@ -1,7 +1,7 @@
 .search-bar {
   position: relative;
   background-color: white;
-  padding: 1rem;
+  padding: 0.75rem;
   border-radius: 25px;
   display: flex;
   align-items: center;
@@ -18,13 +18,13 @@
   font-family: var(--font-2);
   width: 100%;
 }
-.search__icon {
+.search-icon {
   font-size: var(--fs-m);
   margin: 0;
   margin-right: 0.5rem;
 }
 
-.search__input-clear {
+.search-input-clear {
   display: inline-flex;
   cursor: pointer;
   color: var(--color-2);

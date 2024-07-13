@@ -30,7 +30,7 @@ export default function Recipe() {
       <motion.span
         whileHover={{ scale: 1.3 }}
         onClick={handleClickedIcon}
-        className="recipe__bookmark"
+        className="recipe-bookmark"
       >
         {isIconClicked ? <BsFillBookmarkStarFill /> : <BsBookmark />}
       </motion.span>

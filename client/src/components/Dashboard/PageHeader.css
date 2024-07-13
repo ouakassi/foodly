@@ -1,10 +1,10 @@
-.page__header {
+.page-header {
   display: flex;
   width: 100%;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 0.75rem;
 }
-.page__header h1 {
+.page-header h1 {
   text-transform: capitalize;
 }

@@ -28,7 +28,7 @@ export default function SearchInput({ isSearchButtonClicked }) {
       className="search-bar"
       style={isFocused && { width: "calc(100% + 1%)" }}
     >
-      <FiSearch className="search__icon icon" />
+      <FiSearch className="search-icon icon" />
 
       <motion.input
         type="search"
@@ -41,7 +41,7 @@ export default function SearchInput({ isSearchButtonClicked }) {
         ref={searchRef}
       />
       <motion.span
-        className="search__input-clear"
+        className="search-input-clear"
         whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.8 }}
       >

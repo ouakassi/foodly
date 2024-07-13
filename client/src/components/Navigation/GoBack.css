@@ -1,10 +1,10 @@
-.navigation__goback {
+.navigation-goback {
   display: flex;
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-xl);
   color: #000;
   cursor: pointer;
 }
-.navigation__goback:hover,
-.navigation__goback:focus {
+.navigation-goback:hover,
+.navigation-goback:focus {
   color: var(--color-3);
 }

@@ -1,14 +1,14 @@
 .recipe {
   position: relative;
-  margin: 1rem;
+  margin: 0.75rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   border-radius: 15px;
-  gap: 1rem;
+  gap: var(--gap-2);
   background-color: white;
   width: fit-content;
-  width: 25rem;
+  width: 15rem;
   box-shadow: rgb(0 0 0 / 16%) 0px 1px 4px;
 }
 .recipe header {
@@ -19,7 +19,7 @@
 .recipe img {
   border-radius: 15px 15px 0 0;
   width: inherit;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
 }
 
@@ -27,18 +27,18 @@
   display: flex;
   width: 100%;
   justify-content: space-around;
-  padding: 2rem;
+  padding: 1.25rem;
 }
 .recipe footer span {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--gap-2);
 }
 .recipe footer svg {
   color: var(--color-2);
 }
 
-.recipe__bookmark {
+.recipe-bookmark {
   position: absolute;
   right: 5%;
   top: 5%;
@@ -49,8 +49,8 @@
   color: var(--color-3);
   background-color: var(--color-1);
   border-radius: 50%;
-  padding: 1rem;
-  width: 5rem;
-  height: 5rem;
+  padding: 0.75rem;
+  width: 3.125rem;
+  height: 3.125rem;
   cursor: pointer;
 }

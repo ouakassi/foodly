@@ -1,17 +1,17 @@
-.navigation__link {
+.navigation-link {
   background-color: white;
-  padding: 2rem 1.5rem;
+  padding: 1.25rem 0.75rem;
   display: flex;
-  gap: 1.5rem;
+  gap: var(--gap-4);
   align-items: center;
   justify-content: center;
   border-radius: 15px;
 }
 
-.navigation__box img {
-  max-width: 4rem;
+.navigation-box img {
+  max-width: 2.5rem;
 }
-.navigation__box span {
+.navigation-box span {
   font-size: var(--fs-xl);
   font-family: var(--font-1);
   font-weight: var(--fw-bold);
@@ -19,7 +19,7 @@
 }
 
 @media only screen and (max-width: 870px) {
-  .navigation__link {
-    padding: 1rem 1rem;
+  .navigation-link {
+    padding: 0.75rem;
   }
 }

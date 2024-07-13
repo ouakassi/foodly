@@ -19,7 +19,7 @@ export default function Banner({ children, isRemovable = true }) {
           {isRemovable && (
             <AnimatedIcon
               onClick={handleClick}
-              className={"banner__close-icon"}
+              className={"banner-close-icon"}
               icon={<MdClose />}
             />
           )}

@@ -41,7 +41,7 @@ export default function ProductRow({ product }) {
   console.log(formatedPrice);
 
   return (
-    <div className="row">
+    <div className="table-row">
       <div
         className="cell"
         style={!isActive ? { opacity: 0.5 } : { opacity: 1 }}
@@ -49,7 +49,7 @@ export default function ProductRow({ product }) {
         <ProductImage
           productImg={productImg}
           productName={productName}
-          className=" product__img"
+          className=" product-img"
         />
       </div>
 

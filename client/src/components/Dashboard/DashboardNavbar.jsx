@@ -3,7 +3,7 @@ import UserHead from "../User/UserHead";
 
 export default function DashboardNavbar() {
   return (
-    <header className="dashboard__navbar">
+    <header className="dashboard-navbar">
       <nav>
         <UserHead />
       </nav>

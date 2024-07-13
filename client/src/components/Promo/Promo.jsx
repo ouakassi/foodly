@@ -5,8 +5,8 @@ export default function Promo() {
 
   return (
     <section className="promo">
-      <div className="promo__box">
-        <div className="promo__box-sale">
+      <div className="promo-box">
+        <div className="promo-box-sale">
           {data.map((item) => {
             return item;
           })}

@@ -2,9 +2,9 @@
   position: relative;
 }
 
-.banner__close-icon {
+.banner-close-icon {
   color: var(--text-color);
-  font-size: 2rem;
+  font-size: var(--fs-m);
   position: absolute;
   top: 0;
   bottom: 0;

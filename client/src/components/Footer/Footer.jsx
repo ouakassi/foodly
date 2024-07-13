@@ -10,18 +10,18 @@ const socialLinks = ["store", "about", "same"];
 export default function Footer() {
   return (
     <footer className="footer">
-      <div className="footer__logo">
+      <div className="footer-logo">
         <Logo />
         <p>eco food marketplace</p>
         <br />
-        <span className="footer__rights">2022® all rights reserved</span>
+        <span className="footer-rights">2022® all rights reserved</span>
       </div>
-      <div className="footer__links">
+      <div className="footer-links">
         <FooterList title={"Company"}>
           {listOne.map((link, i) => {
             return (
               <li key={i}>
-                <Link className="footer__link" to={link.toLowerCase()}>
+                <Link className="footer-link" to={link.toLowerCase()}>
                   {link}
                 </Link>
               </li>
@@ -32,7 +32,7 @@ export default function Footer() {
           {listTwo.map((link, i) => {
             return (
               <li key={i}>
-                <Link className="footer__link" to={link.toLowerCase()}>
+                <Link className="footer-link" to={link.toLowerCase()}>
                   {link}
                 </Link>
               </li>

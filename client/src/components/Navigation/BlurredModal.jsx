@@ -15,7 +15,7 @@ export default function BlurredModal({ showModal }) {
             },
           }}
           exit={{ opacity: 0 }}
-          className="blurred__modal"
+          className="blurred-modal"
         ></motion.div>
       )}
     </AnimatePresence>

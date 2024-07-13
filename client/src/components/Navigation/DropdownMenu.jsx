@@ -38,7 +38,7 @@ export default function DropdownMenu({
       initial="closed"
       animate="open"
       exit="closed"
-      className={`dropdown__menu ${className}`}
+      className={`dropdown-menu ${className}`}
       style={style}
       onClick={onClick}
       layout

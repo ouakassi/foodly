@@ -13,7 +13,7 @@ export default function Section({
   return (
     <section
       style={style}
-      className={`section section__more ${sectionClass || ""}`}
+      className={`section section-more ${sectionClass || ""}`}
     >
       <h1>
         {icon}
@@ -21,10 +21,10 @@ export default function Section({
       </h1>
       {children}
       {link && (
-        <Link to={link} className="section__view-all">
+        <Link to={link} className="section-view-all">
           <span>
             view all
-            <BsArrowReturnRight className="section__more-icon icon" />
+            <BsArrowReturnRight className="section-more-icon icon" />
           </span>
         </Link>
       )}

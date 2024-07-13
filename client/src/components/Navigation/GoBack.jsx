@@ -10,7 +10,7 @@ export default function GoBack() {
     <motion.div
       whileTap={{ scale: 0.9 }}
       whileHover={{ scale: 1.2 }}
-      className="navigation__goback"
+      className="navigation-goback"
       onClick={() => navigate(-1)}
     >
       <IoArrowBack className="icon" />

@@ -1,5 +1,5 @@
-.input__container {
-  margin: 1rem 0 3rem;
+.input-container {
+  margin: 0.75rem 0 1.25rem;
 }
 
 .input {
@@ -27,7 +27,7 @@
   position: absolute;
   top: -13px;
   left: 40px;
-  padding: 0 1rem;
+  padding: 0 0.75rem;
   background: #fff;
   height: 13px;
   transition: 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -40,25 +40,24 @@
   height: 20px;
 }
 
-.input .required__icon {
+.input .required-icon {
   /* vertical-align: middle; */
   color: red;
 }
 
-.input__icon {
-  font-size: 2rem;
-  margin: 0 1rem;
+.input-icon {
+  font-size: var(--fs-m);
+  margin: 0 0.75rem;
 }
-.input__icon svg {
+.input-icon svg {
   vertical-align: middle;
 }
-.input:focus-within .input__icon {
+.input:focus-within .input-icon {
   color: var(--color-3);
 }
 
 .input input {
-  padding: 1rem;
-  font-size: var(--fs-m);
+  padding: 0.5rem;
   border: none;
   border-radius: inherit;
   background-color: inherit;
@@ -67,16 +66,16 @@
   font-family: var(--font-3);
 }
 
-.toggle__password-icon {
+.toggle-password-icon {
   height: inherit;
-  margin: 0 1rem;
+  margin: 0 0.75rem;
 }
 
-.toggle__password-icon button {
+.toggle-password-icon button {
   background: none;
   border: none;
-  font-size: 2.4rem;
-  padding: 0 0.5rem;
+  font-size: var(--fs-m);
+  padding: 0 0.25rem;
   align-self: center;
   display: flex;
   cursor: pointer;

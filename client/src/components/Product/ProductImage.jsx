@@ -18,11 +18,11 @@ export default function ProductImage({
         transition: { duration: 0.5 },
       }}
       viewport={{ once: true }}
-      className="product__img-container"
+      className="product-img-container"
       style={style}
     >
       <img
-        className={`product__img ${className}`}
+        className={`product-img ${className}`}
         src={productImg}
         alt={productName}
         loading="eager"

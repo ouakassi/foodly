@@ -6,7 +6,7 @@ export default function SaleBanner() {
   return (
     <Banner>
       <Link to="sale">
-        <p className="sale__banner">
+        <p className="sale-banner">
           20% off with coupon{" "}
           <span style={{ color: "var(--text-color)" }}>SALE20</span> <br />{" "}
           <u>shop now</u>

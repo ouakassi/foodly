@@ -1,4 +1,4 @@
-.table__header {
+.table-header {
   display: flex;
   background: #fff2e8;
   color: #742f07;
@@ -8,12 +8,12 @@
   font-size: var(--fs-s);
   font-family: var(--font-1);
 }
-.table__header .cell {
+.table-header .cell {
   flex: 1;
   text-align: center;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.75rem;
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--gap-1);
 }

@@ -1,7 +1,5 @@
 import "./InputContainer.css";
 import { BiShow, BiHide } from "react-icons/bi";
-import { TbNorthStar } from "react-icons/tb";
-
 import ErrorMsg from "../Errors/ErrorMsg";
 
 const errorMsgStyle = {
@@ -21,9 +19,10 @@ export default function InputContainer({
   toRef,
   isFieldRequired,
   className,
+  style,
 }) {
   return (
-    <div className={`input__container ${className}`}>
+    <div style={style} className={`input-container ${className}`}>
       <div
         ref={toRef}
         className="input"
@@ -32,14 +31,14 @@ export default function InputContainer({
         {labelText && (
           <label htmlFor={labelText}>
             {labelText}{" "}
-            {isFieldRequired && <span className="required__icon">*</span>}
+            {isFieldRequired && <span className="required-icon">*</span>}
           </label>
         )}
-        {icon && <span className="input__icon">{icon}</span>}
+        {icon && <span className="input-icon">{icon}</span>}
 
         {children}
         {isPassword && (
-          <div className="toggle__password-icon">
+          <div className="toggle-password-icon">
             <button
               onClick={(e) => {
                 e.preventDefault();

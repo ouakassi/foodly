@@ -1,15 +1,15 @@
-.page__header {
+.page-header {
   display: flex;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0 1.25rem;
 }
 
-.page__header h1 {
+.page-header h1 {
   font-family: var(--font-1);
   text-transform: capitalize;
 }
 
-.page__header .add__product-button {
+.page-header .add-product-button {
   width: fit-content;
   border-radius: 25px;
   text-transform: capitalize;

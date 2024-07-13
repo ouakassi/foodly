@@ -15,7 +15,7 @@ import {
 
 import DropdownMenu from "../Navigation/DropdownMenu";
 import DropdownItem from "../Navigation/DropdownItem";
-import Button from "../Buttons/Button";
+import CustomButton from "../Buttons/CustomButton";
 import BlurredModal from "../Navigation/BlurredModal";
 
 const data = [
@@ -38,12 +38,12 @@ export default function UserHead() {
     <div
       ref={MenuRef}
       onClick={handlClick}
-      className="user__head"
+      className="user-head"
       style={showMenu ? { backgroundColor: "var(--background-color1)" } : null}
     >
-      <div className="user__head-icons">
+      <div className="user-head-icons">
         {showMenu ? <FaUser className="icon" /> : <FiUser className="icon" />}
-        <span className="user__head-name">user</span>
+        <span className="user-head-name">user</span>
         <motion.span
           animate={
             showMenu

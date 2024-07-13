@@ -3,11 +3,12 @@
   background-color: var(--color-3);
   font-family: var(--font-2);
   color: white;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
+
   border-radius: 25px;
   text-transform: capitalize;
   min-width: max-content;
-  font-size: var(--fs-m);
+  /* font-size: var(--fs-m); */
   border: none;
   cursor: pointer;
   width: 100%;

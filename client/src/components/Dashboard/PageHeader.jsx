@@ -7,7 +7,7 @@ export default function PageHeader({ header }) {
   const location = useLocation();
   console.log(location);
   return (
-    <div className="page__header">
+    <div className="page-header">
       <h1>{header}</h1>
       <Breadcrumbs />
     </div>

@@ -1,8 +1,9 @@
+import CustomButton from "@/components/Buttons/CustomButton";
+import ProductHeader from "@/components/Product/ProductHeader";
+import ProductRow from "@/components/Product/ProductRow";
+import Header from "@/components/Product/Header";
 import "./ProductsPage.css";
-import Button from "../../../components/Buttons/Button";
-import ProductHeader from "../../../components/Product/ProductHeader";
-import ProductRow from "../../../components/Product/ProductRow";
-import Header from "../../../components/Product/Header";
+import NoProductsPage from "./NoProductsPage";
 
 import { BsPlusCircleFill } from "react-icons/bs";
 import {
@@ -20,10 +21,8 @@ import {
   TbHomeSignal,
   TbBrandProducthunt,
 } from "react-icons/tb";
-import { useState } from "react";
+import { Link } from "react-router-dom";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
-import CreateProduct from "../../../components/Product/CreateProduct";
-import NoProductsFound from "../../../components/Product/NoProductsFound";
 
 const tableHeaders = [
   { title: "" },
@@ -40,56 +39,40 @@ const tableHeaders = [
 ];
 
 export default function ProductsPage() {
-  const [showCreateProduct, setShowCreateProduct] = useState(false);
-
-  const handleShowCreateProduct = () => {
-    setShowCreateProduct(true);
-  };
-  const handleHideCreateProduct = () => setShowCreateProduct(false);
-
   const {
     data: products,
     fetchError,
     isLoading,
   } = useAxiosFetch("http://localhost:8000/api/products");
 
-  console.log(products);
-  console.log(fetchError);
-
-  return (
-    <>
-      {showCreateProduct && (
-        <CreateProduct onCloseShowCreateProduct={handleHideCreateProduct} />
-      )}
-      {products ? (
-        <section className="products__page">
-          <Header
-            title="all products"
-            button={
-              <Button
-                className="add__product-button"
-                scaleOnHover={1}
-                text="add Product"
-                icon={<BsPlusCircleFill />}
-                onClick={() => setShowCreateProduct(true)}
-              />
-            }
-          />
-          <div className="table ">
-            <div className="table__filters"></div>
-            <ProductHeader headers={tableHeaders} />
-            <div className="table__body">
-              {products.map((product) => (
-                <ProductRow key={product.id} product={product} />
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : (
-        <section className="products__page">
-          <NoProductsFound onSetShowCreateProduct={handleShowCreateProduct} />
-        </section>
-      )}
-    </>
+  return products ? (
+    <section className="products-page">
+      <Header
+        title="all products"
+        button={
+          <Link to={"../create"}>
+            <CustomButton
+              className="add-product-button"
+              scaleOnHover={1}
+              text="add Product"
+              icon={<BsPlusCircleFill />}
+            />
+          </Link>
+        }
+      />
+      <div className="table ">
+        <div className="table-filters"></div>
+        <ProductHeader headers={tableHeaders} />
+        <div className="table-body">
+          {products.map((product) => (
+            <ProductRow key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section className="products-page">
+      <NoProductsPage />
+    </section>
   );
 }

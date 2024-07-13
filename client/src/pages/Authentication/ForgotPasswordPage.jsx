@@ -8,7 +8,7 @@ import "./ForgotPasswordPage.css";
 import FormContainer from "../../components/Forms/FormContainer";
 import InputContainer from "../../components/Forms/InputContainer";
 import { RiMailLine } from "react-icons//ri";
-import Button from "../../components/Buttons/Button";
+import CustomButton from "../../components/Buttons/CustomButton";
 import Form from "../../components/Forms/Form";
 import ErrorMsg from "../../components/Errors/ErrorMsg";
 
@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="forgot__password">
+    <div className="forgot-password">
       <FormContainer
         headingTitle="reset account"
         headingText="please enter your email to reset your password"
@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
               <ErrorMsg errorMsg={"email not found"} />
             )}
           </div>
-          <Button
+          <CustomButton
             disabled={!isValid}
             text="reset account"
             isTypeSubmit={true}

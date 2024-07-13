@@ -54,7 +54,7 @@ export default function NavigationContainer() {
   };
 
   return (
-    <div className="navigation__container section">
+    <div className="navigation-container section">
       <Swiper
         modules={[Navigation, Autoplay]}
         grabCursor={true}
@@ -97,7 +97,7 @@ export default function NavigationContainer() {
           swiper.navigation.init();
           swiper.navigation.update();
         }}
-        className="navigation__slider"
+        className="navigation-slider"
       >
         {navigationData.map(({ link, img, text, backgroundColor }, i) => {
           return (
@@ -111,7 +111,7 @@ export default function NavigationContainer() {
             </SwiperSlide>
           );
         })}
-        <div className="slider__buttons">
+        <div className="slider-buttons">
           <motion.div
             variants={arrowsAnimation}
             whileHover="whileHover"

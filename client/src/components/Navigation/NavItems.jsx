@@ -31,7 +31,7 @@ export default function NavItems({
       variants={navLinksAnimation}
       initial="closed"
       animate="open"
-      className="nav__links"
+      className="nav-links"
       style={
         isMobile && isSidebarButtonClicked
           ? {
@@ -48,7 +48,7 @@ export default function NavItems({
         const isSale = name === "sale";
         return (
           <li
-            className="nav__item"
+            className="nav-item"
             key={id}
             onClick={() => updateIsSidebarClicked(false)}
           >
@@ -60,11 +60,11 @@ export default function NavItems({
                       ? { backgroundColor: color, color: "#fff" }
                       : null
                   }
-                  className={`nav__link ${
+                  className={`nav-link ${
                     isActive && !isSale
-                      ? "nav__link-active"
+                      ? "nav-link-active"
                       : isActive && isSale
-                      ? "nav__link-active-sale"
+                      ? "nav-link-active-sale"
                       : ""
                   }`}
                 >

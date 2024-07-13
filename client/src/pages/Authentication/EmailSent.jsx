@@ -8,7 +8,7 @@ import "./EmailSent.css";
 import Form from "../../components/Forms/Form";
 import FormContainer from "../../components/Forms/FormContainer";
 import InputContainer from "../../components/Forms/InputContainer";
-import Button from "../../components/Buttons/Button";
+import CustomButton from "../../components/Buttons/CustomButton";
 import ErrorMsg from "../../components/Errors/ErrorMsg";
 
 export default function EmailSent() {
@@ -20,7 +20,7 @@ export default function EmailSent() {
   const INPUTS_LENGTH = new Array(4).fill("");
   const validOtp = "0000";
   const navigate = useNavigate();
-  const ERROR__MSG = "invalid PIN please try again";
+  const ERROR_MSG = "invalid PIN please try again";
 
   const {
     register,
@@ -66,7 +66,7 @@ export default function EmailSent() {
   };
 
   return (
-    <div className="email__sent">
+    <div className="email-sent">
       <FormContainer
         headingText={
           <>
@@ -113,9 +113,9 @@ export default function EmailSent() {
               );
             })}
           </div>
-          <Button text="Confirm PIN" />
+          <CustomButton text="Confirm PIN" />
           {isError && (
-            <ErrorMsg style={{ width: "100%" }} errorMsg={ERROR__MSG} />
+            <ErrorMsg style={{ width: "100%" }} errorMsg={ERROR - MSG} />
           )}
         </Form>
       </FormContainer>

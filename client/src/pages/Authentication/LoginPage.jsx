@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import "./LoginPage.css";
 import { RiUserLine, RiLockPasswordLine, RiMailLine } from "react-icons//ri";
 
-import Button from "../../components/Buttons/Button";
+import CustomButton from "../../components/Buttons/CustomButton";
 
 import FormContainer from "../../components/Forms/FormContainer";
 import InputContainer from "../../components/Forms/InputContainer";
@@ -101,15 +101,15 @@ export default function LoginPage() {
             />
           </InputContainer>
 
-          <div className="form__footer">
+          <div className="form-footer">
             <Link
-              className="form__reset"
+              className="form-reset"
               style={{ color: "var(--color-4)" }}
               to="/auth/forgot-password"
             >
               forgot password ?{" "}
             </Link>
-            {/* <div className="form__remember">
+            {/* <div className="form-remember">
               <input
                 type="checkbox"
                 id="rememberInput"
@@ -118,10 +118,10 @@ export default function LoginPage() {
               <label htmlFor="rememberInput">remember me</label>
             </div> */}
           </div>
-          <Button
+          <CustomButton
             isTypeSubmit={true}
             isDisabled={!isValid}
-            style={{ fontSize: "var(--fs-xl)" }}
+            style={{ fontSize: "var(--fs-m)" }}
             text="login"
           />
           {errorMsg && (

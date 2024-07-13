@@ -1,18 +1,18 @@
-.navigation__container {
+.navigation-container {
   display: flex;
-  padding: 3rem 2rem;
+  padding: 1.25rem 1.25rem;
   justify-content: center;
-  gap: 2rem;
+  gap: var(--gap-5);
   position: relative;
 }
 
-.navigation__slider {
+.navigation-slider {
   position: unset !important;
-  padding: 2rem !important;
+  padding: 1.25rem !important;
 }
 
-.navigation__slider .swiper-button-prev,
-.navigation__slider .swiper-button-next {
+.navigation-slider .swiper-button-prev,
+.navigation-slider .swiper-button-next {
   font-size: var(--fs-2xl);
   position: absolute;
   top: 0;
@@ -30,24 +30,24 @@
   height: var(--fs-3xl);
   z-index: var(--z-tooltip);
 }
-.navigation__slider .swiper-button-prev:hover,
-.navigation__slider .swiper-button-next:hover {
+.navigation-slider .swiper-button-prev:hover,
+.navigation-slider .swiper-button-next:hover {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
   filter: brightness(1.2);
 }
 
-.navigation__slider .swiper-button-prev {
+.navigation-slider .swiper-button-prev {
   left: 2%;
 }
-.navigation__slider .swiper-button-next {
+.navigation-slider .swiper-button-next {
   right: 2%;
 }
 
 @media only screen and (max-width: 769px) {
-  .navigation__slider .swiper-button-prev {
+  .navigation-slider .swiper-button-prev {
     left: 0;
   }
-  .navigation__slider .swiper-button-next {
+  .navigation-slider .swiper-button-next {
     right: 0;
   }
 }

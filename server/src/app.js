@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
+const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const compression = require("compression");
 const expressWinston = require("express-winston");
@@ -20,6 +21,7 @@ const addressRouter = require("./routes/addressRouter");
 const adminRouter = require("./routes/adminRouter");
 const authRole = require("./middlewares/authRole");
 const roles = require("./utils/constants");
+const uploadImageRouter = require("./routes/uploadImageRouter");
 
 const app = express();
 
@@ -38,7 +40,7 @@ app.use(
   })
 );
 app.use(compression(compressionConfig));
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -48,6 +50,7 @@ app.use("/auth", authRouter);
 app.use("/api/products", productRouter);
 app.use("/api/users", userRouter, addressRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/upload", uploadImageRouter);
 
 app.get("/error", (req, res) => {
   throw new Error("error");

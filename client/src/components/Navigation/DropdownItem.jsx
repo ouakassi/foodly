@@ -14,9 +14,9 @@ export default function DropdownItem({ style, children, icon }) {
     <motion.li
       style={style}
       variants={chiledVariants}
-      className="dropdown__item"
+      className="dropdown-item"
     >
-      <span className="dropdown__item-icon">{icon}</span>
+      <span className="dropdown-item-icon">{icon}</span>
       {children}
     </motion.li>
   );

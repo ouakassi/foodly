@@ -27,41 +27,41 @@ export default function ProductCard({
 
   const priceBefore = (productPrice * isSale) / 100 + productPrice;
   return (
-    <article style={style} className="product__card">
+    <article style={style} className="product-card">
       <Link to={link}>
         <header>
           <div>
             <motion.div whileHover={{ scale: 1.05 }}>
               <ProductImage
-                className="product__card-img"
+                className="product-card-img"
                 productImg={productImg}
                 productName={productName}
               />
             </motion.div>
-            <span className="product__card-name">
+            <span className="product-card-name">
               {productName}
-              {/* <GrFormNextLink className="product__card-link-icon" /> */}
+              {/* <GrFormNextLink className="product-card-link-icon" /> */}
             </span>
           </div>
           <div>
-            <span className="product__card-stars">
+            <span className="product-card-stars">
               <AiOutlineStar /> {productStars}
             </span>
           </div>
         </header>
       </Link>
       <footer>
-        <button className="product__card-add">
+        <button className="product-card-add">
           add <MdAddShoppingCart className="icon" />
         </button>
         <div>
-          <del className="product__card-price-before">
+          <del className="product-card-price-before">
             ${priceBefore.toFixed(2)}
           </del>
-          <span className="product__card-price">
+          <span className="product-card-price">
             $ {productPrice.toFixed(2)}
           </span>
-          <span className="product__card-weight">
+          <span className="product-card-weight">
             <RiScales2Line />
             500g
           </span>
@@ -69,15 +69,15 @@ export default function ProductCard({
       </footer>
       <motion.span
         whileHover={{ scale: 1.3 }}
-        className="product__wish"
+        className="product-wish"
         onClick={handleClickedIcon}
       >
         {isIconClicked ? <BsHeartFill /> : <BsHeart />}
       </motion.span>
       {isSale !== 0 && (
-        <span className="product__card-sale">{isSale + "%"}</span>
+        <span className="product-card-sale">{isSale + "%"}</span>
       )}
-      <span className="product__card-new">new</span>
+      <span className="product-card-new">new</span>
     </article>
   );
 }

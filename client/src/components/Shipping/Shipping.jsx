@@ -47,7 +47,7 @@ export default function Shipping() {
 
   return (
     <Section
-      sectionClass="shipping__section"
+      sectionClass="shipping-section"
       icon={<FiBriefcase />}
       text="how we work ?"
     >
@@ -63,7 +63,7 @@ export default function Shipping() {
                 shippingNumber={id}
                 style={
                   id % 2 !== 1 && isNotMobile
-                    ? { transform: "translateY(6rem)" }
+                    ? { transform: "translateY(3.75rem)" }
                     : null
                 }
               />
@@ -73,11 +73,11 @@ export default function Shipping() {
                     id === data.length / 2
                       ? {
                           transform:
-                            " rotate(380deg) scale(1.8) translateX(-1rem) ",
+                            " rotate(380deg) scale(1.8) translateX(-0.75rem) ",
                         }
                       : null
                   }
-                  className="shipping__arrow"
+                  className="shipping-arrow"
                   src={dottedArrow}
                   alt="arrow"
                 />

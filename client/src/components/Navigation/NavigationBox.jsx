@@ -22,10 +22,10 @@ export default function NavigationBox({ link, img, text, backgroundColor }) {
       whileInView={{ scale: 1, opacity: 1, transition: { duration: 0.4 } }}
       viewport={{ amount: 0.2 }}
       whileTap={{ scale: 0.9 }}
-      className="navigation__box"
+      className="navigation-box"
     >
       <Link
-        className="navigation__link"
+        className="navigation-link"
         onMouseOver={() => {
           setHovered(true);
         }}

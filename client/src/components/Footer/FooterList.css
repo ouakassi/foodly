@@ -1,14 +1,14 @@
-.footer__list {
+.footer-list {
   display: flex;
   flex-direction: column;
   /* align-items: center; */
 }
 
-.footer__list h3 {
-  margin-bottom: 1rem;
+.footer-list h3 {
+  margin-bottom: 0.75rem;
 }
 
-.footer__list ul {
+.footer-list ul {
   text-transform: capitalize;
   font-family: var(--font-1);
 }

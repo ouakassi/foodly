@@ -1,20 +1,20 @@
-.slider__container {
+.slider-container {
   position: relative;
 }
 .swiper {
   position: unset !important;
-  padding: 2rem !important;
+  padding: 1.25rem !important;
 }
 
-.slider__content .slider__buttons {
+.slider-content .slider-buttons {
   position: absolute;
   top: -40px;
   right: 0;
   display: flex;
-  gap: 1rem;
+  gap: var(--gap-2);
 }
 
-.slider__content .swiper-button-prev,
-.slider__content .swiper-button-next {
+.slider-content .swiper-button-prev,
+.slider-content .swiper-button-next {
   position: initial;
 }

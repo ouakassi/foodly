@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import CartProductCard from "./CartProductCard";
 import "./CartMenu.css";
-import Button from "../Buttons/Button";
+import CustomButton from "../Buttons/CustomButton";
 import { TbShoppingCartDiscount } from "react-icons/tb";
 import { RiCloseFill } from "react-icons/ri";
 
@@ -54,19 +54,19 @@ export default function CartMenu({ handleShowSidebar }) {
       initial="closed"
       animate="open"
       exit="closed"
-      className="cart__menu-container"
+      className="cart-menu-container"
       onClick={(e) => {
         e.stopPropagation();
       }}
     >
-      <header className="cart__heading">
+      <header className="cart-heading">
         <h3>
           cart
           <TbShoppingCartDiscount className="icon" />
         </h3>
         <AnimatedIcon
           onClick={handleShowSidebar}
-          className="cart__heading__close-button"
+          className="cart-heading-close-button"
           icon={<RiCloseFill />}
           // hoverIcon={<RiCloseCircleFill />}
         />
@@ -95,7 +95,7 @@ export default function CartMenu({ handleShowSidebar }) {
         )}
       </main>
       <footer>
-        <div className="cart__total-container">
+        <div className="cart-total-container">
           <span>
             {data.length === 1
               ? `${data.length} product`
@@ -104,7 +104,7 @@ export default function CartMenu({ handleShowSidebar }) {
           <span>total: 1800$</span>
         </div>
         <Link to={"/cart"}>
-          <Button className="cart__button" text="checkout" />
+          <CustomButton className="cart-button" text="checkout" />
         </Link>
       </footer>
     </motion.div>

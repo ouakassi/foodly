@@ -1,55 +1,108 @@
-.product-form-container {
-  background: var(--white-color);
-  height: fit-content;
-  position: fixed;
-  inset: 0;
-  margin: auto;
-  padding: 2rem;
-  font-family: var(--font-1);
-  border-radius: 15px;
-  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
-    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
-  /* overflow-y: auto; */
-  max-width: 50rem;
+.create-product {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: var(--gap-5);
+}
+.create-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.create-header div {
+  display: flex;
+  gap: 0.5rem;
+}
+.create-header button {
+  max-width: fit-content;
+}
 
-  /* max-height: 60vh; */
+.create-header .button-save {
+  background-color: #717171;
+}
+
+.create-header h1 {
+  font-family: var(--font-5);
+  font-weight: var(--fw-semi);
+  font-size: var(--fs-xl);
+  text-transform: capitalize;
+}
+
+.content-container {
+  /* max-width: 80%; */
+  width: 100%;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-5);
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  margin: 1rem 0;
+}
+
+.content-container h3 {
+  color: var(--color-6);
+}
+
+.create-product .row {
+  display: flex;
+  gap: 1rem;
+  /* width: 100%; */
+}
+
+.product-form {
+  /* width: 100%; */
+}
+.category-form {
+  /* max-width: 40rem; */
+  height: fit-content;
+}
+
+.category-form header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.category-form header button {
+  color: var(--color-4);
+  text-transform: capitalize;
+  font-family: var(--font-6);
+}
+.media-form .create-product .input-container {
+  max-width: 20rem;
+}
+
+span:has(.product-image) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* background-color: red; */
 }
 .product-form-container h2 {
   text-transform: capitalize;
   font-family: var(--font-5);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   /* align-self: start; */
 }
 .product-form-container .product-form {
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  padding: 1.25rem 0.75rem;
+  /* display: flex; */
+  /* flex-direction: column; */
+  gap: var(--gap-5);
   /* display: grid; */
-  /* max-width: 40rem; */
+  /* max-width: 25rem; */
 }
 
 .product-form-container .button-holders,
 .input-holders {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--gap-2);
 }
-.product-form-container .input__container {
+.product-form-container .input-container {
   margin-bottom: 0;
-}
-
-.cancel-button {
-  background-color: var(--color-price);
-  max-width: 10rem;
-  border-radius: 25px;
-}
-.submit-button {
-  background-color: var(--color-7);
-  border-radius: 25px;
 }
 
 /* input::file-selector-button {
@@ -83,8 +136,8 @@
 .file-input + label {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
+  gap: var(--gap-2);
+  padding: 0.75rem;
   cursor: pointer;
   transition: 0.2s;
   border: 1px dashed var(--color-6);
@@ -110,40 +163,30 @@
   height: 10rem;
 }
 
-.delete__button {
-  color: var(--color-6);
-  font-size: var(--fs-xl);
-  cursor: pointer;
-  padding: 0.5rem;
-}
-.delete__button:hover {
-  color: var(--color-2);
-}
-
 .status-toggle {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: var(--gap-5);
 }
 /* .toggle span {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  font-size: 2rem;
-  margin: 0 1rem;
+  gap : var(--gap-2);
+  font-size: var(--fs-m);
+  margin: 0 0.75rem;
 } */
 .status-buttons-container {
   display: flex;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
     rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
   background-color: var(--white-color);
-  padding: 0.5rem;
+  /* padding: 0.5rem; */
   border-radius: 20px;
   position: relative;
 }
 .status-buttons-container button {
   border: 0;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
   cursor: pointer;
   border-radius: 20px;
   background-color: transparent;
@@ -157,9 +200,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--gap-1);
   /* z-index: 100; */
-  width: 10rem;
+  width: 8rem;
   text-transform: capitalize;
 }
 

@@ -8,15 +8,15 @@ export default function ShippingBox({
   shippingNumber,
 }) {
   return (
-    <div style={style} className="shipping__box">
-      <div className="shipping__img">
+    <div style={style} className="shipping-box">
+      <div className="shipping-img">
         <img src={img} alt={title} />
       </div>
-      <div className="shipping__data">
+      <div className="shipping-data">
         <h2>{title}</h2>
         <p>{text}</p>
       </div>
-      <span className="shipping__number">{shippingNumber}</span>
+      <span className="shipping-number">{shippingNumber}</span>
     </div>
   );
 }

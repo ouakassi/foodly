@@ -43,11 +43,11 @@ const Dropdown = ({
   useCheckIfClickedOutside(showDropdown, setShowDropdown, dropdownRef);
 
   return (
-    <div className="dropdown__holder">
+    <div className="dropdown-holder">
       <div className="dropdown" ref={dropdownRef}>
         <div
           tabIndex="0"
-          className="dropdown__title"
+          className="dropdown-title"
           onClick={handleShowDropdown}
           onKeyDown={handleKeyDown}
         >
@@ -65,7 +65,7 @@ const Dropdown = ({
           <motion.ul
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="dropdown__list"
+            className="dropdown-list"
           >
             {options.map(({ label, value }, i) => (
               <li
@@ -83,7 +83,7 @@ const Dropdown = ({
         <motion.span
           whileTap={{ scale: 0.8 }}
           onClick={handleDropdownDelete}
-          className="delete__button"
+          className="delete-button"
         >
           <MdOutlineDeleteForever />
         </motion.span>

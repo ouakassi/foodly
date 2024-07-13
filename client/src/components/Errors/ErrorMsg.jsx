@@ -8,7 +8,7 @@ export default function ErrorMsg({ errorMsg, style }) {
       {errorMsg && (
         <motion.div
           style={style}
-          className="input__error"
+          className="input-error"
           initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 10, opacity: 0 }}
