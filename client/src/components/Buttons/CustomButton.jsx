@@ -8,13 +8,13 @@ export default function CustomButton({
   text,
   icon,
   scaleOnTap = 0.9,
-  isDisabled,
+  disabled,
   onClick,
   isTypeSubmit,
 }) {
   return (
     <motion.button
-      disabled={isDisabled}
+      disabled={disabled}
       onClick={onClick}
       whileTap={{ scale: scaleOnTap }}
       style={style}

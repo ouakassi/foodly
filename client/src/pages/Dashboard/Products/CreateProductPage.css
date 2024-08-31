@@ -125,6 +125,15 @@ span:has(.product-image) {
   font-size: initial;
 } */
 
+.media-inputs {
+  display: flex;
+  margin: 2rem auto;
+  gap: 1rem;
+}
+.media-inputs .button {
+  width: fit-content;
+}
+
 .file-input {
   width: 0.1px;
   height: 0.1px;
@@ -140,7 +149,7 @@ span:has(.product-image) {
   padding: 0.75rem;
   cursor: pointer;
   transition: 0.2s;
-  border: 1px dashed var(--color-6);
+  border: 1px dashed var(--color-3);
   color: var(--color-3);
 
   /* z-index: 10; */
@@ -230,4 +239,11 @@ span:has(.product-image) {
     rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px,
     rgba(0, 0, 0, 0.09) 0px 32px 16px;
   /* background-color: transparent; */
+}
+
+.input-container:has(input[type="text"]) {
+  max-width: 60rem;
+}
+.input-container:has(input[type="number"]) {
+  max-width: 20rem;
 }

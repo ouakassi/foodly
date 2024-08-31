@@ -120,7 +120,7 @@ export default function LoginPage() {
           </div>
           <CustomButton
             isTypeSubmit={true}
-            isDisabled={!isValid}
+            disabled={!isValid}
             style={{ fontSize: "var(--fs-m)" }}
             text="login"
           />

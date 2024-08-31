@@ -13,6 +13,7 @@ import {
   MdOutlineAddBox,
   MdLibraryAddCheck,
   MdOutlineUploadFile,
+  MdOutlineFileUpload,
 } from "react-icons/md";
 import { FaRegCircleCheck, FaRegCircleXmark } from "react-icons/fa6";
 import { TbHomeSignal, TbBrandProducthunt } from "react-icons/tb";
@@ -41,25 +42,26 @@ let validationSchema = Yup.object({
     .typeError("name must be a `string` type")
     .required("Name is required"),
   stock: Yup.number()
-    .min(1, "Stock can't be 0")
-    .default(1)
+    .min(1, "must be at least 1")
+    .integer("must be a whole number")
+    .typeError("must be a Number")
     .required("Stock is required"),
-  price: Yup.number("Enter a valid number")
-    .required("price is required")
-    .min(1, "Price can't be less than 0")
-    .default(0),
+  price: Yup.number()
+    .min(1, "can't be less than 0")
+    .typeError("must be a Number")
+    .required("price is required"),
   discount: Yup.number()
-    .max(100, "Discount can't be more than 100%")
-    .min(0, "Discount can't be less than 0%")
-    .default(0)
-    .typeError("Discount must be a `number` type")
+    .max(100, "can't be more than 100%")
+    .min(0, "can't be less than 0%")
+    .typeError("must be a Number")
     .nullable(),
 });
 
 export default function CreateProductPage() {
   const [selectedStatus, setSelectedStatus] = useState(true);
-  const [productImage, setProductImage] = useState(null);
+  const [productImageUrl, setProductImageUrl] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [imageUploadLoading, setImageUploadLoading] = useState(false);
 
   const {
     register,
@@ -93,13 +95,19 @@ export default function CreateProductPage() {
 
   const handleUploadImage = async (e) => {
     e.preventDefault();
+
     if (!imagePreview) return;
     try {
+      setImageUploadLoading(true);
+
       const res = await axiosInstance.post("/api/upload", {
         imgUrl: imagePreview,
         category: "nuts",
       });
-      setProductImage(res.data.imgUrl);
+      setProductImageUrl(res.data.imgUrl);
+      setImageUploadLoading(false);
+      console.log(productImageUrl);
+
       console.log(res.data.imgUrl);
     } catch (err) {
       console.log(err);
@@ -112,7 +120,7 @@ export default function CreateProductPage() {
       // console.log(data.imgUrl);
       const response = await axiosInstance.post("api/products/", {
         ...data,
-        imgUrl: productImage,
+        imgUrl: productImageUrl,
       });
       console.log(response);
       console.log(getValues);
@@ -206,7 +214,10 @@ export default function CreateProductPage() {
                 icon={<TbBrandProducthunt />}
                 errorMsg={errors?.name?.message}
               >
-                <input type="text" {...register("name")} />
+                <input
+                  type="text"
+                  {...register("name", { required: true, maxLength: 25 })}
+                />
               </InputContainer>
               <div className="row">
                 <InputContainer
@@ -214,15 +225,38 @@ export default function CreateProductPage() {
                   icon={<BiArchiveIn />}
                   errorMsg={errors?.stock?.message}
                 >
-                  <input type="number" {...register("stock")} />
+                  <input
+                    type="number"
+                    {...register("stock", {
+                      required: "Stock is required",
+                      valueAsNumber: true,
+                      min: {
+                        value: 1,
+                        message: "Stock must be at least 1",
+                      },
+                    })}
+                  />
                 </InputContainer>
+
                 <InputContainer
                   errorMsg={errors?.price?.message}
                   labelText="Price"
                   icon={<AiOutlineDollar />}
                 >
-                  <input type="number" {...register("price")} />
+                  <input
+                    type="number"
+                    step="0.01"
+                    {...register("price", {
+                      required: "Price is required",
+                      valueAsNumber: true,
+                      min: {
+                        value: 0,
+                        message: "Price cannot be negative",
+                      },
+                    })}
+                  />
                 </InputContainer>
+
                 <InputContainer
                   errorMsg={errors?.discount?.message}
                   labelText="Discount"
@@ -230,11 +264,18 @@ export default function CreateProductPage() {
                 >
                   <input
                     type="number"
-                    {...register("discount")}
-                    // min={0}
-                    max={100}
-                    maxlength={3}
-                    required
+                    {...register("discount", {
+                      required: "Discount is required",
+                      valueAsNumber: true,
+                      min: {
+                        value: 0,
+                        message: "Discount cannot be negative",
+                      },
+                      max: {
+                        value: 100,
+                        message: "Discount cannot exceed 100%",
+                      },
+                    })}
                   />
                 </InputContainer>
               </div>
@@ -264,10 +305,10 @@ export default function CreateProductPage() {
               <ProductImage
                 className="product-image"
                 productName="Product Image"
-                productImg={imagePreview}
+                productImg={imagePreview || null}
               />
             </span>
-            <div>
+            <div className="media-inputs">
               <input
                 type="file"
                 name="file"
@@ -283,7 +324,7 @@ export default function CreateProductPage() {
               >
                 <RiImageAddLine />
                 {!imagePreview ? (
-                  <span>Upload image...</span>
+                  <span>Select image please...</span>
                 ) : (
                   <span
                     style={{
@@ -296,7 +337,19 @@ export default function CreateProductPage() {
                   </span>
                 )}
               </label>
-              <CustomButton onClick={handleUploadImage} text="upload image" />
+              <CustomButton
+                onClick={handleUploadImage}
+                disabled={productImageUrl && imagePreview}
+                text={
+                  imageUploadLoading ? (
+                    "loading..."
+                  ) : (
+                    <span className="button-icon">
+                      <MdOutlineFileUpload /> upload image
+                    </span>
+                  )
+                }
+              />
             </div>
           </div>
         </div>
