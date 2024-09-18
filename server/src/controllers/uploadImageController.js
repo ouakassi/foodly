@@ -2,6 +2,7 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const cloudinary = require("../configs/cloudinaryConfig");
+const { response } = require("express");
 
 const uploadImageController = async (req, res) => {
   try {
@@ -19,6 +20,7 @@ const uploadImageController = async (req, res) => {
     res.status(200).json({
       message: "Image uploaded successfully",
       imgUrl: cloudinaryResponse.url,
+      response: cloudinaryResponse,
     });
   } catch (error) {
     res

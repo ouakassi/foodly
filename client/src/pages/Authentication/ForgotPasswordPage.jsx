@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import "./ForgotPasswordPage.css";
 import FormContainer from "../../components/Forms/FormContainer";
 import InputContainer from "../../components/Forms/InputContainer";
-import { RiMailLine } from "react-icons//ri";
+import { RiMailLine } from "react-icons/ri";
 import CustomButton from "../../components/Buttons/CustomButton";
 import Form from "../../components/Forms/Form";
 import ErrorMsg from "../../components/Errors/ErrorMsg";

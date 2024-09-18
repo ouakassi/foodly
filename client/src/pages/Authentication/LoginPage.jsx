@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import "./LoginPage.css";
-import { RiUserLine, RiLockPasswordLine, RiMailLine } from "react-icons//ri";
+import { RiUserLine, RiLockPasswordLine, RiMailLine } from "react-icons/ri";
 
 import CustomButton from "../../components/Buttons/CustomButton";
 

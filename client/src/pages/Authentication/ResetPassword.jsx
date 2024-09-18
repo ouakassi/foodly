@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import Form from "../../components/Forms/Form";
 import InputContainer from "../../components/Forms/InputContainer";
 import CustomButton from "../../components/Buttons/CustomButton";
-import { RiLockPasswordLine, RiLockPasswordFill } from "react-icons//ri";
+import { RiLockPasswordLine, RiLockPasswordFill } from "react-icons/ri";
 import FormContainer from "../../components/Forms/FormContainer";
 
 //  validation schema

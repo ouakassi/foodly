@@ -6,6 +6,7 @@ import DashboardSidebar from "../components/Dashboard/DashboardSidebar";
 import { useEffect, useState } from "react";
 import DashboardNavbar from "../components/Dashboard/DashboardNavbar";
 import Breadcrumbs from "../components/Navigation/Breadcrumbs";
+import { Toaster, toast } from "sonner";
 
 const mainStyle = {
   paddingLeft: "var(--sidebar-width)",
@@ -43,6 +44,7 @@ export default function DashboardLayout() {
           <Outlet />
         </motion.div>
       </main>
+      <Toaster richColors />
     </div>
   );
 }

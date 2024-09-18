@@ -1,86 +1,102 @@
-.table-row {
+tr {
   display: flex;
   font-family: var(--font-1);
   font-weight: var(--fw-semi);
-  /* border-bottom: 2px solid #efefef; */
   background: var(--white-color);
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px;
   transition: 0.2s;
+  padding: 0.5rem;
+  border-bottom: 1px dashed #dcdcdc;
 }
-.table-row:hover {
-  border-radius: 15px;
-  background-color: #fff2e8;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+tr:hover {
+  background-color: #f4f4f4;
 }
 
-.table-row .cell {
+tr td {
   flex: 1;
-  text-align: center;
-  padding: 0.5rem;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+
   gap: var(--gap-1);
 }
-.table-row .product-img {
-  max-width: 5rem;
-}
-.table-row .cell span {
-  display: flex;
+tr .product-img {
+  width: 4rem;
+  height: 4rem;
 }
 
-.cell.name {
-  /* Styles for the 'name' cell */
-  font-weight: bold; /* Example: Make the text bold */
-  /* text-align: left; */
+td.name {
+  font-weight: bold;
   justify-content: baseline;
+  word-break: break-all;
 }
 
-.cell.status span {
+td.status span {
   display: inline-flex;
   justify-content: center;
   align-items: center;
   gap: var(--gap-1);
   text-transform: capitalize;
-  padding: 0.1.25rem 0.5rem;
-  border-radius: 5px;
+  border-radius: 10px;
   font-weight: var(--fw-bold);
-  min-width: 9rem;
-  box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
 }
 
-.status span.active {
-  color: #079b65;
-  background: #c3ffe9;
+tr .status span.active {
+  color: #00925d;
 }
 
-.status span.inactive {
-  color: #b90129;
-  background: #ffb8c7;
+tr .status span.inactive {
+  color: #e00c0c;
 }
 
-.cell.stock {
+td.stock {
 }
-.cell.orders {
+td.orders {
 }
 
-.cell.price {
+tr .price {
   font-weight: var(--fw-bold);
-  /* color: #078053; */
+  color: #078053;
 }
 
-.cell.discount {
+td.discount {
 }
 
-.cell.category {
+td.category {
 }
 
-.cell.rating {
+td.rating {
   color: #d19a00;
 }
 
-.cell.published {
+tr .published {
+  color: var(--color-6);
 }
 
-.cell.action {
+td.action {
+  display: flex;
+  gap: var(--gap-2);
+}
+
+.dialog-button-cancel,
+.dialog-button-delete {
+  width: fit-content;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+}
+.dialog-button-cancel svg,
+.dialog-button-delete svg {
+  font-size: 1.3rem;
+}
+.dialog-button-delete,
+.dialog-button-delete:hover {
+  background-color: var(--color-2);
+}
+
+.dialog-button-cancel {
+  background-color: black;
+  color: white;
+  margin-right: 0.5rem;
+}
+.dialog-button-cancel:hover {
+  background-color: rgb(46, 46, 46);
+  color: white;
 }

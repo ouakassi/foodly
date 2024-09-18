@@ -34,6 +34,7 @@ import ProductsPage from "./pages/Dashboard/Products/ProductsPage";
 import ReportsPage from "./pages/Dashboard/ReportsPage";
 import CreateProductPage from "./pages/Dashboard/Products/CreateProductPage";
 import ProductsLayout from "./pages/ProductsLayout";
+import EditProductPage from "./pages/Dashboard/Products/EditProductPage";
 
 const LazyAbout = lazy(() => import("./pages/About/AboutPage"));
 
@@ -74,6 +75,7 @@ function App() {
             <Route index element={<Navigate to="overview" />} />
             <Route path="overview" element={<ProductsPage />} />
             <Route path="create" element={<CreateProductPage />} />
+            <Route path="edit/:productId" element={<EditProductPage />} />
           </Route>
           <Route path="reports" element={<ReportsPage />} />
           <Route path="settings">

@@ -96,8 +96,8 @@
 
   /* Scroll */
   --scroll-bar-color: var(--body-color);
-  --scroll-thumb-color: var(--color-3);
-  --scroll-thumb-color-hover: var(--color-5);
+  --scroll-thumb-color: var(--color-6);
+  --scroll-thumb-color-hover: var(--color-3);
 
   /* Box Shadows */
   --box-shadow-3d: rgba(0, 0, 0, 0.4) 0px 2px 4px,

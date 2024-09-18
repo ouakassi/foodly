@@ -43,13 +43,13 @@ const createProduct = async (req, res) => {
   try {
     const { name, imgUrl, price, category, stock, status, discount } = req.body;
 
-    const productCategory = await Category.findOne({
-      where: { name: category },
-    });
+    // const productCategory = await Category.findOne({
+    //   where: { name: category },
+    // });
 
-    if (!productCategory) {
-      return res.status(404).json({ message: "category not found" });
-    }
+    // if (!category) {
+    //   return res.status(404).json({ message: "category not found" });
+    // }
 
     const product = await Product.create({
       status,
@@ -58,7 +58,7 @@ const createProduct = async (req, res) => {
       price,
       stock,
       discount,
-      productCategoryId: productCategory.id,
+      category,
     });
 
     res

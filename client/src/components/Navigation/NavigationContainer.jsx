@@ -12,9 +12,12 @@ import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import { useRef } from "react";
 import { motion } from "framer-motion";
 
-import { Autoplay, Navigation } from "swiper";
+import { Navigation, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+
 import "swiper/css";
+import "swiper/css/autoplay";
+import "swiper/css/navigation";
 
 const navigationData = [
   {

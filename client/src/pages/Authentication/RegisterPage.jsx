@@ -15,7 +15,7 @@ import {
   RiLockPasswordLine,
   RiMailLine,
   RiLockPasswordFill,
-} from "react-icons//ri";
+} from "react-icons/ri";
 import { AiOutlineUser } from "react-icons/ai";
 import CustomButton from "../../components/Buttons/CustomButton";
 

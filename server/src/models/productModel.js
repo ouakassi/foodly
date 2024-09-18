@@ -35,6 +35,10 @@ const Product = sequelize.define("product", {
     max: 100,
     allowNull: false,
   },
+  category: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
 module.exports = Product;

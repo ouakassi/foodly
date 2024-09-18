@@ -17,14 +17,18 @@ const useAxiosFetch = (dataUrl) => {
       setData(response.data);
       setFetchError(null);
     } catch (err) {
-      setFetchError(err.message);
-      setData(null); // Reset data to null on error
+      if (axios.isCancel(err)) {
+        console.log("Request canceled:", err.message);
+      } else {
+        setFetchError(`Error: ${err.message}`); // Set a more descriptive error message
+        setData(null); // Reset data in case of error
+      }
     } finally {
       setIsLoading(false);
     }
 
     return () => {
-      source.cancel();
+      source.cancel("Request canceled by the user.");
     };
   }, [dataUrl]);
 

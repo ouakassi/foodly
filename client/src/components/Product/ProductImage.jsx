@@ -5,7 +5,7 @@ import IMAGES from "../../assets/index";
 export default function ProductImage({
   className,
   style,
-  productImg = IMAGES.bowl,
+  productImg,
   productName,
 }) {
   return (
@@ -22,6 +22,12 @@ export default function ProductImage({
       style={style}
     >
       <img
+        style={{
+          background: `url(${IMAGES.bowl})`,
+          padding: "3px",
+          backgroundRepeat: "round",
+          position: "relative",
+        }}
         className={`product-img ${className}`}
         src={productImg}
         alt={productName}

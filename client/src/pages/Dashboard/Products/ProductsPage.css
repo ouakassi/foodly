@@ -15,3 +15,22 @@
   display: flex;
   flex-direction: column;
 }
+.products-page header {
+  display: flex;
+  justify-content: space-between;
+}
+.products-page header h1 {
+  font-family: var(--font-5);
+  font-weight: var(--fw-semi);
+  font-size: var(--fs-xl);
+  text-transform: capitalize;
+}
+
+.products-container {
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  padding: 1rem;
+  margin-top: 1rem;
+}

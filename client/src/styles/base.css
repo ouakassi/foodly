@@ -15,19 +15,9 @@ body {
   color: var(--text-color);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-4);
-  font-weight: var(--fw-bold);
-}
-
 p {
   font-family: var(--font-1);
-  font-weight: var(--fw-semi);
+  /* font-weight: var(--fw-semi); */
 }
 ul {
   list-style-type: none;

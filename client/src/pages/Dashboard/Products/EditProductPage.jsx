@@ -1,4 +1,4 @@
-import "./CreateProductPage.css";
+// import "./EditProductPage.css";
 import CustomButton from "@/components/Buttons/CustomButton";
 import InputContainer from "@/components/Forms/InputContainer";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { motion } from "framer-motion";
+import { useParams } from "react-router-dom";
 
 import { MdOutlineUploadFile } from "react-icons/md";
 
@@ -26,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import MediaUpload from "../../../components/Product/MediaUpload";
 import CategoryForm from "../../../components/Product/CategoryForm";
 
-//  validation schema
+//  validation schema (same as create)
 let validationSchema = Yup.object({
   status: Yup.boolean().default(true),
   name: Yup.string()
@@ -34,33 +35,48 @@ let validationSchema = Yup.object({
       /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
       "Name can only contain Latin letters."
     )
-    .typeError("name must be a `string` type")
     .required("Name is required"),
   stock: Yup.number()
     .integer("Stock must be a whole number")
     .min(1, "must be at least 1")
-    .typeError("must be a Number")
     .required("Stock is required"),
   price: Yup.number()
     .positive("must be a positive number")
     .min(1, "can't be less than 0")
-    .typeError("must be a Number")
     .required("price is required"),
   discount: Yup.number()
     .min(0, "can't be less than 0%")
     .max(100, "can't be more than 100%")
-    .typeError("must be a Number")
     .nullable(),
-  category: Yup.string()
-    .matches(
-      /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
-      "Name can only contain Latin letters."
-    )
-    .typeError("name must be a `string` type"),
+  category: Yup.string().matches(
+    /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+    "Name can only contain Latin letters."
+  ),
 });
 
-export default function CreateProductPage() {
-  const [selectedStatus, setSelectedStatus] = useState(true);
+const activeStyles = {
+  backgroundColor: "13c93d",
+  background: `linear-gradient(3deg, rgb(2, 0, 36) 0%, var(--color-3) 0%, rgb(0 255 129) 100%)`,
+  boxShadow: `rgba(0, 255, 89, 0.09) 0px 2px 1px,
+                rgba(0, 255, 89, 0.09) 0px 4px 2px,
+                rgba(0, 255, 89, 0.09) 0px 8px 4px,
+                `,
+  left: 0,
+};
+
+const inactiveStyles = {
+  backgroundColor: "#dc3545",
+  background: `linear-gradient(3deg, rgb(36, 0, 2) 0%, rgb(201, 19, 19) 0%, rgb(255, 0, 0) 100%)`,
+
+  boxShadow: `rgba(255, 0, 0, 0.09) 0px 2px 1px,
+                rgba(255, 0, 0, 0.09) 0px 4px 2px,
+                rgba(255, 0, 0, 0.09) 0px 8px 4px,
+             `,
+  left: "50%",
+};
+
+export default function EditProductPage() {
+  const [selectedStatus, setSelectedStatus] = useState(false);
   const [productImageUrl, setProductImageUrl] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [isImageUploaded, setIsImageUploaded] = useState(false);
@@ -75,6 +91,16 @@ export default function CreateProductPage() {
   const [newCategory, setNewCategory] = useState("");
   const [isAddCategoryLoading, setIsAddCategoryLoading] = useState(false);
   const [isProductFormLoading, setIsProductFormLoading] = useState(false);
+  const { productId } = useParams(); // Get product ID from URL
+  const [product, setProduct] = useState({});
+
+  const {
+    data: productsData,
+    fetchError,
+    isLoading,
+  } = useAxiosFetch("http://localhost:8000/api/products/");
+
+  console.log(product);
 
   const {
     register,
@@ -86,37 +112,23 @@ export default function CreateProductPage() {
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "onChange",
+    // defaultValues: async () => {
+    //   const product = await axiosInstance.get(
+    //     `http://localhost:8000/api/products/${productId}`
+    //   );
+    //   return product.data;
+    // },
+
+    // defaultValues: {
+    //   status: true,
+    //   name: "",
+    //   stock: 1,
+    //   price: 0,
+    //   imgUrl: "",
+    //   discount: 0,
+    //   category: "",
+    // },
   });
-
-  let navigate = useNavigate();
-
-  const {
-    data: products,
-    fetchError,
-    isLoading,
-    error,
-  } = useAxiosFetch("http://localhost:8000/api/products");
-
-  useEffect(() => {
-    setFocus("name");
-  }, [setFocus]);
-
-  useEffect(() => {
-    if (error) {
-      console.error("Error fetching products:", error);
-      toast.error("Failed to fetch products. Please try again.");
-      return;
-    }
-    if (!products) {
-      console.log("no categories found");
-      return;
-    }
-    const uniqueCategories = [
-      ...new Set(products.map((product) => product.category)),
-    ];
-    setCategories(uniqueCategories);
-    setFocus("name");
-  }, [error, products]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -144,59 +156,6 @@ export default function CreateProductPage() {
     setProductImageUrl(null);
   };
 
-  const onSubmit = async (data) => {
-    // Ensure image is selected
-    if (!imagePreview) {
-      toast.warning("Select an image, please!");
-      return;
-    }
-
-    if (!data.category) {
-      toast.warning("Select a category, please!");
-      return;
-    }
-
-    try {
-      setIsImgUploadLoading(true);
-      setIsProductFormLoading(true);
-
-      // Upload the image first
-      const imgRes = await axiosInstance.post("/api/upload", {
-        imgUrl: imagePreview,
-        category: newCategory || "nuts", // Default to "nuts" if no category is selected
-      });
-
-      // Once the image is uploaded, update the product data
-      const uploadedImgUrl = imgRes.data.imgUrl;
-      setProductImageUrl(uploadedImgUrl);
-      setValue("imgUrl", uploadedImgUrl);
-      setIsImageUploaded(true);
-
-      // Now, create the product using the uploaded image URL
-      const productRes = await axiosInstance.post("api/products/", {
-        ...data,
-        imgUrl: uploadedImgUrl, // Use the uploaded image URL here
-      });
-
-      // Show success notification and navigate to products page
-      toast.success("Product created successfully", { duration: 1000 });
-      setIsProductFormLoading(false);
-
-      // Optional: Uncomment this line if you want to navigate after success
-      navigate("/dashboard/products");
-    } catch (err) {
-      if (err.response) {
-        toast.error(err.response.data.message || "Error occurred");
-      } else if (err.request) {
-        toast.error("Network error, please try again later");
-      } else {
-        toast.error("Something went wrong");
-      }
-    } finally {
-      setIsImgUploadLoading(false);
-      setIsProductFormLoading(false);
-    }
-  };
   const handleAddNewCategory = (e) => {
     e.preventDefault();
 
@@ -233,20 +192,50 @@ export default function CreateProductPage() {
     setValue("category", value);
   };
 
+  const onSubmit = async (data) => {
+    if (!imagePreview) {
+      toast.warning("Select an image, please!");
+      return;
+    }
+
+    if (!data.category) {
+      toast.warning("Select a category, please!");
+      return;
+    }
+    try {
+      setIsImgUploadLoading(true);
+      setIsProductFormLoading(true);
+
+      // Update product information
+      const response = await axiosInstance.put(`/api/products/${productId}`, {
+        ...data,
+        imgUrl: productImageUrl, // Ensure you're using the updated or original image URL
+      });
+
+      toast.success("Product updated successfully");
+      navigate("/dashboard/products");
+    } catch (err) {
+      toast.error("Failed to update product. Please try again.");
+    } finally {
+      setIsImgUploadLoading(false);
+      setIsProductFormLoading(false);
+    }
+  };
+
   return (
-    <div className="create-product">
+    <div className="edit-product">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="create-header">
-          <h1>create product</h1>
+          <h1>Edit product</h1>
           <div>
-            <CustomButton
+            {/* <CustomButton
               text="save as draft"
               icon={<MdOutlineUploadFile fontSize="1.25rem" />}
               isTypeSubmit={true}
               className="button-save"
-            />
+            /> */}
             <CustomButton
-              text="Create"
+              text="Edit"
               icon={<FaFileCirclePlus fontSize="1.25rem" />}
               isTypeSubmit={true}
             />
@@ -266,10 +255,8 @@ export default function CreateProductPage() {
                 <div className="status-buttons-container">
                   <motion.span
                     layout
-                    className={`active-button ${
-                      selectedStatus ? "active" : "inactive"
-                    }`}
-                    style={selectedStatus ? { left: 0 } : { left: "50%" }}
+                    className="active-button"
+                    style={selectedStatus ? activeStyles : inactiveStyles}
                   ></motion.span>
 
                   <button

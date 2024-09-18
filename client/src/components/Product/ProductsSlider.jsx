@@ -6,9 +6,11 @@ import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import ProductCard from "./ProductCard";
 import ArrowButton from "../Buttons/ArrowButton";
 
-import "swiper/css";
-import { Autoplay, Navigation } from "swiper";
+import { Navigation, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
+import "swiper/css/navigation";
 
 export default function ProductsSlider({ productsArray, isLoading }) {
   const prevRef = useRef(null);

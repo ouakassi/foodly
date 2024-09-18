@@ -6,10 +6,14 @@ import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import { useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 
-import { Autoplay, Navigation, Pagination } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+
+// import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import "swiper/css/navigation";
 import "swiper/css/pagination";
+
 import ArrowButton from "../Buttons/ArrowButton";
 
 const data = [

@@ -21,8 +21,13 @@ export default function CustomButton({
       className={`button ${className}`}
       type={isTypeSubmit ? "submit" : null}
     >
-      {icon && <span className="button-icon">{icon}</span>}
-      {text || "submit"}
+      {text ? (
+        icon && <span style={{ marginRight: "0.5rem" }}>{icon}</span>
+      ) : (
+        <span>{icon}</span>
+      )}
+
+      {text}
     </motion.button>
   );
 }

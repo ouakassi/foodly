@@ -1,10 +1,46 @@
-import { HiDotsHorizontal } from "react-icons/hi";
-import { FaRegCircleCheck, FaRegCircleXmark } from "react-icons/fa6";
-import { TbEdit, TbTrash } from "react-icons/tb";
 import "./ProductRow.css";
 import ProductImage from "./ProductImage";
+import CustomButton from "../Buttons/CustomButton";
+import { BiSolidMessageSquareEdit } from "react-icons/bi";
+import { MdDeleteForever, MdEditSquare } from "react-icons/md";
 
-export default function ProductRow({ product }) {
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  FaArrowTrendDown,
+  FaRegCircleCheck,
+  FaRegCircleXmark,
+} from "react-icons/fa6";
+import { color } from "framer-motion";
+import { AiFillDelete } from "react-icons/ai";
+import { TbForbid2 } from "react-icons/tb";
+
+const buttonStyle = {
+  color: "white",
+  borderRadius: "10px",
+  padding: "5px 10px",
+  maxWidth: "max-content",
+  fontSize: "var(--fs-l)",
+  boxShadow: "none",
+  cursor: "pointer", // Ensure the button shows the pointer cursor
+};
+
+export default function ProductRow({ product, handleDeleteProduct }) {
   const {
     imgUrl: productImg,
     name: productName,
@@ -18,16 +54,16 @@ export default function ProductRow({ product }) {
     createdAt: publishedDate,
   } = product;
 
-  const formatedPrice = new Intl.NumberFormat("en-IN", {
-    maximumSignificantDigits: 3,
+  const formattedPrice = new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "USD",
+    minimumFractionDigits: 2, // Ensures at least 2 decimal places are shown
+    maximumFractionDigits: 20, // Allows up to 20 decimal places (you can adjust as needed)
   }).format(+price);
 
   const isActive = status === true;
 
   const date = new Date(publishedDate);
-
   const publishedYear = date.getFullYear();
   const publishedMonth = date.toLocaleString("en", { month: "2-digit" });
   const publishedDay = date.toLocaleString("en", { day: "2-digit" });
@@ -36,56 +72,101 @@ export default function ProductRow({ product }) {
     style: "percent",
   });
 
-  console.log(product);
-
-  console.log(formatedPrice);
-
   return (
-    <div className="table-row">
-      <div
-        className="cell"
-        style={!isActive ? { opacity: 0.5 } : { opacity: 1 }}
-      >
+    <tr>
+      <td style={!isActive ? { opacity: 0.8 } : { opacity: 1 }}>
         <ProductImage
           productImg={productImg}
           productName={productName}
-          className=" product-img"
+          className="product-img"
         />
-      </div>
-
-      <div className="cell name">{productName}</div>
-      <div className="cell status">
+      </td>
+      <td className="status">
         <span className={isActive ? "active" : "inactive"}>
           {isActive ? <FaRegCircleCheck /> : <FaRegCircleXmark />}
-          {isActive ? "active" : "inactive"}
+          {isActive ? "Active" : "Inactive"}
         </span>
-      </div>
-      <div className="cell stock">{stock}</div>
-      <div className="cell discount">
-        {/* <BiTrendingDown /> */}
-        {formattedDiscount}
-      </div>
-      <div className="cell category">{category}</div>
-      <div className="cell orders">
-        {/* <BiBasket /> */}
-        {orders}
-      </div>
-      <div className="cell rating">
-        {/* <CiStar /> */}
-        {rating}
-      </div>
-      <div className="cell published">
-        {/* <BiCalendarEdit /> */}
-        {`${publishedDay}-${publishedMonth}-${publishedYear}`}
-      </div>
-      <div className="cell price">
-        {/* <BiPurchaseTagAlt /> */}
-        {formatedPrice}
-      </div>
-      <div className="cell action">
-        <TbEdit />
-        <TbTrash />
-      </div>
-    </div>
+      </td>
+      <td className="name">{productName}</td>
+      <td>
+        {stock}
+        {stock <= 25 && <FaArrowTrendDown color="var(--color-2)" />}
+      </td>
+      <td>{formattedDiscount}</td>
+      {/* <td>{orders}</td> */}
+      {/* <td>{rating}</td> */}
+      <td className="price">{formattedPrice}</td>
+      <td>{category}</td>
+      <td className="published">{`${publishedDay}-${publishedMonth}-${publishedYear}`}</td>
+      <td className="action">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <CustomButton
+                aria-label="Edit Product"
+                style={{
+                  ...buttonStyle,
+                  backgroundColor: "#5300b5",
+                }}
+                icon={<MdEditSquare />}
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Edit Product</p>
+            </TooltipContent>
+          </Tooltip>
+          {/* </TooltipProvider>
+
+        <TooltipProvider> */}
+          <Tooltip>
+            <TooltipTrigger>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <CustomButton
+                    aria-label="Delete Product"
+                    style={{
+                      ...buttonStyle,
+                      backgroundColor: "#ef0012",
+                    }}
+                    icon={<MdDeleteForever />}
+                  />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you sure you want to delete this product?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      product from your inventory.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel asChild>
+                      <CustomButton
+                        className="dialog-button-cancel"
+                        text="cancel"
+                        icon={<TbForbid2 />}
+                      />
+                    </AlertDialogCancel>
+                    <AlertDialogAction asChild>
+                      <CustomButton
+                        className="dialog-button-delete "
+                        text="Delete"
+                        icon={<AiFillDelete />}
+                        onClick={() => handleDeleteProduct(product)}
+                      />
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Delete Product</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </td>
+    </tr>
   );
 }

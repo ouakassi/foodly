@@ -1,14 +1,24 @@
 .noproducts-container {
   display: flex;
-  /* max-width: 22rem; */
-  width: 100%;
-  margin: 35vh 0;
-  align-items: center;
+  flex-direction: column;
+
   justify-content: center;
-  gap: var(--gap-2);
+  align-items: center;
+  gap: var(--gap-4);
+  background: white;
+  width: fit-content;
+  padding: 2rem;
+  border-radius: 15px;
+  /* box-shadow: var(--box-shadow-1); */
+  margin: 20vh auto;
+  font-family: var(--font-1);
+  /* font-size: var(--fs-m); */
 }
-.noproducts-container button {
-  flex: 0;
-  text-transform: capitalize;
+
+.noproducts-container h1 {
+  font-size: var(--fs-l);
+  font-weight: var(--fw-semi);
+}
+/* .noproducts-container button {
   background: var(--color-7);
-}
+} */

@@ -2,13 +2,14 @@ import "./ProductHeader.css";
 
 const ProductHeader = ({ headers }) => {
   return (
-    <div className="table-header">
+    <tr className="table-header">
       {headers.map(({ title, icon }, index) => (
-        <div key={index} className="cell">
-          {icon} {title}
-        </div>
+        <th key={index} className="cell">
+          {/* <span style={{ color: "var(--color-3)" }}>{icon}</span> */}
+          {title}
+        </th>
       ))}
-    </div>
+    </tr>
   );
 };
 

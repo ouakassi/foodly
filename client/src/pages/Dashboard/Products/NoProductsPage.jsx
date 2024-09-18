@@ -16,8 +16,15 @@ import { Link } from "react-router-dom";
 export default function NoProductsPage() {
   return (
     <div className="noproducts-container">
-      <IoAlertCircleOutline style={{ color: "var(--alert-secondary" }} />
-      <span>No Product Found! Please add one</span>
+      <h1>
+        <IoAlertCircleOutline
+          className="icon"
+          style={{ color: "var(--alert-primary)" }}
+        />
+        No products found in your inventory
+      </h1>
+
+      <span>Begin your sales journey by adding a product now.</span>
       <Link to={"../create"}>
         <CustomButton
           className="add-product-button"
