@@ -19,12 +19,14 @@ import {
 
 const CategoryForm = ({
   categories,
-  newCategory,
+  selectedCategory,
   handleAddNewCategory,
   setNewCategory,
   handleCategoryInputChange,
   onSetOpenCategoryDialog,
   openCategoryDialog,
+  isEditSession,
+  editDefaultValues,
 }) => {
   return (
     <div className="content-container category-form">
@@ -52,7 +54,6 @@ const CategoryForm = ({
 
             <input
               type="text"
-              value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
             />
 
@@ -71,7 +72,10 @@ const CategoryForm = ({
         </Dialog>
       </header>
 
-      <Select onValueChange={handleCategoryInputChange}>
+      <Select
+        defaultValue={isEditSession ? editDefaultValues.category : ""}
+        onValueChange={handleCategoryInputChange}
+      >
         <SelectTrigger>
           <SelectValue placeholder="Select Category" />
         </SelectTrigger>

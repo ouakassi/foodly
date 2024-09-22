@@ -27,6 +27,7 @@ import { FaRegImage } from "react-icons/fa6";
 import axiosInstance from "../../../api/api";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 
 // const PRODUCTS = [
 //   {
@@ -207,7 +208,10 @@ export default function ProductsPage() {
         </Link>
       </header>
       {isLoading ? (
-        <div> loading...</div>
+        <div>
+          {" "}
+          <LoadingSpinner />
+        </div>
       ) : (
         <div className="products-container">
           {products && products.length > 0 ? (

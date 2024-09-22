@@ -44,7 +44,7 @@ export default function DashboardLayout() {
           <Outlet />
         </motion.div>
       </main>
-      <Toaster richColors />
+      <Toaster position="bottom-center" richColors />
     </div>
   );
 }

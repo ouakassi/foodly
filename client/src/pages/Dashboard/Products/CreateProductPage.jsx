@@ -59,10 +59,22 @@ let validationSchema = Yup.object({
     .typeError("name must be a `string` type"),
 });
 
-export default function CreateProductPage() {
-  const [selectedStatus, setSelectedStatus] = useState(true);
-  const [productImageUrl, setProductImageUrl] = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
+export default function CreateProductPage(defaultValues = {}) {
+  const {
+    id: editId,
+    createdAt,
+    updatedAt,
+    ...editDefaultValues
+  } = defaultValues.defaultValues || {};
+  const isEditSession = Boolean(editId);
+
+  const [selectedStatus, setSelectedStatus] = useState(
+    isEditSession ? editDefaultValues.status : true
+  );
+
+  const [imagePreview, setImagePreview] = useState(
+    isEditSession ? editDefaultValues.imgUrl : ""
+  );
   const [isImageUploaded, setIsImageUploaded] = useState(false);
   const [isImgUploadLoading, setIsImgUploadLoading] = useState(false);
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
@@ -72,6 +84,9 @@ export default function CreateProductPage() {
     "coffees",
     "herbs",
   ]);
+  const [selectedCategory, setSelectedCategory] = useState(
+    isEditSession ? editDefaultValues.category : "nuts"
+  );
   const [newCategory, setNewCategory] = useState("");
   const [isAddCategoryLoading, setIsAddCategoryLoading] = useState(false);
   const [isProductFormLoading, setIsProductFormLoading] = useState(false);
@@ -86,9 +101,18 @@ export default function CreateProductPage() {
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "onChange",
+    defaultValues: !isEditSession
+      ? {
+          stock: 1,
+          discount: 0,
+          category: "nuts",
+        }
+      : editDefaultValues,
   });
 
   let navigate = useNavigate();
+
+  console.log("editDefaultValues", editDefaultValues.imgUrl);
 
   const {
     data: products,
@@ -141,62 +165,9 @@ export default function CreateProductPage() {
   const handleRemoveImg = (e) => {
     e.preventDefault();
     setImagePreview("");
-    setProductImageUrl(null);
+    // setProductImageUrl(null);
   };
 
-  const onSubmit = async (data) => {
-    // Ensure image is selected
-    if (!imagePreview) {
-      toast.warning("Select an image, please!");
-      return;
-    }
-
-    if (!data.category) {
-      toast.warning("Select a category, please!");
-      return;
-    }
-
-    try {
-      setIsImgUploadLoading(true);
-      setIsProductFormLoading(true);
-
-      // Upload the image first
-      const imgRes = await axiosInstance.post("/api/upload", {
-        imgUrl: imagePreview,
-        category: newCategory || "nuts", // Default to "nuts" if no category is selected
-      });
-
-      // Once the image is uploaded, update the product data
-      const uploadedImgUrl = imgRes.data.imgUrl;
-      setProductImageUrl(uploadedImgUrl);
-      setValue("imgUrl", uploadedImgUrl);
-      setIsImageUploaded(true);
-
-      // Now, create the product using the uploaded image URL
-      const productRes = await axiosInstance.post("api/products/", {
-        ...data,
-        imgUrl: uploadedImgUrl, // Use the uploaded image URL here
-      });
-
-      // Show success notification and navigate to products page
-      toast.success("Product created successfully", { duration: 1000 });
-      setIsProductFormLoading(false);
-
-      // Optional: Uncomment this line if you want to navigate after success
-      navigate("/dashboard/products");
-    } catch (err) {
-      if (err.response) {
-        toast.error(err.response.data.message || "Error occurred");
-      } else if (err.request) {
-        toast.error("Network error, please try again later");
-      } else {
-        toast.error("Something went wrong");
-      }
-    } finally {
-      setIsImgUploadLoading(false);
-      setIsProductFormLoading(false);
-    }
-  };
   const handleAddNewCategory = (e) => {
     e.preventDefault();
 
@@ -217,41 +188,132 @@ export default function CreateProductPage() {
     try {
       setIsAddCategoryLoading(true);
       setCategories((prevCategories) => [trimmedCategory, ...prevCategories]);
-      setNewCategory("");
-      setOpenCategoryDialog(false);
+      setNewCategory(trimmedCategory);
 
       toast.success("Category added successfully");
     } catch (error) {
       console.error("Error adding category:", error);
       toast.error("Failed to add category. Please try again.");
     } finally {
+      setOpenCategoryDialog(false);
       setIsAddCategoryLoading(false);
     }
   };
 
   const handleCategoryInputChange = (value) => {
+    setSelectedCategory(value);
     setValue("category", value);
+  };
+
+  const onSubmit = async (data) => {
+    // Ensure image is selected
+    if (!imagePreview) {
+      toast.warning("Select an image, please!");
+      return;
+    }
+
+    if (!data.category) {
+      toast.warning("Select a category, please!");
+      return;
+    }
+
+    try {
+      const uploadImage = async () => {
+        // Upload the image first
+        const imgRes = await axiosInstance.post("/api/upload", {
+          imgUrl: imagePreview,
+          category: selectedCategory || "nuts", // Default to "nuts" if no category is selected
+        });
+
+        // Once the image is uploaded, update the product data
+        const uploadedImgUrlToServer = imgRes.data.imgUrl;
+        setValue("imgUrl", uploadedImgUrlToServer);
+      };
+
+      // setProductImageUrl(uploadedImgUrl);
+
+      if (isEditSession) {
+        !imagePreview.startsWith("http") && (await uploadImage());
+        setIsImgUploadLoading(true);
+        setIsProductFormLoading(true);
+        await axiosInstance.put(`/api/products/${editId}`, {
+          ...data,
+        });
+        toast.success("Product Edited successfully");
+
+        navigate(`/dashboard/products`);
+        return;
+      } else {
+        setIsImgUploadLoading(true);
+        setIsProductFormLoading(true);
+        // Now, create the product using the uploaded image URL
+        await axiosInstance.post("api/products/", {
+          ...data,
+        });
+        // Show success notification and navigate to products page
+        toast.success("Product created successfully");
+        // Optional: Uncomment this line if you want to navigate after success
+        navigate("/dashboard/products");
+      }
+    } catch (err) {
+      if (err.response) {
+        toast.error(err.response.data.message || "Error occurred");
+      } else if (err.request) {
+        toast.error("Network error, please try again later");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setIsImgUploadLoading(false);
+      setIsProductFormLoading(false);
+    }
   };
 
   return (
     <div className="create-product">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="create-header">
-          <h1>create product</h1>
-          <div>
-            <CustomButton
-              text="save as draft"
-              icon={<MdOutlineUploadFile fontSize="1.25rem" />}
-              isTypeSubmit={true}
-              className="button-save"
-            />
-            <CustomButton
-              text="Create"
-              icon={<FaFileCirclePlus fontSize="1.25rem" />}
-              isTypeSubmit={true}
-            />
+        {!isEditSession ? (
+          <div className="create-header">
+            <h1>create product</h1>
+            <div>
+              <CustomButton
+                text="save as draft"
+                icon={<MdOutlineUploadFile fontSize="1.25rem" />}
+                isTypeSubmit={true}
+                className="button-save"
+              />
+              <CustomButton
+                text="Create"
+                icon={<FaFileCirclePlus fontSize="1.25rem" />}
+                isTypeSubmit={true}
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="create-header">
+            <h1>
+              Edit product{" "}
+              <span
+                style={{
+                  color: "var(--color-3)",
+                  // fontSize: "1.5rem",
+                  fontWeight: "bold",
+                  fontFamily: "var(--font-1)",
+                }}
+              >
+                {editDefaultValues.name}
+              </span>
+            </h1>
+            <div>
+              <CustomButton
+                text="Edit"
+                icon={<FaFileCirclePlus fontSize="1.25rem" />}
+                isTypeSubmit={true}
+                disabled={isProductFormLoading}
+              />
+            </div>
+          </div>
+        )}
         <div className="row">
           <div>
             <div className="content-container product-form">
@@ -336,7 +398,6 @@ export default function CreateProductPage() {
                         message: "Stock must be at least 1",
                       },
                     })}
-                    defaultValue={1}
                   />
                 </InputContainer>
 
@@ -378,7 +439,6 @@ export default function CreateProductPage() {
                         message: "Discount cannot exceed 100%",
                       },
                     })}
-                    defaultValue={0}
                   />
                 </InputContainer>
               </div>
@@ -393,6 +453,8 @@ export default function CreateProductPage() {
               handleCategoryInputChange={handleCategoryInputChange}
               onSetOpenCategoryDialog={setOpenCategoryDialog}
               openCategoryDialog={openCategoryDialog}
+              isEditSession={isEditSession}
+              editDefaultValues={editDefaultValues}
             />
           </div>
 
@@ -406,7 +468,7 @@ export default function CreateProductPage() {
           />
         </div>
       </form>
-      {isImgUploadLoading && isProductFormLoading && (
+      {isProductFormLoading && (
         <div className="loader-container">
           <LoadingSpinner />
         </div>

@@ -7,8 +7,8 @@
   text-transform: capitalize;
   font-size: var(--fs-s);
   font-family: var(--font-1);
-  background: #ebebeb;
-  background: linear-gradient(
+   background: #f6f6f6;
+ /* background: linear-gradient(
     0deg,
     rgba(2, 0, 36, 1) 0%,
     rgb(0, 114, 27) 0%,
@@ -18,7 +18,7 @@
     0deg,
     rgba(159, 159, 159, 0) 0%,
     rgb(233 233 233) 100%
-  );
+  ); */
   border: 4px solid rgba(0, 0, 0, 0);
   /* margin-bottom: 1rem; */
 }

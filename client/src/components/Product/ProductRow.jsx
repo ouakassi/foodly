@@ -1,7 +1,6 @@
 import "./ProductRow.css";
 import ProductImage from "./ProductImage";
 import CustomButton from "../Buttons/CustomButton";
-import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import { MdDeleteForever, MdEditSquare } from "react-icons/md";
 
 import {
@@ -26,9 +25,9 @@ import {
   FaRegCircleCheck,
   FaRegCircleXmark,
 } from "react-icons/fa6";
-import { color } from "framer-motion";
 import { AiFillDelete } from "react-icons/ai";
 import { TbForbid2 } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 
 const buttonStyle = {
   color: "white",
@@ -37,7 +36,8 @@ const buttonStyle = {
   maxWidth: "max-content",
   fontSize: "var(--fs-l)",
   boxShadow: "none",
-  cursor: "pointer", // Ensure the button shows the pointer cursor
+  cursor: "pointer",
+  backgroundColor: "white",
 };
 
 export default function ProductRow({ product, handleDeleteProduct }) {
@@ -54,6 +54,8 @@ export default function ProductRow({ product, handleDeleteProduct }) {
     createdAt: publishedDate,
   } = product;
 
+  const navigate = useNavigate();
+
   const formattedPrice = new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "USD",
@@ -65,7 +67,7 @@ export default function ProductRow({ product, handleDeleteProduct }) {
 
   const date = new Date(publishedDate);
   const publishedYear = date.getFullYear();
-  const publishedMonth = date.toLocaleString("en", { month: "2-digit" });
+  const publishedMonth = date.toLocaleString("en", { month: "short" });
   const publishedDay = date.toLocaleString("en", { day: "2-digit" });
 
   const formattedDiscount = discount.toLocaleString("en", {
@@ -81,23 +83,21 @@ export default function ProductRow({ product, handleDeleteProduct }) {
           className="product-img"
         />
       </td>
+      <td className="name">{productName}</td>
       <td className="status">
         <span className={isActive ? "active" : "inactive"}>
           {isActive ? <FaRegCircleCheck /> : <FaRegCircleXmark />}
           {isActive ? "Active" : "Inactive"}
         </span>
       </td>
-      <td className="name">{productName}</td>
       <td>
         {stock}
         {stock <= 25 && <FaArrowTrendDown color="var(--color-2)" />}
       </td>
       <td>{formattedDiscount}</td>
-      {/* <td>{orders}</td> */}
-      {/* <td>{rating}</td> */}
       <td className="price">{formattedPrice}</td>
       <td>{category}</td>
-      <td className="published">{`${publishedDay}-${publishedMonth}-${publishedYear}`}</td>
+      <td className="published">{`${publishedMonth} ${publishedDay}  ${publishedYear}`}</td>
       <td className="action">
         <TooltipProvider>
           <Tooltip>
@@ -106,18 +106,21 @@ export default function ProductRow({ product, handleDeleteProduct }) {
                 aria-label="Edit Product"
                 style={{
                   ...buttonStyle,
-                  backgroundColor: "#5300b5",
+                  color: "#2300b5",
                 }}
                 icon={<MdEditSquare />}
+                onClick={() => {
+                  navigate(`/dashboard/products/edit/${product.id}`);
+                }}
               />
             </TooltipTrigger>
             <TooltipContent>
               <p>Edit Product</p>
             </TooltipContent>
           </Tooltip>
-          {/* </TooltipProvider>
+        </TooltipProvider>
 
-        <TooltipProvider> */}
+        <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
               <AlertDialog>
@@ -126,7 +129,7 @@ export default function ProductRow({ product, handleDeleteProduct }) {
                     aria-label="Delete Product"
                     style={{
                       ...buttonStyle,
-                      backgroundColor: "#ef0012",
+                      color: "#ef0012",
                     }}
                     icon={<MdDeleteForever />}
                   />
