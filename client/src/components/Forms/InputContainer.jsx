@@ -18,7 +18,7 @@ export default function InputContainer({
   setTogglePassword,
   toRef,
   isFieldRequired,
-  className,
+  className = "",
   style,
 }) {
   return (

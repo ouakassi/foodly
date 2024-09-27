@@ -35,7 +35,8 @@ let validationSchema = Yup.object({
       "Name can only contain Latin letters."
     )
     .typeError("name must be a `string` type")
-    .required("Name is required"),
+    .required("Name is required")
+    .lowercase(),
   stock: Yup.number()
     .integer("Stock must be a whole number")
     .min(1, "must be at least 1")
@@ -75,8 +76,7 @@ export default function CreateProductPage(defaultValues = {}) {
   const [imagePreview, setImagePreview] = useState(
     isEditSession ? editDefaultValues.imgUrl : ""
   );
-  const [isImageUploaded, setIsImageUploaded] = useState(false);
-  const [isImgUploadLoading, setIsImgUploadLoading] = useState(false);
+  const [isFormLoading, setIsFormLoading] = useState(false);
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [categories, setCategories] = useState([
     "oils",
@@ -89,7 +89,7 @@ export default function CreateProductPage(defaultValues = {}) {
   );
   const [newCategory, setNewCategory] = useState("");
   const [isAddCategoryLoading, setIsAddCategoryLoading] = useState(false);
-  const [isProductFormLoading, setIsProductFormLoading] = useState(false);
+  const [isDraft, setIsDraft] = useState(false);
 
   const {
     register,
@@ -111,8 +111,6 @@ export default function CreateProductPage(defaultValues = {}) {
   });
 
   let navigate = useNavigate();
-
-  console.log("editDefaultValues", editDefaultValues.imgUrl);
 
   const {
     data: products,
@@ -139,7 +137,6 @@ export default function CreateProductPage(defaultValues = {}) {
       ...new Set(products.map((product) => product.category)),
     ];
     setCategories(uniqueCategories);
-    setFocus("name");
   }, [error, products]);
 
   const handleFileUpload = (e) => {
@@ -172,6 +169,11 @@ export default function CreateProductPage(defaultValues = {}) {
     e.preventDefault();
 
     const trimmedCategory = newCategory.trim().toLowerCase();
+
+    if (/[A-Z0-9]/.test(newCategory)) {
+      toast.error("Cannot contain uppercase letters or numbers.");
+      return;
+    }
 
     if (!trimmedCategory) {
       toast.error("Category cannot be empty");
@@ -218,54 +220,46 @@ export default function CreateProductPage(defaultValues = {}) {
     }
 
     try {
-      const uploadImage = async () => {
-        // Upload the image first
-        const imgRes = await axiosInstance.post("/api/upload", {
-          imgUrl: imagePreview,
-          category: selectedCategory || "nuts", // Default to "nuts" if no category is selected
-        });
+      setIsFormLoading(true);
 
-        // Once the image is uploaded, update the product data
-        const uploadedImgUrlToServer = imgRes.data.imgUrl;
-        setValue("imgUrl", uploadedImgUrlToServer);
-      };
+      const imgRes = await axiosInstance.post("/api/upload", {
+        imgUrl: imagePreview,
+        category: selectedCategory || "nuts", // Default to "nuts" if no category is selected
+      });
 
-      // setProductImageUrl(uploadedImgUrl);
+      console.log(imgRes);
+      const uploadedImgUrl = imgRes.data.imgUrl;
+
+      setValue("imgUrl", uploadedImgUrl);
+
+      console.log("uploadedImgUrlToServer", uploadedImgUrl);
+
+      // Ensure that the image URL is part of the data
+      data.imgUrl = uploadedImgUrl;
 
       if (isEditSession) {
-        !imagePreview.startsWith("http") && (await uploadImage());
-        setIsImgUploadLoading(true);
-        setIsProductFormLoading(true);
         await axiosInstance.put(`/api/products/${editId}`, {
           ...data,
         });
-        toast.success("Product Edited successfully");
-
-        navigate(`/dashboard/products`);
-        return;
-      } else {
-        setIsImgUploadLoading(true);
-        setIsProductFormLoading(true);
-        // Now, create the product using the uploaded image URL
-        await axiosInstance.post("api/products/", {
-          ...data,
-        });
-        // Show success notification and navigate to products page
-        toast.success("Product created successfully");
-        // Optional: Uncomment this line if you want to navigate after success
+        console.log("edit data", data);
+        toast.success("Product edited successfully");
         navigate("/dashboard/products");
+        return;
       }
-    } catch (err) {
-      if (err.response) {
-        toast.error(err.response.data.message || "Error occurred");
-      } else if (err.request) {
-        toast.error("Network error, please try again later");
-      } else {
-        toast.error("Something went wrong");
-      }
+
+      await axiosInstance.post("/api/products/", {
+        ...data,
+      });
+
+      console.log("create data", data);
+      toast.success("Product created successfully");
+      navigate("/dashboard/products");
+      return;
+    } catch (error) {
+      console.error("Error saving the product", error);
+      toast.error("Failed to save product");
     } finally {
-      setIsImgUploadLoading(false);
-      setIsProductFormLoading(false);
+      setIsFormLoading(false);
     }
   };
 
@@ -281,6 +275,7 @@ export default function CreateProductPage(defaultValues = {}) {
                 icon={<MdOutlineUploadFile fontSize="1.25rem" />}
                 isTypeSubmit={true}
                 className="button-save"
+                onClick={() => setIsDraft(true)}
               />
               <CustomButton
                 text="Create"
@@ -309,7 +304,7 @@ export default function CreateProductPage(defaultValues = {}) {
                 text="Edit"
                 icon={<FaFileCirclePlus fontSize="1.25rem" />}
                 isTypeSubmit={true}
-                disabled={isProductFormLoading}
+                disabled={isFormLoading}
               />
             </div>
           </div>
@@ -461,14 +456,12 @@ export default function CreateProductPage(defaultValues = {}) {
           <MediaUpload
             selectedStatus={selectedStatus}
             imagePreview={imagePreview}
-            isImgUploadLoading={isImgUploadLoading}
-            isProductFormLoading={isProductFormLoading}
             handleFileUpload={handleFileUpload}
             handleRemoveImg={handleRemoveImg}
           />
         </div>
       </form>
-      {isProductFormLoading && (
+      {isFormLoading && (
         <div className="loader-container">
           <LoadingSpinner />
         </div>

@@ -8,8 +8,6 @@ import LoadingSpinner from "@/components/Forms/LoadingSpinner";
 const MediaUpload = ({
   selectedStatus = true,
   imagePreview,
-  isImgUploadLoading,
-  isProductFormLoading,
   handleFileUpload,
   handleRemoveImg,
 }) => {

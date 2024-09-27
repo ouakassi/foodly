@@ -5,14 +5,14 @@ import Header from "@/components/Product/Header";
 import "./ProductsPage.css";
 import NoProductsPage from "./NoProductsPage";
 
-import { BsPlusCircleFill } from "react-icons/bs";
+import { BsPlusCircleFill, BsShieldCheck, BsShieldX } from "react-icons/bs";
 import {
   BiArchiveIn,
   BiBasket,
   BiPurchaseTagAlt,
   BiCalendarEdit,
 } from "react-icons/bi";
-import { CiStar } from "react-icons/ci";
+import { CiGrid41, CiStar } from "react-icons/ci";
 import { HiOutlineReceiptPercent } from "react-icons/hi2";
 
 import {
@@ -20,14 +20,18 @@ import {
   TbCategory2,
   TbHomeSignal,
   TbBrandProducthunt,
+  TbSearch,
 } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { FaRegImage } from "react-icons/fa6";
 import axiosInstance from "../../../api/api";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
+import InputContainer from "../../../components/Forms/InputContainer";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // const PRODUCTS = [
 //   {
@@ -154,8 +158,8 @@ import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 
 const tableHeaders = [
   { title: "image", icon: <FaRegImage /> },
-  { title: "Status", icon: <TbHomeSignal /> },
   { title: "name", icon: <TbBrandProducthunt /> },
+  { title: "Status", icon: <TbHomeSignal /> },
   { title: "Stock", icon: <BiArchiveIn /> },
   { title: "Discount", icon: <HiOutlineReceiptPercent /> },
   // { title: "Orders", icon: <BiBasket /> },
@@ -168,15 +172,38 @@ const tableHeaders = [
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
-  const {
-    data: productsData,
-    fetchError,
-    isLoading,
-  } = useAxiosFetch("http://localhost:8000/api/products");
+  const [selectedTab, setSelectedTab] = useState("all");
+  const [searchParam, setSearchParam] = useState("");
+
+  const { data, fetchError, isLoading } = useAxiosFetch(
+    "http://localhost:8000/api/products"
+  );
 
   useEffect(() => {
-    productsData && setProducts(productsData);
-  }, [productsData]);
+    setProducts(data);
+  }, [data]);
+
+  // const filterProducts = useMemo(() => {
+  //   return data.filter((product) => product.status);
+  // }, [data]);
+  const filteredProducts = useMemo(() => {
+    switch (selectedTab) {
+      case "all":
+        return products;
+      case "active":
+        return products?.filter((product) => product.status === true);
+      case "inactive":
+        return products?.filter((product) => product.status === false);
+      default:
+        return products;
+    }
+  }, [selectedTab, products]);
+
+  const filteredProductsBySearch = useMemo(() => {
+    return products?.filter((product) =>
+      product.name.toLowerCase().includes(searchParam.toLowerCase())
+    );
+  }, [products, searchParam]);
 
   const handleDeleteProduct = async (product) => {
     if (!product.id) {
@@ -194,43 +221,96 @@ export default function ProductsPage() {
     }
   };
 
+  const handleSearchParamChange = (e) => {
+    setSearchParam(e.target.value);
+    console.log(e.target.value);
+  };
+
   return (
     <section className="products-page">
-      <header>
-        <h1>All Products</h1>
-        <Link to={"../create"}>
-          <CustomButton
-            className="add-product-button"
-            scaleOnHover={1}
-            text="Add Product"
-            icon={<BsPlusCircleFill />}
-          />
-        </Link>
-      </header>
-      {isLoading ? (
-        <div>
-          {" "}
-          <LoadingSpinner />
-        </div>
-      ) : (
-        <div className="products-container">
-          {products && products.length > 0 ? (
+      {products && products.length > 0 ? (
+        <>
+          <header>
+            <h1>All Products</h1>
+
+            <Link to={"../create"}>
+              <CustomButton
+                className="add-product-button"
+                scaleOnHover={1}
+                text="Add Product"
+                icon={<BsPlusCircleFill />}
+              />
+            </Link>
+          </header>
+          <div className="products-container">
             <table className="table">
+              <div className="filters">
+                <Tabs defaultValue="all" className="w-[400px]">
+                  <TabsList>
+                    <TabsTrigger
+                      onClick={() => setSelectedTab("all")}
+                      value="all"
+                    >
+                      <CiGrid41 className="icon" /> All
+                    </TabsTrigger>
+                    <TabsTrigger
+                      onClick={() => setSelectedTab("active")}
+                      value="active"
+                    >
+                      <BsShieldCheck className="icon" /> Active
+                    </TabsTrigger>
+                    <TabsTrigger
+                      onClick={() => setSelectedTab("inactive")}
+                      value="inactive"
+                    >
+                      <BsShieldX className="icon" />
+                      Inactive
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+
+                <div className="search-container">
+                  <span htmlFor="search">Search Product</span>
+                  <InputContainer icon={<TbSearch />} className="search-input">
+                    <input type="text" onChange={handleSearchParamChange} />
+                  </InputContainer>
+                </div>
+              </div>
+
               <ProductHeader headers={tableHeaders} />
-              <tbody className="table-body">
-                {products.map((P) => (
-                  <ProductRow
-                    key={P.id}
-                    product={P}
-                    handleDeleteProduct={handleDeleteProduct}
-                  />
-                ))}
-              </tbody>
+              {isLoading ? (
+                <div>
+                  <LoadingSpinner />
+                </div>
+              ) : (
+                <tbody className="table-body">
+                  {!searchParam &&
+                    filteredProducts.map((P) => (
+                      <ProductRow
+                        key={P.id}
+                        product={P}
+                        handleDeleteProduct={handleDeleteProduct}
+                      />
+                    ))}
+                  {filteredProductsBySearch.length > 0 &&
+                    searchParam &&
+                    filteredProductsBySearch.map((P) => (
+                      <ProductRow
+                        key={P.id}
+                        product={P}
+                        handleDeleteProduct={handleDeleteProduct}
+                      />
+                    ))}
+                  {filteredProductsBySearch.length === 0 &&
+                    searchParam &&
+                    "No products found"}
+                </tbody>
+              )}
             </table>
-          ) : (
-            <NoProductsPage />
-          )}
-        </div>
+          </div>
+        </>
+      ) : (
+        <NoProductsPage />
       )}
     </section>
   );

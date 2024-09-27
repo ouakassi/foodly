@@ -1,14 +1,14 @@
 .table-header {
   display: flex;
   /* padding: 0.5rem; */
-  color: #1d1d1d;
+  color: #5c5c5c;
   border-radius: 5px;
   font-weight: var(--fw-bold);
   text-transform: capitalize;
   font-size: var(--fs-s);
   font-family: var(--font-1);
-   background: #f6f6f6;
- /* background: linear-gradient(
+  background: #f6f6f6;
+  /* background: linear-gradient(
     0deg,
     rgba(2, 0, 36, 1) 0%,
     rgb(0, 114, 27) 0%,
