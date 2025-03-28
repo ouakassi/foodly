@@ -10,6 +10,8 @@ import { Toaster, toast } from "sonner";
 
 const mainStyle = {
   paddingLeft: "var(--sidebar-width)",
+  maxWidth: "1400px",
+  margin: "auto",
 };
 
 export default function DashboardLayout() {

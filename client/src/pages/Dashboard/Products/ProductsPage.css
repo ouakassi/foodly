@@ -38,9 +38,10 @@
 .products-page .filters {
   margin-top: 1rem;
   display: flex;
-  /* justify-content: space-around; */
   align-items: center;
-  margin-bottom: 1rem;
+  justify-content: space-between;
+  /* align-items: center; */
+  /* margin-bottom: 1rem; */
   gap: var(--gap-12);
   /* font-family: var(--font-4); */
 }
@@ -49,15 +50,87 @@
   margin-left: 0;
 }
 
-.products-page .search-input {
+.products-page .search-container {
   margin: 0;
-  /* flex: 1; */
   width: 100%;
+}
+.products-page .search-container .input {
+  margin: 0;
+}
+
+.products-page .search-container div:has(input) {
+  border-radius: 20px;
+}
+
+.products-page .search-container div:has(input):focus-within {
+  border-radius: 5px;
 }
 
 .search-container {
+  /* display: flex; */
+  /* align-items: center; */
+  /* width: 100%; */
+  /* gap: var(--gap-4); */
+}
+
+.products-page .table-pages-buttons {
   display: flex;
   align-items: center;
-  width: 100%;
-  gap: var(--gap-4);
+  gap: 0.5rem;
+}
+.products-page .table-pages-buttons button,
+.table-footer button {
+  padding: 6px 10px;
+  background: rgb(255 255 255);
+  border: 1px rgb(221 221 221 / 15%) solid;
+  color: rgb(77 77 77);
+  border-radius: 5px;
+  width: fit-content;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.products-page .table-pages-buttons button:hover,
+.table-footer button:hover {
+  background-color: rgb(245, 245, 245);
+}
+
+.products-page .table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  /* max-width: fit-content; */
+}
+
+.products-page .table-footer span {
+  font-family: var(--font-1);
+  /* font-weight: bold; */
+  font-size: var(--fs-sm);
+}
+
+.page-info {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.page-current {
+  font-weight: 700;
+  color: var(--color-3-dark);
+}
+.total-pages {
+  /* font-weight: 700;
+  color: var(--color-4); */
+}
+
+.badge {
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 5px;
+  padding: 5px;
+  margin-left: 8px;
+  font-weight: 700;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }

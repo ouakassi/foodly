@@ -24,7 +24,7 @@ import {
 } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
-import { FaRegImage } from "react-icons/fa6";
+import { FaAngleLeft, FaAngleRight, FaRegImage } from "react-icons/fa6";
 import axiosInstance from "../../../api/api";
 import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
@@ -32,129 +32,12 @@ import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 import InputContainer from "../../../components/Forms/InputContainer";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// const PRODUCTS = [
-//   {
-//     id: 1,
-//     status: true,
-//     name: "Mixed Nuts",
-//     imgUrl:
-//       "https://res.cloudinary.com/djfsxp9z0/image/upload/v1726090749/products/nuts/cedfb7a667584a1362a6b25ef127eeea.png",
-//     price: 499,
-//     stock: 250,
-//     discount: 10.0,
-//     category: "Fruits",
-//     createdAt: "2024-09-12T10:00:00Z",
-//   },
-//   {
-//     id: 2,
-//     status: false,
-//     name: "Dried Mango Slices",
-//     imgUrl:
-//       "https://res.cloudinary.com/djfsxp9z0/image/upload/v1726090749/products/nuts/cedfb7a667584a1362a6b25ef127eeea.png",
-//     price: 425,
-//     stock: 300,
-//     discount: 8.5,
-//     category: "Oils",
-//     createdAt: "2024-09-12T10:00:00Z",
-//   },
-//   {
-//     id: 3,
-//     status: true,
-//     name: "Dried Plums",
-//     imgUrl:
-//       "https://res.cloudinary.com/djfsxp9z0/image/upload/v1726090749/products/nuts/cedfb7a667584a1362a6b25ef127eeea.png",
-//     price: 555.68,
-//     stock: 500,
-//     discount: 5.5,
-//     category: "Coffees",
-//     createdAt: "2024-09-12T10:00:00Z",
-//   },
-//   {
-//     id: 4,
-//     status: false,
-//     name: "Roasted Peanuts",
-//     imgUrl:
-//       "https://res.cloudinary.com/djfsxp9z0/image/upload/v1726090749/products/nuts/cedfb7a667584a1362a6b25ef127eeea.png",
-//     price: 350,
-//     stock: 400,
-//     discount: 7.0,
-//     category: "Herbs",
-//     createdAt: "2024-09-12T10:00:00Z",
-//   },
-//   {
-//     id: 5,
-//     status: true,
-//     name: "Chestnuts",
-//     imgUrl:
-//       "https://res.cloudinary.com/djfsxp9z0/image/upload/v1726090749/products/nuts/cedfb7a667584a1362a6b25ef127eeea.png",
-//     price: 675,
-//     stock: 150,
-//     discount: 6.0,
-//     category: "Fruits",
-//     createdAt: "2024-09-12T10:00:00Z",
-//   },
-//   {
-//     id: 6,
-//     status: false,
-//     name: "Dried Figs",
-//     imgUrl:
-//       "https://res.cloudinary.com/djfsxp9z0/image/upload/v1726090749/products/nuts/cedfb7a667584a1362a6b25ef127eeea.png",
-//     price: 475,
-//     stock: 220,
-//     discount: 4.5,
-//     category: "Oils",
-//     createdAt: "2024-09-12T10:00:00Z",
-//   },
-//   {
-//     id: 7,
-//     status: true,
-//     name: "Bay Leaves",
-//     imgUrl:
-//       "https://res.cloudinary.com/djfsxp9z0/image/upload/v1726090749/products/nuts/cedfb7a667584a1362a6b25ef127eeea.png",
-//     price: 299,
-//     stock: 350,
-//     discount: 5.0,
-//     category: "Herbs",
-//     createdAt: "2024-09-12T10:00:00Z",
-//   },
-//   {
-//     id: 8,
-//     status: false,
-//     name: "Dried Rose Petals",
-//     imgUrl:
-//       "https://res.cloudinary.com/djfsxp9z0/image/upload/v1726090749/products/nuts/cedfb7a667584a1362a6b25ef127eeea.png",
-//     price: 399,
-//     stock: 180,
-//     discount: 6.5,
-//     category: "Coffees",
-//     createdAt: "2024-09-12T10:00:00Z",
-//   },
-//   {
-//     id: 9,
-//     status: true,
-//     name: "Dried Rose Blend",
-//     imgUrl:
-//       "https://res.cloudinary.com/djfsxp9z0/image/upload/v1726090749/products/nuts/cedfb7a667584a1362a6b25ef127eeea.png",
-//     price: 450,
-//     stock: 270,
-//     discount: 9.0,
-//     category: "Fruits",
-//     createdAt: "2024-09-12T10:00:00Z",
-//   },
-//   {
-//     id: 10,
-//     status: false,
-//     name: "Ground Cinnamon",
-//     imgUrl:
-//       "https://res.cloudinary.com/djfsxp9z0/image/upload/v1726090749/products/nuts/cedfb7a667584a1362a6b25ef127eeea.png",
-//     price: 299,
-//     stock: 320,
-//     discount: 4.0,
-//     category: "Oils",
-//     createdAt: "2024-09-12T10:00:00Z",
-//   },
-// ];
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const tableHeaders = [
   { title: "image", icon: <FaRegImage /> },
@@ -174,14 +57,27 @@ export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [selectedTab, setSelectedTab] = useState("all");
   const [searchParam, setSearchParam] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [productsTotal, setProductsTotal] = useState(0);
+  const ITEMS_PER_PAGE = 10;
 
   const { data, fetchError, isLoading } = useAxiosFetch(
-    "http://localhost:8000/api/products"
+    `http://localhost:8000/api/products?limit=${ITEMS_PER_PAGE}&page=${currentPage}`
   );
 
+  console.log(data?.products);
+
   useEffect(() => {
-    setProducts(data);
-  }, [data]);
+    try {
+      setProducts(data.products);
+      setTotalPages(data.totalPages);
+      setProductsTotal(data.productsCount);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setProducts([]); // Clear products if error
+    }
+  }, [data, currentPage]);
 
   // const filterProducts = useMemo(() => {
   //   return data.filter((product) => product.status);
@@ -226,12 +122,27 @@ export default function ProductsPage() {
     console.log(e.target.value);
   };
 
+  const handleNextPage = () => {
+    if (currentPage >= totalPages) {
+      toast.error("You are already on the last page");
+      return;
+    }
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+  const handlePreviousPage = () => {
+    if (currentPage === 1) {
+      toast.error("You are already on the first page");
+      return;
+    }
+    setCurrentPage((prevPage) => prevPage - 1);
+  };
+
   return (
     <section className="products-page">
       {products && products.length > 0 ? (
         <>
           <header>
-            <h1>All Products</h1>
+            <h1>Products</h1>
 
             <Link to={"../create"}>
               <CustomButton
@@ -243,40 +154,62 @@ export default function ProductsPage() {
             </Link>
           </header>
           <div className="products-container">
-            <table className="table">
-              <div className="filters">
-                <Tabs defaultValue="all" className="w-[400px]">
-                  <TabsList>
-                    <TabsTrigger
-                      onClick={() => setSelectedTab("all")}
-                      value="all"
-                    >
-                      <CiGrid41 className="icon" /> All
-                    </TabsTrigger>
-                    <TabsTrigger
-                      onClick={() => setSelectedTab("active")}
-                      value="active"
-                    >
-                      <BsShieldCheck className="icon" /> Active
-                    </TabsTrigger>
-                    <TabsTrigger
-                      onClick={() => setSelectedTab("inactive")}
-                      value="inactive"
-                    >
+            <div className="filters">
+              <Tabs defaultValue="all" className="w-[400px]">
+                <TabsList>
+                  <TabsTrigger
+                    onClick={() => setSelectedTab("all")}
+                    value="all"
+                  >
+                    <div>
+                      <CiGrid41 className="icon" /> <span>All</span>
+                      <Badge>{productsTotal}</Badge>
+                    </div>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    onClick={() => setSelectedTab("active")}
+                    value="active"
+                  >
+                    <div>
+                      <BsShieldCheck className="icon" /> <span>Active</span>
+                      <Badge>14</Badge>
+                    </div>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    onClick={() => setSelectedTab("inactive")}
+                    value="inactive"
+                  >
+                    <div>
                       <BsShieldX className="icon" />
-                      Inactive
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
+                      <span>Inactive</span>
+                      <Badge>6</Badge>
+                    </div>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
 
-                <div className="search-container">
-                  <span htmlFor="search">Search Product</span>
-                  <InputContainer icon={<TbSearch />} className="search-input">
-                    <input type="text" onChange={handleSearchParamChange} />
-                  </InputContainer>
-                </div>
+              <InputContainer icon={<TbSearch />} className="search-container">
+                <input
+                  type="text"
+                  placeholder="Search for product.."
+                  onChange={handleSearchParamChange}
+                />
+              </InputContainer>
+
+              <div className="table-pages-buttons">
+                <PreviousBtn
+                  onClick={handlePreviousPage}
+                  currentPage={currentPage}
+                />
+
+                <NextBtn
+                  onClick={handleNextPage}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                />
               </div>
-
+            </div>
+            <table className="table">
               <ProductHeader headers={tableHeaders} />
               {isLoading ? (
                 <div>
@@ -307,6 +240,22 @@ export default function ProductsPage() {
                 </tbody>
               )}
             </table>
+            <footer className="table-footer">
+              <PreviousBtn
+                onClick={handlePreviousPage}
+                currentPage={currentPage}
+              />
+              <span className="page-info">
+                {/* Page */}
+                <span className="page-current">{currentPage}</span>/
+                <span className="total-pages">{totalPages}</span>
+              </span>
+              <NextBtn
+                onClick={handleNextPage}
+                currentPage={currentPage}
+                totalPages={totalPages}
+              />
+            </footer>
           </div>
         </>
       ) : (
@@ -315,3 +264,50 @@ export default function ProductsPage() {
     </section>
   );
 }
+
+const PreviousBtn = ({ onClick, currentPage }) => {
+  const isFirstPage = currentPage === 1;
+  return (
+    <TooltipProvider delayDuration={100}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span>
+            <CustomButton
+              onClick={onClick}
+              disabled={isFirstPage}
+              icon={<FaAngleLeft />}
+            />
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{!isFirstPage ? "Previous Page" : "You're in first page"}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+const NextBtn = ({ onClick, currentPage, totalPages }) => {
+  const isLastPage = currentPage === totalPages;
+
+  return (
+    <TooltipProvider delayDuration={100}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span>
+            <CustomButton
+              onClick={onClick}
+              disabled={isLastPage}
+              icon={<FaAngleRight />}
+            />
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{!isLastPage ? "Next Page" : "Already in Last page"}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+const Badge = ({ children }) => <span className="badge">{children}</span>;

@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const Category = require("../models/categoryModel");
 const Product = require("../models/productModel");
 const { httpLogger } = require("../utils/logger");
@@ -7,12 +8,52 @@ const { httpLogger } = require("../utils/logger");
 // Public
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.findAll({});
-    if (products.length === 0) {
-      return res.status(404).json({ message: "no products found" });
-    } else {
-      res.status(200).json(products);
+    let { page, limit } = req.query;
+
+    const { search } = req.query;
+
+    // Return all products if no pagination is provided
+    if (!page && !limit) {
+      if (!search) {
+        const products = await Product.findAll();
+        return res.status(200).json({ products });
+      }
+      const products = await Product.findAll({
+        where: {
+          name: { [Op.like]: `%${search}%` },
+        },
+      });
+      return res
+        .status(200)
+        .json({
+          products,
+          message: "search results",
+          searchQuery: search,
+          searchCount: products.length,
+        });
     }
+
+    // Paginated
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+
+    const { count, rows: products } = await Product.findAndCountAll({
+      offset: (page - 1) * limit,
+      limit: limit,
+    });
+
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
+    }
+
+    const productsCount = await Product.count();
+
+    return res.status(200).json({
+      products,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      productsCount: parseInt(productsCount),
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

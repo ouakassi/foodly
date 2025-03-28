@@ -70,10 +70,6 @@ export default function ProductRow({ product, handleDeleteProduct }) {
   const publishedMonth = date.toLocaleString("en", { month: "short" });
   const publishedDay = date.toLocaleString("en", { day: "2-digit" });
 
-  const formattedDiscount = discount.toLocaleString("en", {
-    style: "percent",
-  });
-
   return (
     <tr>
       <td style={!isActive ? { opacity: 0.8 } : { opacity: 1 }}>
@@ -94,12 +90,12 @@ export default function ProductRow({ product, handleDeleteProduct }) {
         {stock}
         {stock <= 25 && <FaArrowTrendDown color="var(--color-2)" />}
       </td>
-      <td>{formattedDiscount}</td>
+      <td>{`${discount}%`}</td>
       <td className="price">{formattedPrice}</td>
       <td>{category}</td>
       <td className="published">{`${publishedMonth} ${publishedDay}  ${publishedYear}`}</td>
       <td className="action">
-        <TooltipProvider>
+        <TooltipProvider delayDuration={100}>
           <Tooltip>
             <TooltipTrigger>
               <CustomButton
@@ -120,7 +116,7 @@ export default function ProductRow({ product, handleDeleteProduct }) {
           </Tooltip>
         </TooltipProvider>
 
-        <TooltipProvider>
+        <TooltipProvider delayDuration={100}>
           <Tooltip>
             <TooltipTrigger>
               <AlertDialog>

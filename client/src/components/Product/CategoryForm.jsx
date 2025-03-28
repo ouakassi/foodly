@@ -1,3 +1,5 @@
+import "./CategoryForm.css";
+
 import { RiAddCircleLine } from "react-icons/ri";
 import { MdFormatListBulletedAdd } from "react-icons/md";
 import {
@@ -53,6 +55,7 @@ const CategoryForm = ({
             </DialogDescription>
 
             <input
+              className="category-form__input"
               type="text"
               onChange={(e) => setNewCategory(e.target.value)}
             />
@@ -61,9 +64,18 @@ const CategoryForm = ({
               <CustomButton
                 onClick={handleAddNewCategory}
                 text={
-                  <span>
-                    <MdFormatListBulletedAdd className="icon" />
-                    Add Category
+                  <span
+                    style={{
+                      fontFamily: "var(--font-2)",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    <MdFormatListBulletedAdd
+                      className="icon"
+                      style={{ fontSize: "25px" }}
+                    />
+                    Create Category
                   </span>
                 }
               />

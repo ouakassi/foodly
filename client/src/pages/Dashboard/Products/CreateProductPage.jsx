@@ -111,6 +111,9 @@ export default function CreateProductPage(defaultValues = {}) {
   });
 
   let navigate = useNavigate();
+  const formattedDiscount = getValues().discount.toLocaleString("en", {
+    style: "percent",
+  });
 
   const {
     data: products,
@@ -123,6 +126,8 @@ export default function CreateProductPage(defaultValues = {}) {
     setFocus("name");
   }, [setFocus]);
 
+  console.log(products);
+
   useEffect(() => {
     if (error) {
       console.error("Error fetching products:", error);
@@ -133,10 +138,12 @@ export default function CreateProductPage(defaultValues = {}) {
       console.log("no categories found");
       return;
     }
-    const uniqueCategories = [
-      ...new Set(products.map((product) => product.category)),
-    ];
-    setCategories(uniqueCategories);
+    if (products.length > 0) {
+      const uniqueCategories = [
+        ...new Set(products.map((product) => product.category)),
+      ];
+      setCategories(uniqueCategories);
+    }
   }, [error, products]);
 
   const handleFileUpload = (e) => {
@@ -436,6 +443,7 @@ export default function CreateProductPage(defaultValues = {}) {
                     })}
                   />
                 </InputContainer>
+                <span>{formattedDiscount}</span>
               </div>
             </div>
             <CategoryForm
