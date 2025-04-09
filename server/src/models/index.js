@@ -25,6 +25,32 @@ const createRoles = async () => {
   }
 };
 
+const crateRandomProducts = async () => {
+  try {
+    const productCount = await Product.count();
+    if (productCount === 0) {
+      console.log("No products found. Seeding database...");
+
+      const randomProducts = Array.from({ length: 16 }).map(() => ({
+        name: `Product ${Math.random().toString(36).substring(7)}`,
+        imgUrl: "https://via.placeholder.com/150", // Default placeholder image
+        price: (Math.random() * 100).toFixed(2),
+        stock: Math.floor(Math.random() * 50) + 1,
+        discount: Math.floor(Math.random() * 30), // Random discount between 0-30%
+        category: ["Electronics", "Clothing", "Books", "Furniture"][
+          Math.floor(Math.random() * 4)
+        ],
+        status: Math.random() > 0.5, // Random true/false
+      }));
+
+      await Product.bulkCreate(randomProducts);
+      console.log("10 Random Products Inserted!");
+    }
+  } catch (error) {
+    console.error("Error initializing database:", error);
+  }
+};
+
 // relations
 
 Role.hasMany(User);
@@ -43,6 +69,7 @@ const connectDb = async () => {
     console.log("Connection has been established successfully.");
     // await db.sync({ logging: true });
     await db.sync({ force: true, logging: true });
+    await crateRandomProducts();
     await createRoles();
     await createCategories();
     console.log("All models were synchronized successfully.");

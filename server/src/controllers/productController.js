@@ -8,51 +8,69 @@ const { httpLogger } = require("../utils/logger");
 // Public
 const getAllProducts = async (req, res) => {
   try {
-    let { page, limit } = req.query;
+    let { page, limit, search, sort, status } = req.query;
 
-    const { search } = req.query;
+    const sortOptions = {
+      price_asc: ["price", "ASC"],
+      price_desc: ["price", "DESC"],
+      name_asc: ["name", "ASC"],
+      name_desc: ["name", "DESC"],
+      stock_asc: ["stock", "ASC"],
+      stock_desc: ["stock", "DESC"],
+      discount_asc: ["discount", "ASC"],
+      discount_desc: ["discount", "DESC"],
+      category_asc: ["category", "ASC"],
+      category_desc: ["category", "DESC"],
+      createdAt_asc: ["createdAt", "ASC"],
+      createdAt_desc: ["createdAt", "DESC"],
+      updatedAt_asc: ["updatedAt", "ASC"],
+      updatedAt_desc: ["updatedAt", "DESC"],
+    };
 
-    // Return all products if no pagination is provided
-    if (!page && !limit) {
-      if (!search) {
-        const products = await Product.findAll();
-        return res.status(200).json({ products });
-      }
-      const products = await Product.findAll({
-        where: {
-          name: { [Op.like]: `%${search}%` },
-        },
-      });
-      return res
-        .status(200)
-        .json({
-          products,
-          message: "search results",
-          searchQuery: search,
-          searchCount: products.length,
-        });
-    }
-
-    // Paginated
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
 
-    const { count, rows: products } = await Product.findAndCountAll({
-      offset: (page - 1) * limit,
-      limit: limit,
-    });
+    const filterConditions = {};
 
-    if (products.length === 0) {
+    if (search) {
+      filterConditions.name = { [Op.like]: `%${search}%` };
+    }
+
+    if (status === "active") {
+      filterConditions.status = true;
+    } else if (status === "inactive") {
+      filterConditions.status = false;
+    }
+
+    const [productsData, activeCount, inactiveCount] = await Promise.all([
+      Product.findAndCountAll({
+        where: filterConditions,
+        limit: limit,
+        offset: Number.isNaN(parseInt(page)) ? 0 : (parseInt(page) - 1) * limit,
+        order: sort ? [sortOptions[sort]] : [],
+      }),
+      Product.count({
+        where: { ...filterConditions, status: true },
+      }),
+      Product.count({
+        where: { ...filterConditions, status: false },
+      }),
+    ]);
+
+    if (productsData.count === 0 && status === undefined) {
       return res.status(404).json({ message: "No products found" });
     }
 
-    const productsCount = await Product.count();
-
     return res.status(200).json({
-      products,
-      totalPages: Math.ceil(count / limit),
+      productsData: productsData.rows,
+      totalPages: Math.ceil(productsData.count / limit),
       currentPage: page,
-      productsCount: parseInt(productsCount),
+      totalProducts: status ? activeCount + inactiveCount : productsData.count,
+      activeProducts: activeCount,
+      inactiveProducts: inactiveCount,
+      message: search ? "Search results" : "All products",
+      searchQuery: search || null,
+      filters: filterConditions,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -30,3 +30,25 @@
   /* justify-content: center; */
   gap: var(--gap-1);
 }
+
+.sort-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-1);
+  padding: 4px 8px;
+  border-radius: 5px;
+  /* background-color: #ffffff; */
+  color: #000000;
+  font-size: var(--fs-s);
+  font-family: var(--font-1);
+  font-weight: var(--fw-bold);
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.sort-button:hover {
+  background-color: var(--color-3);
+  color: #ffffff;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 3px, rgba(0, 0, 0, 0.1) 0px 1px 2px;
+}

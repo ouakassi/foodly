@@ -10,6 +10,7 @@ import { BsHeart, BsHeartFill } from "react-icons/bs";
 import { RiScales2Line } from "react-icons/ri";
 
 import ProductImage from "./ProductImage";
+import IMAGES from "../../assets";
 
 export default function ProductCard({
   style,
@@ -20,6 +21,7 @@ export default function ProductCard({
   productPrice,
   link,
 }) {
+  console.log(productImg);
   const [isIconClicked, setIsIconClicked] = useState(false);
   const handleClickedIcon = () => {
     setIsIconClicked(!isIconClicked);
@@ -34,7 +36,7 @@ export default function ProductCard({
             <motion.div whileHover={{ scale: 1.05 }}>
               <ProductImage
                 className="product-card-img"
-                productImg={productImg}
+                productImg={IMAGES.defaultProductImage}
                 productName={productName}
               />
             </motion.div>

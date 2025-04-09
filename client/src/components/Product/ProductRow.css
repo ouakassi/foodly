@@ -15,7 +15,7 @@ tr td {
   flex: 1;
   display: inline-flex;
   align-items: center;
-padding: 0 .2rem;
+  padding: 0 0.2rem;
   gap: var(--gap-1);
 }
 tr .product-img {
@@ -30,21 +30,21 @@ td.name {
 }
 
 td.status span {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--gap-1);
-  text-transform: capitalize;
-  border-radius: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  border-radius: 5px;
   font-weight: var(--fw-bold);
+  min-width: 5rem;
+  color: #ffffff;
+  padding: 2px 4px;
 }
 
 tr .status span.active {
-  color: #00925d;
+  background: #0cb578;
 }
 
 tr .status span.inactive {
-  color: #e00c0c;
+  background: #ff0000;
 }
 
 td.stock {

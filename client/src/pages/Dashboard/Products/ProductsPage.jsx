@@ -22,7 +22,7 @@ import {
   TbBrandProducthunt,
   TbSearch,
 } from "react-icons/tb";
-import { Link } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { FaAngleLeft, FaAngleRight, FaRegImage } from "react-icons/fa6";
 import axiosInstance from "../../../api/api";
@@ -32,74 +32,112 @@ import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 import InputContainer from "../../../components/Forms/InputContainer";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import useDebounce from "../../../hooks/useDebounce";
 
 const tableHeaders = [
-  { title: "image", icon: <FaRegImage /> },
-  { title: "name", icon: <TbBrandProducthunt /> },
+  { title: "Image", icon: <FaRegImage /> },
+  {
+    title: "Name",
+    icon: <TbBrandProducthunt />,
+    isSortable: true,
+    value: "name_asc",
+  },
   { title: "Status", icon: <TbHomeSignal /> },
-  { title: "Stock", icon: <BiArchiveIn /> },
+  {
+    title: "Stock",
+    icon: <BiArchiveIn />,
+    isSortable: true,
+    value: "stock_asc",
+  },
+  {
+    title: "Price",
+    icon: <BiPurchaseTagAlt />,
+    isSortable: true,
+    value: "price_asc",
+  },
+  { title: "Category", icon: <TbCategory2 /> },
   { title: "Discount", icon: <HiOutlineReceiptPercent /> },
+  {
+    title: "Published",
+    icon: <BiCalendarEdit />,
+    isSortable: true,
+    value: "createdAt_asc",
+  },
+  { title: "Action", icon: <TbHandClick /> },
   // { title: "Orders", icon: <BiBasket /> },
   // { title: "Rating", icon: <CiStar /> },
-  { title: "Price", icon: <BiPurchaseTagAlt /> },
-  { title: "Category", icon: <TbCategory2 /> },
-  { title: "Published", icon: <BiCalendarEdit /> },
-  { title: "Action", icon: <TbHandClick /> },
 ];
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [selectedTab, setSelectedTab] = useState("all");
+  // const [sortedBy, setSortedBy] = useState(
+  //   searchParams.get("sort") || "name_asc"
+  // );
   const [searchParam, setSearchParam] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [productsTotal, setProductsTotal] = useState(0);
   const ITEMS_PER_PAGE = 10;
 
-  const { data, fetchError, isLoading } = useAxiosFetch(
-    `http://localhost:8000/api/products?limit=${ITEMS_PER_PAGE}&page=${currentPage}`
+  const debouncedSearch = useDebounce(searchParam, 500); // 500ms delay
+
+  const [searchParams] = useSearchParams();
+
+  const page = searchParams.get("page");
+  const limit = searchParams.get("limit");
+  const search = searchParams.get("search");
+  const sort = searchParams.get("sort") || "name_asc";
+  const status = searchParams.get("status");
+
+  console.log({ page, limit, search, sort, status });
+
+  const sortMap = {
+    name_asc: "name_asc",
+    name_desc: "name_desc",
+    price_asc: "price_asc",
+    price_desc: "price_desc",
+    createdAt_asc: "createdAt_asc",
+    createdAt_desc: "createdAt_desc",
+    updatedAt_asc: "updatedAt_asc",
+    updatedAt_desc: "updatedAt_desc",
+  };
+
+  const params = {
+    ...(searchParam && { search: debouncedSearch }),
+    limit: ITEMS_PER_PAGE,
+    page: currentPage,
+    ...(selectedTab !== "all" && { status: selectedTab }),
+    sort: sort,
+  };
+
+  const { data, isLoading, fetchError, refetch } = useAxiosFetch(
+    "http://localhost:8000/api/products",
+    params
   );
 
-  console.log(data?.products);
+  const {
+    activeProducts: activeProductsCount = 0,
+    inactiveProducts: inactiveProductsCount = 0,
+  } = data || {};
 
   useEffect(() => {
     try {
-      setProducts(data.products);
+      setProducts(data.productsData);
       setTotalPages(data.totalPages);
-      setProductsTotal(data.productsCount);
+      setProductsTotal(data.totalProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
       setProducts([]); // Clear products if error
     }
   }, [data, currentPage]);
-
-  // const filterProducts = useMemo(() => {
-  //   return data.filter((product) => product.status);
-  // }, [data]);
-  const filteredProducts = useMemo(() => {
-    switch (selectedTab) {
-      case "all":
-        return products;
-      case "active":
-        return products?.filter((product) => product.status === true);
-      case "inactive":
-        return products?.filter((product) => product.status === false);
-      default:
-        return products;
-    }
-  }, [selectedTab, products]);
-
-  const filteredProductsBySearch = useMemo(() => {
-    return products?.filter((product) =>
-      product.name.toLowerCase().includes(searchParam.toLowerCase())
-    );
-  }, [products, searchParam]);
 
   const handleDeleteProduct = async (product) => {
     if (!product.id) {
@@ -109,9 +147,15 @@ export default function ProductsPage() {
     try {
       await axiosInstance.delete(`/api/products/${product.id}`);
       toast.success("Product Deleted Successfully");
-      setProducts((prevProducts) =>
-        prevProducts.filter((p) => p.id !== product.id)
-      );
+
+      const updatedProducts = products.filter((p) => p.id !== product.id);
+
+      // Go to previous page if this was the last product on the current page
+      if (updatedProducts.length === 0 && currentPage > 1) {
+        setCurrentPage((prev) => prev - 1);
+      } else {
+        refetch();
+      }
     } catch (error) {
       toast.error("Failed to delete product");
     }
@@ -139,7 +183,7 @@ export default function ProductsPage() {
 
   return (
     <section className="products-page">
-      {products && products.length > 0 ? (
+      {products && (
         <>
           <header>
             <h1>Products</h1>
@@ -158,31 +202,37 @@ export default function ProductsPage() {
               <Tabs defaultValue="all" className="w-[400px]">
                 <TabsList>
                   <TabsTrigger
-                    onClick={() => setSelectedTab("all")}
+                    onClick={() => {
+                      setCurrentPage(1), setSelectedTab("all");
+                    }}
                     value="all"
                   >
                     <div>
                       <CiGrid41 className="icon" /> <span>All</span>
-                      <Badge>{productsTotal}</Badge>
+                      <Badge>{productsTotal ? productsTotal : 0}</Badge>
                     </div>
                   </TabsTrigger>
                   <TabsTrigger
-                    onClick={() => setSelectedTab("active")}
+                    onClick={() => {
+                      setCurrentPage(1), setSelectedTab("active");
+                    }}
                     value="active"
                   >
                     <div>
                       <BsShieldCheck className="icon" /> <span>Active</span>
-                      <Badge>14</Badge>
+                      <Badge>{activeProductsCount}</Badge>
                     </div>
                   </TabsTrigger>
                   <TabsTrigger
-                    onClick={() => setSelectedTab("inactive")}
+                    onClick={() => {
+                      setCurrentPage(1), setSelectedTab("inactive");
+                    }}
                     value="inactive"
                   >
                     <div>
                       <BsShieldX className="icon" />
                       <span>Inactive</span>
-                      <Badge>6</Badge>
+                      <Badge>{inactiveProductsCount}</Badge>
                     </div>
                   </TabsTrigger>
                 </TabsList>
@@ -209,47 +259,42 @@ export default function ProductsPage() {
                 />
               </div>
             </div>
+
             <table className="table">
               <ProductHeader headers={tableHeaders} />
               {isLoading ? (
-                <div>
-                  <LoadingSpinner />
-                </div>
+                <TableSkeleton count={ITEMS_PER_PAGE} />
               ) : (
                 <tbody className="table-body">
-                  {!searchParam &&
-                    filteredProducts.map((P) => (
+                  {products.length > 0 ? (
+                    products.map((product) => (
                       <ProductRow
-                        key={P.id}
-                        product={P}
+                        key={product.id}
+                        product={product}
                         handleDeleteProduct={handleDeleteProduct}
                       />
-                    ))}
-                  {filteredProductsBySearch.length > 0 &&
-                    searchParam &&
-                    filteredProductsBySearch.map((P) => (
-                      <ProductRow
-                        key={P.id}
-                        product={P}
-                        handleDeleteProduct={handleDeleteProduct}
-                      />
-                    ))}
-                  {filteredProductsBySearch.length === 0 &&
-                    searchParam &&
-                    "No products found"}
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="100%" className="text-center">
+                        No products found
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               )}
             </table>
+
             <footer className="table-footer">
               <PreviousBtn
                 onClick={handlePreviousPage}
                 currentPage={currentPage}
               />
               <span className="page-info">
-                {/* Page */}
                 <span className="page-current">{currentPage}</span>/
                 <span className="total-pages">{totalPages}</span>
               </span>
+
               <NextBtn
                 onClick={handleNextPage}
                 currentPage={currentPage}
@@ -258,15 +303,14 @@ export default function ProductsPage() {
             </footer>
           </div>
         </>
-      ) : (
-        <NoProductsPage />
       )}
+      {/* <NoProductsPage /> */}
     </section>
   );
 }
 
 const PreviousBtn = ({ onClick, currentPage }) => {
-  const isFirstPage = currentPage === 1;
+  const isFirstPage = currentPage <= 1;
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
@@ -288,7 +332,7 @@ const PreviousBtn = ({ onClick, currentPage }) => {
 };
 
 const NextBtn = ({ onClick, currentPage, totalPages }) => {
-  const isLastPage = currentPage === totalPages;
+  const isLastPage = currentPage >= totalPages;
 
   return (
     <TooltipProvider delayDuration={100}>
@@ -311,3 +355,21 @@ const NextBtn = ({ onClick, currentPage, totalPages }) => {
 };
 
 const Badge = ({ children }) => <span className="badge">{children}</span>;
+
+function TableSkeleton({ count = 10 }) {
+  return (
+    <div className="rounded-md border w-full">
+      {Array.from({ length: count }).map((_, i) => (
+        <tr key={i} className="text-sm flex items-center justify-between">
+          <td className="px-4 py-3">
+            <Skeleton className="h-10 w-10 rounded-full" />
+          </td>
+
+          {Array.from({ length: 8 }).map((_, i) => (
+            <td className="px-4 py-3 text-gray-200">......</td>
+          ))}
+        </tr>
+      ))}
+    </div>
+  );
+}

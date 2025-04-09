@@ -28,6 +28,7 @@ import {
 import { AiFillDelete } from "react-icons/ai";
 import { TbForbid2 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import { CiWarning } from "react-icons/ci";
 
 const buttonStyle = {
   color: "white",
@@ -64,6 +65,7 @@ export default function ProductRow({ product, handleDeleteProduct }) {
   }).format(+price);
 
   const isActive = status === true;
+  const isStockLow = stock <= 25;
 
   const date = new Date(publishedDate);
   const publishedYear = date.getFullYear();
@@ -82,17 +84,40 @@ export default function ProductRow({ product, handleDeleteProduct }) {
       <td className="name">{productName}</td>
       <td className="status">
         <span className={isActive ? "active" : "inactive"}>
-          {isActive ? <FaRegCircleCheck /> : <FaRegCircleXmark />}
+          {/* {isActive ? <FaRegCircleCheck /> : <FaRegCircleXmark />} */}
           {isActive ? "Active" : "Inactive"}
         </span>
       </td>
       <td>
-        {stock}
-        {stock <= 25 && <FaArrowTrendDown color="var(--color-2)" />}
+        {isStockLow ? (
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger>
+                {stock}
+                {isStockLow && <FaArrowTrendDown color="var(--color-2)" />}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p
+                  style={{
+                    color: "var(--color-2)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "2px",
+                  }}
+                >
+                  <CiWarning fontSize={"1.2rem"} />
+                  Warning: Stock is low
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          stock
+        )}
       </td>
-      <td>{`${discount}%`}</td>
       <td className="price">{formattedPrice}</td>
       <td>{category}</td>
+      <td>{`${discount}%`}</td>
       <td className="published">{`${publishedMonth} ${publishedDay}  ${publishedYear}`}</td>
       <td className="action">
         <TooltipProvider delayDuration={100}>

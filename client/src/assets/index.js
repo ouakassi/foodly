@@ -1,9 +1,9 @@
-import emptyImage from "./images/emptyimage.png";
 import bowl from "./images/bowl.png";
+import defaultProductImage from "./images/product-default-photo.png";
 
 const IMAGES = {
   bowl,
-  emptyImage,
+  defaultProductImage,
 };
 
 export default IMAGES;
