@@ -29,11 +29,12 @@ import { AiFillDelete } from "react-icons/ai";
 import { TbForbid2 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { CiWarning } from "react-icons/ci";
+import { GoDotFill } from "react-icons/go";
 
 const buttonStyle = {
   color: "white",
   borderRadius: "10px",
-  padding: "5px 10px",
+  padding: "2px 5px",
   maxWidth: "max-content",
   fontSize: "var(--fs-l)",
   boxShadow: "none",
@@ -65,25 +66,27 @@ export default function ProductRow({ product, handleDeleteProduct }) {
   }).format(+price);
 
   const isActive = status === true;
-  const isStockLow = stock <= 25;
+  const isStockLow = stock <= 30;
 
   const date = new Date(publishedDate);
   const publishedYear = date.getFullYear();
-  const publishedMonth = date.toLocaleString("en", { month: "short" });
+  const publishedMonth = date.toLocaleString("en", { month: "long" });
   const publishedDay = date.toLocaleString("en", { day: "2-digit" });
+  // const publishedTimeString = date.toLocaleString("en", {
+  //   hour: "2-digit",
+  //   minute: "2-digit",
+  // });
+  const publishedDateString = `${publishedDay} ${publishedMonth} ${publishedYear}`;
 
   return (
     <tr>
       <td style={!isActive ? { opacity: 0.8 } : { opacity: 1 }}>
-        <ProductImage
-          productImg={productImg}
-          productName={productName}
-          className="product-img"
-        />
+        <img src={productImg} alt={productName} className="product-img" />
       </td>
       <td className="name">{productName}</td>
       <td className="status">
         <span className={isActive ? "active" : "inactive"}>
+          <GoDotFill />
           {/* {isActive ? <FaRegCircleCheck /> : <FaRegCircleXmark />} */}
           {isActive ? "Active" : "Inactive"}
         </span>
@@ -106,7 +109,7 @@ export default function ProductRow({ product, handleDeleteProduct }) {
                   }}
                 >
                   <CiWarning fontSize={"1.2rem"} />
-                  Warning: Stock is low
+                  Stock is low
                 </p>
               </TooltipContent>
             </Tooltip>
@@ -118,22 +121,24 @@ export default function ProductRow({ product, handleDeleteProduct }) {
       <td className="price">{formattedPrice}</td>
       <td>{category}</td>
       <td>{`${discount}%`}</td>
-      <td className="published">{`${publishedMonth} ${publishedDay}  ${publishedYear}`}</td>
+      <td className="published">{publishedDateString}</td>
       <td className="action">
         <TooltipProvider delayDuration={100}>
           <Tooltip>
-            <TooltipTrigger>
-              <CustomButton
-                aria-label="Edit Product"
-                style={{
-                  ...buttonStyle,
-                  color: "#2300b5",
-                }}
-                icon={<MdEditSquare />}
-                onClick={() => {
-                  navigate(`/dashboard/products/edit/${product.id}`);
-                }}
-              />
+            <TooltipTrigger asChild>
+              <span>
+                <CustomButton
+                  aria-label="Edit Product"
+                  style={{
+                    ...buttonStyle,
+                    color: "#008acb",
+                  }}
+                  icon={<MdEditSquare />}
+                  onClick={() => {
+                    navigate(`/dashboard/products/edit/${product.id}`);
+                  }}
+                />
+              </span>
             </TooltipTrigger>
             <TooltipContent>
               <p>Edit Product</p>
@@ -141,11 +146,11 @@ export default function ProductRow({ product, handleDeleteProduct }) {
           </Tooltip>
         </TooltipProvider>
 
-        <TooltipProvider delayDuration={100}>
-          <Tooltip>
-            <TooltipTrigger>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
+        <AlertDialog>
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AlertDialogTrigger>
                   <CustomButton
                     aria-label="Delete Product"
                     style={{
@@ -155,41 +160,42 @@ export default function ProductRow({ product, handleDeleteProduct }) {
                     icon={<MdDeleteForever />}
                   />
                 </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you sure you want to delete this product?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      product from your inventory.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel asChild>
-                      <CustomButton
-                        className="dialog-button-cancel"
-                        text="cancel"
-                        icon={<TbForbid2 />}
-                      />
-                    </AlertDialogCancel>
-                    <AlertDialogAction asChild>
-                      <CustomButton
-                        className="dialog-button-delete "
-                        text="Delete"
-                        icon={<AiFillDelete />}
-                        onClick={() => handleDeleteProduct(product)}
-                      />
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Delete Product</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Delete Product</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Are you sure you want to delete this product?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the
+                product from your inventory.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel asChild>
+                <CustomButton
+                  className="dialog-button-cancel"
+                  text="Cancel"
+                  icon={<TbForbid2 />}
+                />
+              </AlertDialogCancel>
+              <AlertDialogAction asChild>
+                <CustomButton
+                  className="dialog-button-delete"
+                  text="Delete"
+                  icon={<AiFillDelete />}
+                  onClick={() => handleDeleteProduct(product)}
+                />
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </td>
     </tr>
   );

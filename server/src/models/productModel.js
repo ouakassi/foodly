@@ -18,6 +18,9 @@ const Product = sequelize.define("product", {
   price: {
     type: DataTypes.FLOAT,
     allowNull: false,
+    validate: {
+      min: 0,
+    },
   },
   status: {
     type: DataTypes.BOOLEAN,
@@ -31,9 +34,12 @@ const Product = sequelize.define("product", {
   },
   discount: {
     type: DataTypes.FLOAT,
-    defaultValue: 0,
-    max: 100,
     allowNull: false,
+    defaultValue: 0,
+    validate: {
+      min: 0,
+      max: 100,
+    },
   },
   category: {
     type: DataTypes.STRING,

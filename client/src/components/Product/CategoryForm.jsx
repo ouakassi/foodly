@@ -50,8 +50,7 @@ const CategoryForm = ({
             </DialogTitle>
 
             <DialogDescription>
-              Create a new category to better organize your products. Click Add
-              Button when you're done.
+              Create a new category to better organize your products.
             </DialogDescription>
 
             <input

@@ -31,9 +31,10 @@ const crateRandomProducts = async () => {
     if (productCount === 0) {
       console.log("No products found. Seeding database...");
 
-      const randomProducts = Array.from({ length: 16 }).map(() => ({
+      const randomProducts = Array.from({ length: 100 }).map(() => ({
         name: `Product ${Math.random().toString(36).substring(7)}`,
-        imgUrl: "https://via.placeholder.com/150", // Default placeholder image
+        imgUrl:
+          "https://res.cloudinary.com/djfsxp9z0/image/upload/v1742571332/products/weed/6172705011f98cfbe6f5304a764fc862.png", // Default placeholder image
         price: (Math.random() * 100).toFixed(2),
         stock: Math.floor(Math.random() * 50) + 1,
         discount: Math.floor(Math.random() * 30), // Random discount between 0-30%

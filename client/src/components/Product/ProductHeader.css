@@ -24,11 +24,8 @@
 }
 .table-header .cell {
   display: inline-flex;
-  text-align: center;
   align-items: center;
   flex: 1;
-  /* justify-content: center; */
-  gap: var(--gap-1);
 }
 
 .sort-button {
@@ -51,4 +48,8 @@
   background-color: var(--color-3);
   color: #ffffff;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 3px, rgba(0, 0, 0, 0.1) 0px 1px 2px;
+}
+
+.active-sort {
+  color: red;
 }

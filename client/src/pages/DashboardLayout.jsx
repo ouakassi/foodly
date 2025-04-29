@@ -15,6 +15,13 @@ const mainStyle = {
 };
 
 export default function DashboardLayout() {
+  // useEffect(() => {
+  //   document.body.style.backgroundColor = "#f3f3f3";
+
+  //   return () => {
+  //     document.body.style.backgroundColor = "";
+  //   };
+  // }, []);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -34,19 +41,20 @@ export default function DashboardLayout() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           style={{
-            backgroundColor: "#f4f4f4",
+            // backgroundColor: "#f3f3f3",
             borderRadius: "10px",
-            margin: "1.25rem",
-            padding: "1.25rem 3rem",
-            boxShadow:
-              "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+            // margin: "1.25rem",
+            padding: "1.5rem",
+            // boxShadow:
+            //   "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.1) 0px 0px 0px 1px",
           }}
           className="content"
         >
           <Outlet />
         </motion.div>
       </main>
-      <Toaster position="bottom-center" richColors />
+      {/* <Toaster position="bottom-center" richColors /> */}
+      <Toaster position="bottom-center" />
     </div>
   );
 }

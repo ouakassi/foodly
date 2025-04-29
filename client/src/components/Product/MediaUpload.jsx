@@ -4,6 +4,7 @@ import { RiImageAddLine } from "react-icons/ri";
 import { MdLibraryAddCheck, MdDeleteForever } from "react-icons/md";
 import CustomButton from "@/components/Buttons/CustomButton";
 import LoadingSpinner from "@/components/Forms/LoadingSpinner";
+import { useState } from "react";
 
 const MediaUpload = ({
   selectedStatus = true,
@@ -11,6 +12,7 @@ const MediaUpload = ({
   handleFileUpload,
   handleRemoveImg,
 }) => {
+  const [isDragging, setIsDragging] = useState(false);
   return (
     <div className="content-container media-form">
       <h3>Media upload</h3>
@@ -23,30 +25,53 @@ const MediaUpload = ({
       </span>
 
       <div className="media-inputs">
-        <input
-          type="file"
-          name="file"
-          id="file"
-          className="file-input"
-          accept="image/*"
-          onChange={handleFileUpload}
-        />
-        <label className={imagePreview ? "file-selected" : null} htmlFor="file">
-          {!imagePreview ? (
-            <span>
-              <RiImageAddLine className="icon" />
-              Select an image...
-            </span>
-          ) : (
-            <span>
-              <MdLibraryAddCheck
-                className="icon"
-                style={{ color: "var(--color-3)" }}
-              />
-              Image Selected!
-            </span>
-          )}
-        </label>
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragging(false);
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith("image/")) {
+              handleFileUpload({ target: { files: [file] } });
+            }
+          }}
+        >
+          <input
+            type="file"
+            name="file"
+            id="file"
+            className="file-input"
+            accept="image/*"
+            onChange={handleFileUpload}
+          />
+          <label
+            className={`${imagePreview ? "file-selected" : ""} ${
+              isDragging ? "input-on-drag" : ""
+            }`}
+            htmlFor="file"
+          >
+            {!imagePreview ? (
+              <span>
+                <RiImageAddLine className="icon" />
+                {!isDragging
+                  ? "Drop image here or click to upload..."
+                  : "drop it now!"}
+              </span>
+            ) : (
+              <span>
+                <MdLibraryAddCheck
+                  className="icon"
+                  style={{ color: "var(--color-3)" }}
+                />
+                Image Selected!
+              </span>
+            )}
+          </label>
+        </div>
         {imagePreview && (
           <motion.span
             initial={{ opacity: 0, y: 5 }}

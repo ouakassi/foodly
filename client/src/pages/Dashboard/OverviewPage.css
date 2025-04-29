@@ -1,0 +1,116 @@
+.data-boxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.data-box,
+.last-product,
+.data__icon {
+  box-shadow: var(--box-shadow-content-container);
+  padding: 1rem 2rem;
+  border-radius: 10px;
+}
+
+.data-box {
+  background-color: white;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.data-box:hover {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 30px -20px;
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+.data-box:hover .data__icon {
+  background: var(--color-3);
+  color: white;
+}
+.data-box h2 {
+  /* font-size: 1.6rem; */
+  font-weight: 500;
+  color: rgb(167, 167, 167);
+  /* font-family: var(--font-3); */
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.data__value {
+  font-size: 2.2rem;
+  font-weight: 500;
+  font-family: var(--font-2);
+}
+.data-box .sign-up {
+  color: var(--color-3);
+}
+.data-box .sign-down {
+  color: var(--color-2);
+}
+.sign__text {
+  display: block;
+  font-size: 0.8rem;
+  color: rgb(167, 167, 167);
+}
+.data__icon {
+  background: #fbfbfb;
+  padding: 0.4rem 1rem;
+  border-radius: 60px;
+  font-size: 2.2rem;
+  transition: all 0.2s ease-in-out;
+}
+.data-box img {
+  width: 2rem;
+  color: rgb(153, 153, 153);
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 2fr));
+  align-items: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.chart {
+  max-width: 40rem;
+  background-color: white;
+}
+
+.last-product {
+  /* padding: 2rem; */
+}
+.last-product h2 {
+  font-size: 1.6rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-bottom: 1rem;
+}
+
+.last-product header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.all-products-btn {
+  width: fit-content;
+  background-color: #ffffff;
+  color: black;
+  border-radius: 10px;
+  font-family: var(--font-1);
+  box-shadow: var(--box-shadow-content-container);
+  transition: all 0.2s ease-in-out;
+}
+.all-products-btn:hover {
+  background-color: var(--color-3);
+  color: white;
+}

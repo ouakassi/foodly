@@ -1,10 +1,10 @@
 import "./NavigationContainer.css";
 
-import herbIcon from "../../assets/icons/herb.png";
-import oilIcon from "../../assets/icons/oil.png";
-import nuts from "../../assets/icons/nuts2.png";
-import sale from "../../assets/icons/sale.png";
-import coffee from "../../assets/icons/coffee.png";
+// import herbIcon from "/icons/herb.png";
+// import oilIcon from "/icons/oil.png";
+// import nuts from "/icons/nuts2.png";
+// import sale from "/icons/sale.png";
+// import coffee from "/icons/coffee.png";
 
 import NavigationBox from "./NavigationBox";
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
@@ -22,26 +22,31 @@ import "swiper/css/navigation";
 const navigationData = [
   {
     link: "herbs",
-    img: herbIcon,
+    img: "/icons/client/herb.png",
     text: "organic herbs",
     backgroundColor: "#8f78d8",
   },
   {
     link: "oils",
-    img: oilIcon,
+    img: "/icons/client/oil.png",
     text: "healthy oils",
     backgroundColor: "#fac600",
   },
-  { link: "nuts", img: nuts, text: "fresh nuts", backgroundColor: "#ce795f" },
+  {
+    link: "nuts",
+    img: "/icons/client/nuts2.png",
+    text: "fresh nuts",
+    backgroundColor: "#ce795f",
+  },
   {
     link: "coffee",
-    img: coffee,
+    img: "/icons/client/coffee.png",
     text: "quality coffee",
     backgroundColor: "#6a563d",
   },
   {
     link: "sale",
-    img: sale,
+    img: "/icons/client/sale.png",
     text: "mega sale",
     backgroundColor: "#fd4755",
   },

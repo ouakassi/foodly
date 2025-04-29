@@ -11,6 +11,7 @@ import {
   BiBasket,
   BiPurchaseTagAlt,
   BiCalendarEdit,
+  BiSolidErrorCircle,
 } from "react-icons/bi";
 import { CiGrid41, CiStar } from "react-icons/ci";
 import { HiOutlineReceiptPercent } from "react-icons/hi2";
@@ -27,7 +28,7 @@ import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { FaAngleLeft, FaAngleRight, FaRegImage } from "react-icons/fa6";
 import axiosInstance from "../../../api/api";
 import { toast } from "sonner";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 import InputContainer from "../../../components/Forms/InputContainer";
 
@@ -40,6 +41,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import useDebounce from "../../../hooks/useDebounce";
+import { use } from "react";
 
 const tableHeaders = [
   { title: "Image", icon: <FaRegImage /> },
@@ -77,44 +79,29 @@ const tableHeaders = [
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
-  const [selectedTab, setSelectedTab] = useState("all");
-  // const [sortedBy, setSortedBy] = useState(
-  //   searchParams.get("sort") || "name_asc"
-  // );
-  const [searchParam, setSearchParam] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [productsTotal, setProductsTotal] = useState(0);
-  const ITEMS_PER_PAGE = 10;
+  const [productsTotal, setProductsTotal] = useState(0 || 0);
+  const [limitPerPage, setLimitPerPage] = useState(10);
+  // const ITEMS_PER_PAGE = 10;
 
-  const debouncedSearch = useDebounce(searchParam, 500); // 500ms delay
+  const nextBtnRef = useRef(null);
+  const prevBtnRef = useRef(null);
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const page = searchParams.get("page");
-  const limit = searchParams.get("limit");
+  const page = searchParams.get("page") || 1;
+  const limit = searchParams.get("limit") || 10;
   const search = searchParams.get("search");
   const sort = searchParams.get("sort") || "name_asc";
   const status = searchParams.get("status");
 
-  console.log({ page, limit, search, sort, status });
-
-  const sortMap = {
-    name_asc: "name_asc",
-    name_desc: "name_desc",
-    price_asc: "price_asc",
-    price_desc: "price_desc",
-    createdAt_asc: "createdAt_asc",
-    createdAt_desc: "createdAt_desc",
-    updatedAt_asc: "updatedAt_asc",
-    updatedAt_desc: "updatedAt_desc",
-  };
+  const debouncedSearch = useDebounce(search, 500); // 500ms delay
 
   const params = {
-    ...(searchParam && { search: debouncedSearch }),
-    limit: ITEMS_PER_PAGE,
-    page: currentPage,
-    ...(selectedTab !== "all" && { status: selectedTab }),
+    ...(search && { search: debouncedSearch }),
+    limit: limitPerPage,
+    page: page,
+    ...(status !== "all" && { status: status }),
     sort: sort,
   };
 
@@ -128,16 +115,96 @@ export default function ProductsPage() {
     inactiveProducts: inactiveProductsCount = 0,
   } = data || {};
 
-  useEffect(() => {
-    try {
-      setProducts(data.productsData);
-      setTotalPages(data.totalPages);
-      setProductsTotal(data.totalProducts);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setProducts([]); // Clear products if error
+  let throttleTimer;
+  const throttle = (func, limit) => {
+    if (!throttleTimer) {
+      throttleTimer = setTimeout(() => {
+        func();
+        throttleTimer = null;
+      }, limit);
     }
-  }, [data, currentPage]);
+  };
+  const tabs = [
+    {
+      value: "all",
+      label: "All",
+      icon: <CiGrid41 className="icon" />,
+      count: productsTotal || 0,
+    },
+    {
+      value: "active",
+      label: "Active",
+      icon: <BsShieldCheck className="icon" />,
+      count: activeProductsCount,
+    },
+    {
+      value: "inactive",
+      label: "Inactive",
+      icon: <BsShieldX className="icon" />,
+      count: inactiveProductsCount,
+    },
+  ];
+  useEffect(() => {
+    let lastPressTime = 0;
+    const handleKeyPress = (e) => {
+      const now = Date.now();
+
+      // If less than 250ms seconds since last valid press, skip
+      if (now - lastPressTime < 250) return;
+
+      if (e.key === "ArrowLeft") {
+        prevBtnRef.current?.click();
+        console.log("Prev button clicked");
+      } else if (e.key === "ArrowRight") {
+        nextBtnRef.current?.click();
+        console.log("Next button clicked");
+      }
+      lastPressTime = now;
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [nextBtnRef, prevBtnRef]);
+
+  useEffect(() => {
+    if (!data) {
+      setProducts([]);
+      updatePageParam(1);
+      setTotalPages(1);
+      setProductsTotal(0);
+      return;
+    }
+
+    try {
+      const { productsData = [], totalPages = 1, totalProducts = 0 } = data;
+
+      setProducts(productsData);
+      setTotalPages(totalPages);
+      setProductsTotal(totalProducts);
+    } catch (error) {
+      console.error("Error processing data:", error);
+      setProducts([]); // fallback in case something goes wrong
+    }
+  }, [data]);
+
+  // function to handle the 'page' param and update the URL
+  const updatePageParam = (newPage) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("page", newPage);
+    setSearchParams(newSearchParams);
+  };
+
+  const handleTabChange = (value) => {
+    // reset the 'status' param and 'page'
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("status", value);
+    newSearchParams.set("page", 1);
+
+    setSearchParams(newSearchParams);
+  };
 
   const handleDeleteProduct = async (product) => {
     if (!product.id) {
@@ -151,8 +218,8 @@ export default function ProductsPage() {
       const updatedProducts = products.filter((p) => p.id !== product.id);
 
       // Go to previous page if this was the last product on the current page
-      if (updatedProducts.length === 0 && currentPage > 1) {
-        setCurrentPage((prev) => prev - 1);
+      if (updatedProducts.length === 0 && page > 1) {
+        updatePageParam(+page - 1);
       } else {
         refetch();
       }
@@ -162,23 +229,39 @@ export default function ProductsPage() {
   };
 
   const handleSearchParamChange = (e) => {
-    setSearchParam(e.target.value);
-    console.log(e.target.value);
+    const value = e.target.value;
+
+    setCurrentPage(1);
+
+    const newParams = new URLSearchParams(searchParams);
+
+    // ✅ remove search param if empty
+    if (value.trim() === "") {
+      newParams.delete("search");
+    } else {
+      newParams.set("search", value);
+    }
+
+    // newParams.set("page", "1");
+    setSearchParams(newParams);
   };
 
   const handleNextPage = () => {
-    if (currentPage >= totalPages) {
-      toast.error("You are already on the last page");
+    if (page >= totalPages) {
+      toast.info("You are already on the last page");
       return;
     }
-    setCurrentPage((prevPage) => prevPage + 1);
+
+    updatePageParam(+page + 1);
   };
+
   const handlePreviousPage = () => {
-    if (currentPage === 1) {
-      toast.error("You are already on the first page");
+    if (page <= 1) {
+      toast.info("You are already on the first page");
       return;
     }
-    setCurrentPage((prevPage) => prevPage - 1);
+
+    updatePageParam(+page - 1);
   };
 
   return (
@@ -200,42 +283,7 @@ export default function ProductsPage() {
           <div className="products-container">
             <div className="filters">
               <Tabs defaultValue="all" className="w-[400px]">
-                <TabsList>
-                  <TabsTrigger
-                    onClick={() => {
-                      setCurrentPage(1), setSelectedTab("all");
-                    }}
-                    value="all"
-                  >
-                    <div>
-                      <CiGrid41 className="icon" /> <span>All</span>
-                      <Badge>{productsTotal ? productsTotal : 0}</Badge>
-                    </div>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    onClick={() => {
-                      setCurrentPage(1), setSelectedTab("active");
-                    }}
-                    value="active"
-                  >
-                    <div>
-                      <BsShieldCheck className="icon" /> <span>Active</span>
-                      <Badge>{activeProductsCount}</Badge>
-                    </div>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    onClick={() => {
-                      setCurrentPage(1), setSelectedTab("inactive");
-                    }}
-                    value="inactive"
-                  >
-                    <div>
-                      <BsShieldX className="icon" />
-                      <span>Inactive</span>
-                      <Badge>{inactiveProductsCount}</Badge>
-                    </div>
-                  </TabsTrigger>
-                </TabsList>
+                <FilterTabsList tabs={tabs} handleTabChange={handleTabChange} />
               </Tabs>
 
               <InputContainer icon={<TbSearch />} className="search-container">
@@ -247,14 +295,11 @@ export default function ProductsPage() {
               </InputContainer>
 
               <div className="table-pages-buttons">
-                <PreviousBtn
-                  onClick={handlePreviousPage}
-                  currentPage={currentPage}
-                />
+                <PreviousBtn onClick={handlePreviousPage} page={page} />
 
                 <NextBtn
                   onClick={handleNextPage}
-                  currentPage={currentPage}
+                  page={page}
                   totalPages={totalPages}
                 />
               </div>
@@ -263,7 +308,7 @@ export default function ProductsPage() {
             <table className="table">
               <ProductHeader headers={tableHeaders} />
               {isLoading ? (
-                <TableSkeleton count={ITEMS_PER_PAGE} />
+                <TableSkeleton count={limitPerPage} />
               ) : (
                 <tbody className="table-body">
                   {products.length > 0 ? (
@@ -277,7 +322,8 @@ export default function ProductsPage() {
                   ) : (
                     <tr>
                       <td colSpan="100%" className="text-center">
-                        No products found
+                        <BiSolidErrorCircle style={{ color: "red" }} />
+                        No Product found!
                       </td>
                     </tr>
                   )}
@@ -286,19 +332,32 @@ export default function ProductsPage() {
             </table>
 
             <footer className="table-footer">
+              <select
+                defaultValue={limitPerPage}
+                onChange={(e) => {
+                  updatePageParam(1);
+                  setLimitPerPage(Number(e.target.value));
+                }}
+              >
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+              </select>
               <PreviousBtn
                 onClick={handlePreviousPage}
-                currentPage={currentPage}
+                page={page}
+                prevBtnRef={prevBtnRef}
               />
               <span className="page-info">
-                <span className="page-current">{currentPage}</span>/
+                <span className="page-current">{page}</span>/
                 <span className="total-pages">{totalPages}</span>
               </span>
 
               <NextBtn
                 onClick={handleNextPage}
-                currentPage={currentPage}
+                page={page}
                 totalPages={totalPages}
+                nextBtnRef={nextBtnRef}
               />
             </footer>
           </div>
@@ -309,18 +368,14 @@ export default function ProductsPage() {
   );
 }
 
-const PreviousBtn = ({ onClick, currentPage }) => {
-  const isFirstPage = currentPage <= 1;
+const PreviousBtn = ({ onClick, page, prevBtnRef }) => {
+  const isFirstPage = page <= 1;
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span>
-            <CustomButton
-              onClick={onClick}
-              disabled={isFirstPage}
-              icon={<FaAngleLeft />}
-            />
+          <span onClick={onClick} ref={prevBtnRef}>
+            <CustomButton disabled={isFirstPage} icon={<FaAngleLeft />} />
           </span>
         </TooltipTrigger>
         <TooltipContent>
@@ -331,18 +386,18 @@ const PreviousBtn = ({ onClick, currentPage }) => {
   );
 };
 
-const NextBtn = ({ onClick, currentPage, totalPages }) => {
-  const isLastPage = currentPage >= totalPages;
+const NextBtn = ({ onClick, page, totalPages, nextBtnRef }) => {
+  const isLastPage = page >= totalPages;
 
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span>
+          <span ref={nextBtnRef} onClick={onClick}>
             <CustomButton
-              onClick={onClick}
               disabled={isLastPage}
               icon={<FaAngleRight />}
+              aria-label="Next Page"
             />
           </span>
         </TooltipTrigger>
@@ -357,19 +412,38 @@ const NextBtn = ({ onClick, currentPage, totalPages }) => {
 const Badge = ({ children }) => <span className="badge">{children}</span>;
 
 function TableSkeleton({ count = 10 }) {
-  return (
-    <div className="rounded-md border w-full">
-      {Array.from({ length: count }).map((_, i) => (
-        <tr key={i} className="text-sm flex items-center justify-between">
-          <td className="px-4 py-3">
-            <Skeleton className="h-10 w-10 rounded-full" />
-          </td>
+  return Array.from({ length: count }).map((_, i) => (
+    <tr className="p-3" key={i}>
+      <td>
+        <div>
+          <Skeleton className="w-10 h-10 rounded-full " />
+        </div>
+      </td>
 
-          {Array.from({ length: 8 }).map((_, i) => (
-            <td className="px-4 py-3 text-gray-200">......</td>
-          ))}
-        </tr>
+      {Array.from({ length: 8 }).map((_, j) => (
+        <td key={j} className="px-4 py-3 text-gray-200">
+          ......
+        </td>
       ))}
-    </div>
-  );
+    </tr>
+  ));
 }
+
+const FilterTabsList = ({ tabs, handleTabChange }) => {
+  return (
+    <TabsList>
+      {tabs.map(({ value, label, icon, count }) => (
+        <TabsTrigger
+          key={value}
+          value={value}
+          onClick={() => handleTabChange(value)}
+        >
+          <div>
+            {icon} <span>{label}</span>
+            <Badge>{count}</Badge>
+          </div>
+        </TabsTrigger>
+      ))}
+    </TabsList>
+  );
+};

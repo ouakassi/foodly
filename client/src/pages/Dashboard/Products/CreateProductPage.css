@@ -36,8 +36,7 @@
   gap: var(--gap-4);
   border-radius: 10px;
   background-color: white;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: var(--box-shadow-content-container);
   margin: 1rem 0;
 }
 
@@ -146,12 +145,17 @@ span:has(.product-image) {
 .file-input + label {
   display: flex;
   align-items: center;
+  justify-content: center;
+  font-size: var(--fs-m);
+  min-width: 40rem;
+  height: 10rem;
   gap: var(--gap-2);
   padding: 0.75rem;
   cursor: pointer;
   transition: 0.2s;
   border: 1px dashed var(--color-3);
   color: black;
+  user-select: none;
 
   /* z-index: 10; */
 }
@@ -159,7 +163,8 @@ span:has(.product-image) {
   pointer-events: none;
 }
 .file-input:focus + label,
-.file-input + label:hover {
+.file-input + label:hover,
+.input-on-drag {
   border: 1px solid transparent;
   box-shadow: -4px 4px 0px 0px var(--color-3), 0px 0px 0px 1px var(--color-3);
 }
@@ -168,6 +173,12 @@ span:has(.product-image) {
 
   box-shadow: 0px 0px 0px 1px var(--color-3);
 }
+
+.input-on-drag {
+  border: 1px solid transparent;
+  box-shadow: -4px 4px 0px 0px var(--color-1), 0px 0px 0px 1px var(--color-3);
+}
+
 .product-image {
   width: 10rem;
   height: 10rem;
@@ -181,8 +192,7 @@ span:has(.product-image) {
 
 .status-buttons-container {
   display: flex;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: var(--box-shadow-content-container);
   background-color: var(--white-color);
   border-radius: 20px;
   position: relative;
@@ -213,7 +223,6 @@ span:has(.product-image) {
   height: 100%;
   border-radius: inherit;
   position: absolute;
-
 }
 
 /* Active Styles */
