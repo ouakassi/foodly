@@ -25,11 +25,11 @@ export default function NoProductsPage() {
       </h1>
 
       <span>Begin your sales journey by adding a product now.</span>
-      <Link to={"../create"}>
+      <Link to={"create"}>
         <CustomButton
           className="add-product-button"
           scaleOnHover={1}
-          text="add Product"
+          text="Add Product"
           icon={<BsPlusCircleFill />}
         />
       </Link>

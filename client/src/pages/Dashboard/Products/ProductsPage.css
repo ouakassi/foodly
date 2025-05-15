@@ -3,7 +3,7 @@
   margin-top: 0.75rem;
 }
 
-.table {
+.products-page .table {
   margin-top: 1.25rem;
   overflow-x: auto;
   display: flex;
@@ -21,7 +21,7 @@
 }
 .products-page header h1 {
   font-family: var(--font-5);
-  font-weight: var(--fw-semi);
+  font-weight: 500;
   font-size: var(--fs-xl);
   text-transform: capitalize;
 }

@@ -1,0 +1,15 @@
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1.25rem;
+  gap: var(--gap-4);
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: var(--box-shadow-content-container);
+  margin: 1rem 0;
+}
+
+.contentContainer h3 {
+  color: var(--color-6);
+}

@@ -44,7 +44,7 @@ export default function DashboardLayout() {
             // backgroundColor: "#f3f3f3",
             borderRadius: "10px",
             // margin: "1.25rem",
-            padding: "1.5rem",
+            padding: "0.5rem",
             // boxShadow:
             //   "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.1) 0px 0px 0px 1px",
           }}

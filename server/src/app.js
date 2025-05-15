@@ -20,8 +20,8 @@ const userRouter = require("./routes/userRouter");
 const addressRouter = require("./routes/addressRouter");
 const adminRouter = require("./routes/adminRouter");
 const authRole = require("./middlewares/authRole");
-const roles = require("./utils/constants");
 const uploadImageRouter = require("./routes/uploadImageRouter");
+const orderRouter = require("./routes/orderRouter");
 
 const app = express();
 
@@ -48,19 +48,29 @@ connectDb();
 
 app.use("/auth", authRouter);
 app.use("/api/products", productRouter);
+app.use("/api/orders", orderRouter);
 app.use("/api/users", userRouter, addressRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/upload", uploadImageRouter);
 
-app.get("/error", (req, res) => {
-  throw new Error("error");
+// ❱❱ 2. 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
 });
 
+// ❱❱ 3. Winston error logger (logs only, does NOT send headers)
 app.use(
   expressWinston.errorLogger({
     winstonInstance: errorsLogger,
     statusLevels: true,
   })
 );
+
+// ❱❱ 4. Single global error handler -- sends exactly one response
+app.use((err, req, res, next) => {
+  console.error(err.stack); // helpful in dev
+  if (res.headersSent) return next(err); // guard just in case
+  res.status(500).json({ message: "Internal Server Error" });
+});
 
 module.exports = app;

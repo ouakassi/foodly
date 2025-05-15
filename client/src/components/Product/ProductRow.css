@@ -1,4 +1,4 @@
-tr {
+.product-row {
   display: flex;
   font-family: var(--font-1);
   font-weight: var(--fw-semi);
@@ -7,29 +7,29 @@ tr {
   padding: 0.5rem;
   border-bottom: 1px dashed #dcdcdc;
 }
-tr:hover {
+.product-row:hover {
   background-color: #f4f4f4;
 }
 
-tr td {
+.product-row td {
   flex: 1;
   display: inline-flex;
   align-items: center;
   padding: 0 0.2rem;
   gap: var(--gap-1);
 }
-tr .product-img {
+.product-row .product-img {
   width: 3.2rem;
   height: 3.2rem;
 }
 
-td.name {
+.product-row td.name {
   font-weight: bold;
   justify-content: baseline;
   word-break: break-all;
 }
 
-td.status span {
+.product-row td.status span {
   display: flex;
   align-items: center;
   gap: var(--gap-1);
@@ -42,42 +42,42 @@ td.status span {
   line-height: 1.2;
 }
 
-tr .status span.active {
+.product-row .status span.active {
   color: #18d48f;
   /* background-color: #d5fff0; */
 }
-tr .status svg.active {
+.product-row .status svg.active {
 }
-tr .status span.inactive {
+.product-row .status span.inactive {
   color: #ff3030;
   /* background-color: #ffdede; */
 }
 
-td.stock {
+.product-row td.stock {
 }
-td.orders {
+.product-row td.orders {
 }
 
-tr .price {
+.product-row .price {
   font-weight: var(--fw-bold);
   color: #078053;
 }
 
-td.discount {
+.product-row td.discount {
 }
 
-td.category {
+.product-row td.category {
 }
 
-td.rating {
+.product-row td.rating {
   color: #d19a00;
 }
 
-tr .published {
+.product-row .published {
   color: #c2c2c2;
 }
 
-td.action {
+.product-row td.action {
   display: flex;
   gap: var(--gap-2);
 }

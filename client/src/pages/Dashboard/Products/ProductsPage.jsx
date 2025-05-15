@@ -271,7 +271,7 @@ export default function ProductsPage() {
           <header>
             <h1>Products</h1>
 
-            <Link to={"../create"}>
+            <Link to={"create"}>
               <CustomButton
                 className="add-product-button"
                 scaleOnHover={1}
@@ -413,19 +413,21 @@ const Badge = ({ children }) => <span className="badge">{children}</span>;
 
 function TableSkeleton({ count = 10 }) {
   return Array.from({ length: count }).map((_, i) => (
-    <tr className="p-3" key={i}>
-      <td>
-        <div>
-          <Skeleton className="w-10 h-10 rounded-full " />
-        </div>
-      </td>
-
-      {Array.from({ length: 8 }).map((_, j) => (
-        <td key={j} className="px-4 py-3 text-gray-200">
-          ......
+    <thead key={i}>
+      <tr className="p-3">
+        <td>
+          <div>
+            <Skeleton className="w-10 h-10 rounded-full " />
+          </div>
         </td>
-      ))}
-    </tr>
+
+        {Array.from({ length: 8 }).map((_, j) => (
+          <td key={j} className="px-4 py-3 text-gray-200">
+            ......
+          </td>
+        ))}
+      </tr>
+    </thead>
   ));
 }
 

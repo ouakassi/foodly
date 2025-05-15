@@ -22,6 +22,25 @@ const User = sequelize.define("users", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  address: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  isActive: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  // role: {
+  //   type: DataTypes.ENUM("customer", "admin"),
+  //   defaultValue: "customer",
+  // },
 });
 
 module.exports = User;

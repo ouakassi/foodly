@@ -40,6 +40,7 @@ import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import ProductCard from "../../components/Product/ProductCard";
 import ProductRow from "../../components/Product/ProductRow";
 import CustomButton from "../../components/Buttons/CustomButton";
+import ProductHeader from "../../components/Product/ProductHeader";
 
 export default function OverviewPage() {
   const dataBoxes = [
@@ -71,6 +72,40 @@ export default function OverviewPage() {
       change: null,
       trend: null, // optional: no change
     },
+  ];
+
+  const tableHeaders = [
+    { title: "Image" },
+    {
+      title: "Name",
+
+      // isSortable: true,
+      value: "name_asc",
+    },
+    { title: "Status" },
+    {
+      title: "Stock",
+
+      // isSortable: true,
+      value: "stock_asc",
+    },
+    {
+      title: "Price",
+
+      // isSortable: true,
+      value: "price_asc",
+    },
+    { title: "Category" },
+    { title: "Discount" },
+    {
+      title: "Published",
+
+      // isSortable: true,
+      value: "createdAt_asc",
+    },
+    // { title: "Action" },
+    // { title: "Orders", icon: <BiBasket /> },
+    // { title: "Rating", icon: <CiStar /> },
   ];
 
   const product = {
@@ -121,10 +156,14 @@ export default function OverviewPage() {
             />
           </Link>
         </header>
-        {product && <ProductRow product={product} />}
-        {product && <ProductRow product={product} />}
-        {product && <ProductRow product={product} />}
-        {product && <ProductRow product={product} />}
+        <table style={{ width: "100%" }}>
+          <ProductHeader headers={tableHeaders} />
+          <tbody>
+            {product && <ProductRow product={product} />}
+            {product && <ProductRow product={product} />}
+            {product && <ProductRow product={product} />}
+          </tbody>
+        </table>
       </div>
     </div>
   );

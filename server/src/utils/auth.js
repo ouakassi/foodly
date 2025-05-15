@@ -15,7 +15,11 @@ const comparePasswords = (password, hashedPassword) => {
 // function to signing tokens
 const createJWT = (user) => {
   const token = jwt.sign(
-    { id: user.id, email: user.email },
+    {
+      id: user.id,
+      email: user.email,
+      roleId: user.roleId,
+    },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE_TIME }
   );

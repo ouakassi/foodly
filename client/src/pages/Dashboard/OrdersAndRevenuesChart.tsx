@@ -1,4 +1,11 @@
 "use client";
+import { MdMonetizationOn } from "react-icons/md";
+import {
+  BsArchive,
+  BsArrowReturnRight,
+  BsBagCheckFill,
+  BsBasket,
+} from "react-icons/bs";
 
 import * as React from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
@@ -140,7 +147,12 @@ export function OrdersAndRevenuesChart() {
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>
+          <CardTitle className="flex items-center gap-2 text-lg font-bold sm:text-2xl">
+            {activeChart != "orders" ? (
+              <MdMonetizationOn />
+            ) : (
+              <BsBagCheckFill />
+            )}
             {activeChart.slice(0, 1).toLocaleUpperCase() +
               activeChart.slice(1, activeChart.length)}{" "}
             Chart{" "}

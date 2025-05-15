@@ -6,14 +6,22 @@ const validator = (schema) => (payload) =>
 
 //schemas
 
+const adminRegisterSchema = Joi.object({
+  firstName: Joi.string().alphanum().max(20),
+  lastName: Joi.string().alphanum().max(20),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).max(20).required(),
+  confirmPassword: Joi.ref("password"),
+  role: Joi.string().valid("user", "admin", "employee").optional(),
+});
+
 const registerSchema = Joi.object({
   firstName: Joi.string().alphanum().max(20),
   lastName: Joi.string().alphanum().max(20),
   email: Joi.string().email().required(),
-  role: Joi.string(),
   password: Joi.string().min(6).max(20).required(),
   confirmPassword: Joi.ref("password"),
-  // accessToken: Joi.string().token(),
+  role: Joi.forbidden(),
 });
 
 const loginSchema = Joi.object({
@@ -28,10 +36,12 @@ function handleValidationError(error, res) {
   return res.status(400).json({ error: errors });
 }
 
+const validateAdminRegister = validator(adminRegisterSchema);
 const validateRegister = validator(registerSchema);
 const validateLogin = validator(loginSchema);
 
 module.exports = {
+  validateAdminRegister,
   validateRegister,
   validateLogin,
   handleValidationError,

@@ -32,6 +32,7 @@ import DashboardSidebarNavItem from "./DashboardSidebarNavItem";
 import DropdownMenu from "../Navigation/DropdownMenu";
 import DropdownItem from "../Navigation/DropdownItem";
 import useCheckIfClickedOutside from "../../hooks/useCheckIfClickedOutside";
+import { LuArrowLeftFromLine, LuArrowRightFromLine } from "react-icons/lu";
 
 const navItems = [
   {
@@ -111,7 +112,9 @@ export default function DashboardSidebar() {
           onClick={() => setToggleSidebar(!toggleSidebar)}
           scale={1.2}
           className="dashboard-sidebar-button-toggle"
-          icon={toggleSidebar ? <BsFilterLeft /> : <BsFilterRight />}
+          icon={
+            toggleSidebar ? <LuArrowRightFromLine /> : <LuArrowLeftFromLine />
+          }
         />
       </header>
 

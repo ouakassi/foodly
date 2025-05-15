@@ -29,7 +29,7 @@ import StorePage from "./pages/Store/StorePage";
 import DashboardLayout from "./pages/DashboardLayout";
 import OverviewPage from "./pages/Dashboard/OverviewPage";
 import CustomersPage from "./pages/Dashboard/CustomersPage";
-import OrdersPage from "./pages/Dashboard/OrdersPage";
+import OrdersPage from "./pages/Dashboard/Orders/OrdersPage";
 import ProductsPage from "./pages/Dashboard/Products/ProductsPage";
 import ReportsPage from "./pages/Dashboard/ReportsPage";
 import CreateProductPage from "./pages/Dashboard/Products/CreateProductPage";
@@ -72,8 +72,8 @@ function App() {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="customers" element={<CustomersPage />} />
           <Route path="products" element={<ProductsLayout />}>
-            <Route index element={<Navigate to="overview" />} />
-            <Route path="overview" element={<ProductsPage />} />
+            <Route index element={<ProductsPage />} />
+            {/* <Route path=":productId" element={<ProductsPage />} /> */}
             <Route path="create" element={<CreateProductPage />} />
             <Route path="edit/:productId" element={<EditProductPage />} />
           </Route>

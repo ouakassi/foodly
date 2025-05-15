@@ -8,35 +8,37 @@ const ProductHeader = ({ headers }) => {
   const sortedBy = searchParams.get("sort");
 
   return (
-    <tr className="table-header">
-      {headers.map(({ title, icon, isSortable, value }, index) =>
-        isSortable ? (
-          <th key={index} className="cell">
-            {/* <span style={{ color: "var(--color-3)" }}>{icon}</span> */}
-            <button
-              className={`sort-button ${
-                sortedBy === value ? "active-sort" : ""
-              }`}
-              onClick={() => {
-                // setCurrentPage(1);
-                // Always reset the 'status' param and 'page'
-                const newSearchParams = new URLSearchParams(searchParams);
-                newSearchParams.set("sort", value);
-                setSearchParams(newSearchParams);
-              }}
-            >
+    <thead>
+      <tr className="table-header">
+        {headers.map(({ title, icon, isSortable, value }, index) =>
+          isSortable ? (
+            <th key={index} className="cell">
+              {/* <span style={{ color: "var(--color-3)" }}>{icon}</span> */}
+              <button
+                className={`sort-button ${
+                  sortedBy === value ? "active-sort" : ""
+                }`}
+                onClick={() => {
+                  // setCurrentPage(1);
+                  // Always reset the 'status' param and 'page'
+                  const newSearchParams = new URLSearchParams(searchParams);
+                  newSearchParams.set("sort", value);
+                  setSearchParams(newSearchParams);
+                }}
+              >
+                {title}
+                {<RiArrowUpDownLine />}
+              </button>
+            </th>
+          ) : (
+            <th key={index} className="cell">
+              {/* <span style={{ color: "var(--color-3)" }}>{icon}</span> */}
               {title}
-              {<RiArrowUpDownLine />}
-            </button>
-          </th>
-        ) : (
-          <th key={index} className="cell">
-            {/* <span style={{ color: "var(--color-3)" }}>{icon}</span> */}
-            {title}
-          </th>
-        )
-      )}
-    </tr>
+            </th>
+          )
+        )}
+      </tr>
+    </thead>
   );
 };
 
