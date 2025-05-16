@@ -58,7 +58,7 @@ const createRandomProducts = async () => {
 
 const createAdminUser = async () => {
   try {
-    const adminRole = await Role.findOne({ where: { name: "admin" } });
+    const adminRole = await Role.findOne({ where: { name: ROLES.ADMIN } });
 
     if (!adminRole) {
       console.log("Admin role not found. Please seed roles first.");
@@ -102,12 +102,12 @@ User.hasMany(Order, { foreignKey: "userId" });
 Order.belongsTo(User, { foreignKey: "userId" });
 
 // Order ↔ OrderItem
-Order.hasMany(OrderItem, { foreignKey: "orderId", as: "items" });
-OrderItem.belongsTo(Order, { foreignKey: "orderId", as: "order" });
+Order.hasMany(OrderItem, { as: "items", foreignKey: "orderId" });
+OrderItem.belongsTo(Order, { foreignKey: "orderId" });
 
 // Product ↔ OrderItem
-Product.hasMany(OrderItem, { foreignKey: "productId" });
-OrderItem.belongsTo(Product, { foreignKey: "productId", as: "product" });
+OrderItem.belongsTo(Product, { as: "product", foreignKey: "productId" });
+Product.hasMany(OrderItem, { as: "orderItems", foreignKey: "productId" });
 
 // Product ↔ Inventory
 // Product.hasOne(Inventory, { foreignKey: "productId", as: "inventory" });

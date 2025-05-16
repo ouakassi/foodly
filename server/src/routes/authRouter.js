@@ -8,6 +8,7 @@ const {
   logout,
   loggedIn,
 } = require("../controllers/authController");
+const { ROLES } = require("../utils/constants");
 
 const authRouter = express.Router();
 
@@ -15,7 +16,7 @@ authRouter.route("/register").post(publicRegister);
 authRouter.post(
   "/admin/register",
   authenticateToken,
-  authRole("admin"),
+  authRole(ROLES.ADMIN),
   adminRegister
 );
 authRouter.route("/login").post(login);

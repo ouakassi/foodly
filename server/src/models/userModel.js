@@ -37,10 +37,6 @@ const User = sequelize.define("users", {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
-  // role: {
-  //   type: DataTypes.ENUM("customer", "admin"),
-  //   defaultValue: "customer",
-  // },
 });
 
 module.exports = User;

@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { ROLES } = require("./constants");
 
 // validator function to wrap the schema and to check all body fields
 const validator = (schema) => (payload) =>
@@ -12,7 +13,7 @@ const adminRegisterSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).max(20).required(),
   confirmPassword: Joi.ref("password"),
-  role: Joi.string().valid("user", "admin", "employee").optional(),
+  role: Joi.string().valid(ROLES.USER, ROLES.ADMIN, ROLES.MODERATOR).optional(),
 });
 
 const registerSchema = Joi.object({

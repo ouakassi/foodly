@@ -114,7 +114,7 @@ const adminRegister = async (req, res) => {
     });
 
     const { id, email: createdEmail, roleId } = newUser;
-    console.log(newUser);
+
     res.status(201).json({
       message: "User created by admin",
       user: { id, createdEmail, roleId },
@@ -157,8 +157,6 @@ const login = async (req, res) => {
     if (!isValidPassword) {
       return res.status(401).json({ message: "Wrong password" });
     }
-
-    console.log(user);
 
     // Generate JWT token and set cookie
     const token = createJWT(user);

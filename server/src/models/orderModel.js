@@ -1,5 +1,9 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../utils/database");
+const {
+  ORDER_STATUSES,
+  ORDER_STATUS_VALUES_ARRAY,
+} = require("../utils/constants");
 
 const Order = sequelize.define("orders", {
   id: {
@@ -19,21 +23,9 @@ const Order = sequelize.define("orders", {
   },
 
   status: {
-    type: DataTypes.ENUM(
-      "pending",
-      "paid",
-      "processing",
-      "shipped",
-      "delivered",
-      "completed",
-      "cancelled",
-      "returned",
-      "refunded",
-      "failed",
-      "expired"
-    ),
+    type: DataTypes.ENUM(...ORDER_STATUS_VALUES_ARRAY),
     allowNull: false,
-    defaultValue: "pending",
+    defaultValue: ORDER_STATUSES.PENDING,
   },
 
   paymentMethod: {

@@ -18,7 +18,10 @@ const ORDER_STATUSES = {
   EXPIRED: "expired",
 };
 
+const ORDER_STATUS_VALUES_ARRAY = Object.values(ORDER_STATUSES);
+
 module.exports = {
   ROLES,
   ORDER_STATUSES,
+  ORDER_STATUS_VALUES_ARRAY,
 };
