@@ -7,6 +7,8 @@ const {
   updateOrderStatus,
   editOrder,
   getUserOrders,
+  editOrderAddress,
+  cancelOrder,
 } = require("../controllers/orderController");
 const authenticateToken = require("../middlewares/authenticateToken");
 const authRole = require("../middlewares/authRole");
@@ -20,6 +22,7 @@ orderRouter
   .route("/")
   .get(authenticateToken, authRole(ROLES.ADMIN), getAllOrders)
   .post(authenticateToken, createOrder);
+
 orderRouter
   .route("/:orderId")
   .get(authenticateToken, authRole(ROLES.ADMIN), getOrder);
@@ -27,8 +30,15 @@ orderRouter
 orderRouter
   .route("/:orderId/status")
   .patch(authenticateToken, authRole(ROLES.ADMIN), updateOrderStatus);
+
 orderRouter
   .route("/:orderId/edit")
   .patch(authenticateToken, authRole(ROLES.ADMIN), editOrder);
+
+orderRouter
+  .route("/:orderId/address")
+  .patch(authenticateToken, editOrderAddress);
+
+orderRouter.route("/:orderId/cancel").patch(authenticateToken, cancelOrder);
 
 module.exports = orderRouter;

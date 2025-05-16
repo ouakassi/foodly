@@ -9,6 +9,8 @@ const {
   ORDER_STATUS_VALUES_ARRAY,
 } = require("../utils/constants");
 
+const sendEmail = require("../utils/sendEmail");
+
 const getAllOrders = async (req, res, next) => {
   try {
     const orders = await Order.findAndCountAll();
@@ -152,6 +154,14 @@ const createOrder = async (req, res) => {
       return order;
     });
 
+    await sendEmail({
+      to: req.user.email, // assuming email is in JWT user object
+      subject: "Order Confirmation",
+      html: `<h2>Thank you for your order!</h2>
+         <p>Your order <b>${result.id}</b> has been placed successfully.</p>
+         <p>Total: <b>$${result.totalAmount}</b></p>`,
+    });
+
     return res
       .status(201)
       .json({ message: "Order placed successfully", order: result });
@@ -211,11 +221,78 @@ const editOrder = async (req, res) => {
   }
 };
 
+const editOrderAddress = async (req, res) => {
+  const { orderId } = req.params;
+  const { shippingAddress } = req.body;
+
+  try {
+    const order = await Order.findByPk(orderId);
+
+    if (!order) return res.status(404).json({ message: "Order not found." });
+
+    if (order.status !== ORDER_STATUSES.PENDING) {
+      return res
+        .status(400)
+        .json({ message: "Address can only be updated for pending orders." });
+    }
+
+    order.shippingAddress = shippingAddress;
+    await order.save();
+
+    await sendEmail({
+      to: req.user.email,
+      subject: "Shipping Address Updated",
+      html: `<p>The shipping address for your order <b>${order.id}</b> has been updated.</p>`,
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Shipping address updated.", order });
+  } catch (err) {
+    console.error("Error updating address:", err);
+    return res.status(500).json({ message: "Failed to update address." });
+  }
+};
+
+const cancelOrder = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findByPk(orderId);
+
+    if (!order) return res.status(404).json({ message: "Order not found." });
+
+    if (order.status !== ORDER_STATUSES.PENDING) {
+      return res
+        .status(400)
+        .json({ message: "Only pending orders can be cancelled." });
+    }
+
+    order.status = ORDER_STATUSES.CANCELLED;
+    await order.save();
+
+    await sendEmail({
+      to: req.user.email,
+      subject: "Order Cancelled",
+      html: `<p>Your order <b>${order.id}</b> has been cancelled.</p>`,
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Order cancelled successfully.", order });
+  } catch (err) {
+    console.error("Error cancelling order:", err);
+    return res.status(500).json({ message: "Failed to cancel order." });
+  }
+};
+
 module.exports = {
   getAllOrders,
   getOrder,
   getUserOrders,
   createOrder,
   editOrder,
+  editOrderAddress,
   updateOrderStatus,
+  cancelOrder,
 };
