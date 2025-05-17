@@ -1,11 +1,17 @@
 const Joi = require("joi");
-const { ROLES } = require("./constants");
+const {
+  ORDER_STATUS_VALUES_ARRAY,
+  ORDER_SORT_KEYS,
+  ROLES_VALUES_ARRAY,
+} = require("./constants");
 
 // validator function to wrap the schema and to check all body fields
 const validator = (schema) => (payload) =>
   schema.validate(payload, { abortEarly: false });
 
-//schemas
+// SCHEMAS
+
+// ── Auth Schemas ──
 
 const adminRegisterSchema = Joi.object({
   firstName: Joi.string().alphanum().max(20),
@@ -13,7 +19,9 @@ const adminRegisterSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).max(20).required(),
   confirmPassword: Joi.ref("password"),
-  role: Joi.string().valid(ROLES.USER, ROLES.ADMIN, ROLES.MODERATOR).optional(),
+  role: Joi.string()
+    .valid(...ROLES_VALUES_ARRAY)
+    .optional(),
 });
 
 const registerSchema = Joi.object({
@@ -30,20 +38,31 @@ const loginSchema = Joi.object({
   password: Joi.string().min(6).max(20).required(),
 });
 
-// handle errors
+// ── Orders Query Schema ──
+const orderQuerySchema = Joi.object({
+  page: Joi.number().integer().min(1).default(1),
+  limit: Joi.number().integer().min(1).default(10),
+  search: Joi.string().allow(""),
+  sort: Joi.valid(...ORDER_SORT_KEYS),
+  status: Joi.string().valid(...ORDER_STATUS_VALUES_ARRAY),
+});
 
+// Error Handler
 function handleValidationError(error, res) {
   const errors = error.details.map(({ message: errorMsg }) => errorMsg);
   return res.status(400).json({ error: errors });
 }
 
+// Exported validated functions
 const validateAdminRegister = validator(adminRegisterSchema);
 const validateRegister = validator(registerSchema);
 const validateLogin = validator(loginSchema);
+const validateOrderQuery = validator(orderQuerySchema);
 
 module.exports = {
   validateAdminRegister,
   validateRegister,
   validateLogin,
   handleValidationError,
+  validateOrderQuery,
 };

@@ -8,7 +8,9 @@ const User = require("../models/userModel");
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll({ include: [Role] });
+    const users = await User.findAll({
+      include: [{ model: Role, as: "role" }],
+    });
     if (users.length === 0) {
       res.status(404).json({ message: "no users found" });
     } else {

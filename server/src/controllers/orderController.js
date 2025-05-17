@@ -7,20 +7,113 @@ const sequelize = require("../utils/database");
 const {
   ORDER_STATUSES,
   ORDER_STATUS_VALUES_ARRAY,
+  ORDER_SORT_OPTIONS,
 } = require("../utils/constants");
 
 const sendEmail = require("../utils/sendEmail");
+const User = require("../models/userModel");
+const { Op } = require("sequelize");
+const {
+  handleValidationError,
+  validateOrderQuery,
+} = require("../utils/validator");
 
-const getAllOrders = async (req, res, next) => {
+const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.findAndCountAll();
-    if (orders.count === 0) {
-      return res.status(404).json({ message: "No orders found" });
+    const { error, value } = validateOrderQuery(req.query);
+    if (error) return handleValidationError(error, res);
+
+    let {
+      page,
+      limit,
+      search,
+      sort,
+      status,
+      paymentMethod,
+      startDate,
+      endDate,
+    } = value;
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+
+    if (page < 1 || limit < 1) {
+      return res
+        .status(400)
+        .json({ message: "Page and limit must be positive integers." });
     }
 
-    return res.status(200).json({ message: "all orders", orders });
+    let filterConditions = {};
+
+    if (status) {
+      filterConditions.status = status;
+    }
+
+    if (paymentMethod) {
+      filterConditions.paymentMethod = paymentMethod;
+    }
+
+    if (startDate && endDate) {
+      filterConditions.createdAt = {
+        [Op.between]: [new Date(startDate), new Date(endDate)],
+      };
+    }
+
+    if (search) {
+      filterConditions = {
+        [Op.or]: [
+          { id: { [Op.like]: `%${search}%` } },
+          { "$user.firstName$": { [Op.like]: `%${search}%` } },
+          { "$user.lastName$": { [Op.like]: `%${search}%` } },
+          { "$user.email$": { [Op.like]: `%${search}%` } },
+        ],
+      };
+    }
+
+    const { count, rows } = await Order.findAndCountAll({
+      where: filterConditions,
+      include: [
+        {
+          model: User,
+          as: "user",
+          required: true, // ✅ Ensures JOIN is applied so WHERE on user.* works
+          attributes: ["id", "firstName", "lastName", "email"],
+        },
+        {
+          model: OrderItem,
+          as: "items",
+          include: [{ model: Product, as: "product" }],
+        },
+      ],
+      order:
+        sort && ORDER_SORT_OPTIONS[sort]
+          ? [ORDER_SORT_OPTIONS[sort]]
+          : [["createdAt", "DESC"]],
+      limit,
+      offset: (page - 1) * limit,
+      distinct: true, // ✅ Fix overcounting due to joins
+    });
+
+    if (count === 0) {
+      return res
+        .status(404)
+        .json({ message: "No orders found for the given filters." });
+    }
+
+    return res.status(200).json({
+      orders: rows,
+      totalOrders: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      message: search ? "Search results" : "All orders retrieved successfully.",
+      searchQuery: search || null,
+      filters: filterConditions,
+    });
   } catch (err) {
-    return res.status(500).json({ message: "Failed to get all the orders." });
+    console.error("Error fetching orders:", err);
+    return res
+      .status(500)
+      .json({ message: "Internal server error. Failed to fetch orders." });
   }
 };
 
@@ -154,13 +247,13 @@ const createOrder = async (req, res) => {
       return order;
     });
 
-    await sendEmail({
-      to: req.user.email, // assuming email is in JWT user object
-      subject: "Order Confirmation",
-      html: `<h2>Thank you for your order!</h2>
-         <p>Your order <b>${result.id}</b> has been placed successfully.</p>
-         <p>Total: <b>$${result.totalAmount}</b></p>`,
-    });
+    // await sendEmail({
+    //   to: req.user.email, // assuming email is in JWT user object
+    //   subject: "Order Confirmation",
+    //   html: `<h2>Thank you for your order!</h2>
+    //      <p>Your order <b>${result.id}</b> has been placed successfully.</p>
+    //      <p>Total: <b>$${result.totalAmount}</b></p>`,
+    // });
 
     return res
       .status(201)

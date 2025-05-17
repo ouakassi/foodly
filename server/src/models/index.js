@@ -6,7 +6,7 @@ const Address = require("./addressModel");
 const Product = require("./productModel");
 
 const db = require("../utils/database");
-const { ROLES } = require("../utils/constants");
+const { ROLES, ORDER_STATUS_VALUES_ARRAY } = require("../utils/constants");
 const { hashPassword } = require("../utils/auth");
 // const Inventory = require("./inventoryModel");
 
@@ -136,19 +136,20 @@ Product.hasMany(OrderItem, { as: "orderItems", foreignKey: "productId" });
 
 const connectDb = async () => {
   console.log("Testing the database connection..");
-  console.log(ROLES.ADMIN);
+
   try {
     await db.authenticate();
-    console.log("Connection has been established successfully.");
+    console.log("🔗 Connection has been established successfully.");
     // await db.sync({ logging: true });
     await db.sync({ force: true, logging: true });
     await createRandomProducts();
     await createRoles();
     await createAdminUser();
-    await createCategories();
-    console.log("All models were synchronized successfully.");
+
+    // await createCategories();
+    console.log("☑️  All models were synchronized successfully.");
   } catch (error) {
-    console.error("Unable to connect to the database:", error.original);
+    console.error("❌ Unable to connect to the database:", error.original);
   }
 };
 
