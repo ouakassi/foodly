@@ -1,6 +1,9 @@
+const { where } = require("sequelize");
 const Address = require("../models/addressModel");
 const Role = require("../models/roleModel");
 const User = require("../models/userModel");
+const { ROLES } = require("../utils/constants");
+const Order = require("../models/orderModel");
 
 // Get all users
 // GET /api/users/
@@ -8,8 +11,32 @@ const User = require("../models/userModel");
 
 const getAllUsers = async (req, res) => {
   try {
+    let { page, limit, role } = req.query;
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+
+    let filterConditions = {};
+
+    if (role) {
+      let roleRecord = await Role.findOne({ where: { name: role } });
+      if (roleRecord) {
+        filterConditions.roleId = roleRecord.id;
+      }
+    }
+
     const users = await User.findAll({
-      include: [{ model: Role, as: "role" }],
+      where: filterConditions ? filterConditions : null,
+      attributes: {
+        exclude: ["password"],
+      },
+      order: [["createdAt", "DESC"]],
+      include: [
+        { model: Role, as: "role", attributes: ["id", "name"] },
+        { model: Order, as: "orders", attributes: ["id", "totalAmount"] },
+      ],
+      limit,
+      offset: (page - 1) * limit,
     });
     if (users.length === 0) {
       res.status(404).json({ message: "no users found" });

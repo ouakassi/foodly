@@ -15,6 +15,7 @@ const User = require("../models/userModel");
 const Role = require("../models/roleModel");
 
 const { ROLES } = require("../utils/constants");
+const { log } = require("../utils/logger");
 
 // register public user
 // POST /auth/register
@@ -178,6 +179,7 @@ const login = async (req, res) => {
       user,
       token,
     });
+    log("http", "info", "User logged in successfully", { userId: user.id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
