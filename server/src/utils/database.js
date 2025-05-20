@@ -1,6 +1,6 @@
-const { Sequelize } = require("sequelize");
-const dbConfig = require("../configs/dbConfig");
-const { dbLogger } = require("../utils/logger");
+import { Sequelize } from "sequelize";
+import dbConfig from "../configs/dbConfig.js";
+import { dbLogger } from "../utils/logger.js";
 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
@@ -15,4 +15,6 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   },
 });
 
-module.exports = sequelize;
+console.log(dbConfig, "dbConfig");
+
+export default sequelize;

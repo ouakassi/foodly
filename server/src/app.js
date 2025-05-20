@@ -1,27 +1,24 @@
-const express = require("express");
-const cors = require("cors");
-const morgan = require("morgan");
-const helmet = require("helmet");
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
-const compression = require("compression");
-const expressWinston = require("express-winston");
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+import helmet from "helmet";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import compression from "compression";
+import expressWinston from "express-winston";
 
-const corsOptions = require("./configs/corsOptions");
-const authenticateToken = require("./middlewares/authenticateToken");
-const compressionConfig = require("./configs/compressionConfig");
-const logsConfig = require("./configs/logsConfig");
-const { dbLogger, errorsLogger, httpLogger } = require("./utils/logger");
-const connectDb = require("./models");
+import corsOptions from "./configs/corsOptions.js";
+import compressionConfig from "./configs/compressionConfig.js";
+import logsConfig from "./configs/logsConfig.js";
+import { dbLogger, errorsLogger, httpLogger } from "./utils/logger.js";
+import connectDb from "./models/index.js";
 
-const productRouter = require("./routes/productRouter");
-const authRouter = require("./routes/authRouter");
-const userRouter = require("./routes/userRouter");
-const addressRouter = require("./routes/addressRouter");
-const adminRouter = require("./routes/adminRouter");
-const authRole = require("./middlewares/authRole");
-const uploadImageRouter = require("./routes/uploadImageRouter");
-const orderRouter = require("./routes/orderRouter");
+import productRouter from "./routes/productRouter.js";
+import authRouter from "./routes/authRouter.js";
+import userRouter from "./routes/userRouter.js";
+import addressRouter from "./routes/addressRouter.js";
+import uploadImageRouter from "./routes/uploadImageRouter.js";
+import orderRouter from "./routes/orderRouter.js";
 
 const app = express();
 
@@ -50,7 +47,6 @@ app.use("/auth", authRouter);
 app.use("/api/products", productRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/users", userRouter, addressRouter);
-app.use("/api/admin", adminRouter);
 app.use("/api/upload", uploadImageRouter);
 
 // ❱❱ 2. 404 handler
@@ -73,4 +69,4 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal Server Error" });
 });
 
-module.exports = app;
+export default app;

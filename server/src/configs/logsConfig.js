@@ -1,6 +1,12 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
+// Define __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Create the write stream
 const option = fs.createWriteStream(
   path.join(__dirname, "../", "logs", "appLogs.log"),
   {
@@ -8,4 +14,4 @@ const option = fs.createWriteStream(
   }
 );
 
-module.exports = option;
+export default option;

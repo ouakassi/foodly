@@ -1,7 +1,5 @@
-const { Op } = require("sequelize");
-const Category = require("../models/categoryModel");
-const Product = require("../models/productModel");
-const { httpLogger } = require("../utils/logger");
+import { Op } from "sequelize";
+import Product from "../models/productModel.js";
 
 // Get all Products
 // GET /api/products/
@@ -178,7 +176,7 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getAllProducts,
   getProduct,
   createProduct,

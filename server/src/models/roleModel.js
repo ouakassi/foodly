@@ -1,6 +1,6 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../utils/database");
-const { ROLES } = require("../utils/constants");
+import { DataTypes } from "sequelize";
+import sequelize from "../utils/database.js";
+import { ROLES } from "../utils/constants.js";
 
 const Role = sequelize.define("role", {
   name: {
@@ -12,4 +12,4 @@ const Role = sequelize.define("role", {
   },
 });
 
-module.exports = Role;
+export default Role;

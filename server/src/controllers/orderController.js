@@ -1,22 +1,22 @@
-const Order = require("../models/orderModel");
-const OrderItem = require("../models/orderItemModal");
+import Order from "../models/orderModel.js";
+import OrderItem from "../models/orderItemModal.js";
 
-const Product = require("../models/productModel");
+import Product from "../models/productModel.js";
 
-const sequelize = require("../utils/database");
-const {
+import sequelize from "../utils/database.js";
+import {
   ORDER_STATUSES,
   ORDER_STATUS_VALUES_ARRAY,
   ORDER_SORT_OPTIONS,
-} = require("../utils/constants");
+} from "../utils/constants.js";
 
-const sendEmail = require("../utils/sendEmail");
-const User = require("../models/userModel");
-const { Op } = require("sequelize");
-const {
+import sendEmail from "../utils/sendEmail.js";
+import User from "../models/userModel.js";
+import { Op } from "sequelize";
+import {
   handleValidationError,
   validateOrderQuery,
-} = require("../utils/validator");
+} from "../utils/validator.js";
 
 const getAllOrders = async (req, res) => {
   try {
@@ -247,13 +247,13 @@ const createOrder = async (req, res) => {
       return order;
     });
 
-    // await sendEmail({
-    //   to: req.user.email, // assuming email is in JWT user object
-    //   subject: "Order Confirmation",
-    //   html: `<h2>Thank you for your order!</h2>
-    //      <p>Your order <b>${result.id}</b> has been placed successfully.</p>
-    //      <p>Total: <b>$${result.totalAmount}</b></p>`,
-    // });
+    await sendEmail({
+      to: req.user.email, // assuming email is in JWT user object
+      subject: "Order Confirmation",
+      html: `<h2>Thank you for your order!</h2>
+         <p>Your order <b>${result.id}</b> has been placed successfully.</p>
+         <p>Total: <b>$${result.totalAmount}</b></p>`,
+    });
 
     return res
       .status(201)
@@ -379,7 +379,7 @@ const cancelOrder = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getAllOrders,
   getOrder,
   getUserOrders,

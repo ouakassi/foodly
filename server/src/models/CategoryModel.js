@@ -1,5 +1,5 @@
 // const { DataTypes } = require("sequelize");
-// const sequelize = require("../utils/database");
+// import sequelize from '../utils/database';
 
 // const Category = sequelize.define(
 //   "productCategories",
@@ -12,4 +12,4 @@
 //   { timestamps: false }
 // );
 
-// module.exports = Category;
+// export default Category;

@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../../utils/database");
+import { DataTypes } from "sequelize";
+import sequelize from "../../utils/database";
 
 const CartItem = sequelize.define(
   "cartItems",
@@ -12,4 +12,4 @@ const CartItem = sequelize.define(
   { timestamps: false }
 );
 
-module.exports = CartItem;
+export default CartItem;

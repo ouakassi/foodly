@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../../utils/database");
+import { DataTypes } from "sequelize";
+import sequelize from "../../utils/database";
 
 const Coupon = sequelize.define("coupons", {
   code: {
@@ -15,4 +15,4 @@ const Coupon = sequelize.define("coupons", {
   },
 });
 
-module.exports = Coupon;
+export default Coupon;

@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../../utils/database");
+import { DataTypes } from "sequelize";
+import sequelize from "../../utils/database";
 
 const Payment = sequelize.define(
   "payments",
@@ -16,4 +16,4 @@ const Payment = sequelize.define(
   { timestamps: false }
 );
 
-module.exports = Payment;
+export default Payment;

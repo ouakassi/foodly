@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../utils/database");
+import { DataTypes } from "sequelize";
+import sequelize from "../utils/database";
 
 const Inventory = sequelize.define("Inventory", {
   quantity: {
@@ -9,4 +9,4 @@ const Inventory = sequelize.define("Inventory", {
   },
 });
 
-module.exports = Inventory;
+export default Inventory;

@@ -1,5 +1,5 @@
-const Address = require("../models/addressModel");
-const User = require("../models/userModel");
+import Address from "../models/addressModel.js";
+import User from "../models/userModel.js";
 
 // Get all addresses
 // GET /api/admin/users/addresses
@@ -159,7 +159,7 @@ const deleteAddress = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getAllAddresses,
   getAddresses,
   getAddress,

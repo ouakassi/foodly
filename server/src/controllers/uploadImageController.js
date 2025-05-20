@@ -1,8 +1,7 @@
-const multer = require("multer");
+import multer from "multer";
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-const cloudinary = require("../configs/cloudinaryConfig");
-const { response } = require("express");
+import cloudinary from "../configs/cloudinaryConfig.js";
 
 const uploadImageController = async (req, res) => {
   try {
@@ -29,4 +28,4 @@ const uploadImageController = async (req, res) => {
   }
 };
 
-module.exports = uploadImageController;
+export default uploadImageController;

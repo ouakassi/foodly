@@ -1,5 +1,6 @@
-const jwt = require("jsonwebtoken");
-const { verifyJWT } = require("../utils/auth");
+import jwt from "jsonwebtoken";
+import { verifyJWT } from "../utils/auth.js";
+import { log } from "../utils/logger.js";
 
 // middleware function for authentication:
 const authenticateToken = (req, res, next) => {
@@ -7,6 +8,10 @@ const authenticateToken = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
       res.status(401).json({ message: "unauthorized" });
+      log("error", "error", "unauthorized", {
+        message: "unauthorized",
+        status: 401,
+      });
       return;
     }
     const verifiedUser = verifyJWT(token);
@@ -14,8 +19,12 @@ const authenticateToken = (req, res, next) => {
     next();
   } catch (error) {
     res.status(401).json({ message: "not valid user" });
+    log("error", "error", "not valid user", {
+      message: "not valid user",
+      status: 401,
+    });
     return;
   }
 };
 
-module.exports = authenticateToken;
+export default authenticateToken;

@@ -1,6 +1,6 @@
-const express = require("express");
+import express from "express";
 
-const {
+import {
   createOrder,
   getAllOrders,
   getOrder,
@@ -9,10 +9,10 @@ const {
   getUserOrders,
   editOrderAddress,
   cancelOrder,
-} = require("../controllers/orderController");
-const authenticateToken = require("../middlewares/authenticateToken");
-const authRole = require("../middlewares/authRole");
-const { ROLES } = require("../utils/constants");
+} from "../controllers/orderController.js";
+import authenticateToken from "../middlewares/authenticateToken.js";
+import authRole from "../middlewares/authRole.js";
+import { ROLES } from "../utils/constants.js";
 
 const orderRouter = express.Router();
 
@@ -41,4 +41,4 @@ orderRouter
 
 orderRouter.route("/:orderId/cancel").patch(authenticateToken, cancelOrder);
 
-module.exports = orderRouter;
+export default orderRouter;

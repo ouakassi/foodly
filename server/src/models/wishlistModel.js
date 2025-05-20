@@ -1,8 +1,8 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../utils/database");
+import { DataTypes } from "sequelize";
+import sequelize from "../utils/database.js";
 
 const Wishlist = sequelize.define("wishlist", {
   // add any attributes you need
 });
 
-module.exports = Wishlist;
+export default Wishlist;

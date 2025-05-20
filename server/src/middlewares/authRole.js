@@ -1,5 +1,6 @@
-const Role = require("../models/roleModel");
-const User = require("../models/userModel");
+import { log } from "../utils/logger.js";
+import Role from "../models/roleModel.js";
+import User from "../models/userModel.js";
 
 const authRole = (accessRole) => async (req, res, next) => {
   try {
@@ -10,7 +11,13 @@ const authRole = (accessRole) => async (req, res, next) => {
     });
 
     if (!user || !allowedRoles.includes(user.role.name)) {
-      return res.status(403).json({ message: "Access denied" });
+      log("error", "error", "Access denied", {
+        message: "Access denied",
+        status: 403,
+      });
+
+      res.status(403).json({ message: "Access denied" });
+      return;
     }
 
     next();
@@ -19,4 +26,4 @@ const authRole = (accessRole) => async (req, res, next) => {
   }
 };
 
-module.exports = authRole;
+export default authRole;

@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 // hash the given password using bcrypt
 const hashPassword = (password) => {
@@ -31,9 +31,4 @@ const verifyJWT = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
 
-module.exports = {
-  hashPassword,
-  comparePasswords,
-  createJWT,
-  verifyJWT,
-};
+export { hashPassword, comparePasswords, createJWT, verifyJWT };

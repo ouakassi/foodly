@@ -1,9 +1,9 @@
-const Joi = require("joi");
-const {
+import Joi from "joi";
+import {
   ORDER_STATUS_VALUES_ARRAY,
   ORDER_SORT_KEYS,
   ROLES_VALUES_ARRAY,
-} = require("./constants");
+} from "./constants.js";
 
 // validator function to wrap the schema and to check all body fields
 const validator = (schema) => (payload) =>
@@ -59,7 +59,7 @@ const validateRegister = validator(registerSchema);
 const validateLogin = validator(loginSchema);
 const validateOrderQuery = validator(orderQuerySchema);
 
-module.exports = {
+export {
   validateAdminRegister,
   validateRegister,
   validateLogin,

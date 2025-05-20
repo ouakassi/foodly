@@ -1,14 +1,13 @@
-const User = require("./userModel");
-const Role = require("./roleModel");
-const OrderItem = require("./orderItemModal");
-const Order = require("./orderModel");
-const Address = require("./addressModel");
-const Product = require("./productModel");
+import User from "./userModel.js";
+import Role from "./roleModel.js";
+import OrderItem from "./orderItemModal.js";
+import Order from "./orderModel.js";
+import Product from "./productModel.js";
 
-const db = require("../utils/database");
-const { ROLES, ORDER_STATUS_VALUES_ARRAY } = require("../utils/constants");
-const { hashPassword } = require("../utils/auth");
-// const Inventory = require("./inventoryModel");
+import sequelize from "../utils/database.js";
+import { ROLES } from "../utils/constants.js";
+import { hashPassword } from "../utils/auth.js";
+// import Inventory from './inventoryModel';
 
 //insert roles to database
 const createRoles = async () => {
@@ -138,10 +137,10 @@ const connectDb = async () => {
   console.log("Testing the database connection..");
 
   try {
-    await db.authenticate();
+    await sequelize.authenticate();
     console.log("🔗 Connection has been established successfully.");
     // await db.sync({ logging: true });
-    await db.sync({ force: true, logging: true });
+    await sequelize.sync({ force: true, logging: true });
     await createRandomProducts();
     await createRoles();
     await createAdminUser();
@@ -153,4 +152,4 @@ const connectDb = async () => {
   }
 };
 
-module.exports = connectDb;
+export default connectDb;

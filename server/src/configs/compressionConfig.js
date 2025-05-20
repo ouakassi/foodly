@@ -1,4 +1,4 @@
-const compression = require("compression");
+import compression from "compression";
 const compressionConfig = {
   level: 6,
   threshold: 100 * 1000,
@@ -10,4 +10,4 @@ const compressionConfig = {
   },
 };
 
-module.exports = compressionConfig;
+export default compressionConfig;

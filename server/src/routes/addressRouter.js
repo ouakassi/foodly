@@ -1,13 +1,13 @@
-const express = require("express");
+import express from "express";
 
-const {
+import {
   getAllAddresses,
   getAddresses,
   getAddress,
   createAddress,
   updateAddress,
   deleteAddress,
-} = require("../controllers/addressController");
+} from "../controllers/addressController.js";
 
 const addressRouter = express.Router();
 
@@ -22,4 +22,4 @@ addressRouter
   .put(updateAddress)
   .delete(deleteAddress);
 
-module.exports = addressRouter;
+export default addressRouter;

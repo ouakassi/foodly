@@ -1,14 +1,14 @@
-const express = require("express");
-const authenticateToken = require("../middlewares/authenticateToken");
-const authRole = require("../middlewares/authRole");
-const {
+import express from "express";
+import authenticateToken from "../middlewares/authenticateToken.js";
+import authRole from "../middlewares/authRole.js";
+import {
   publicRegister,
   adminRegister,
   login,
   logout,
   loggedIn,
-} = require("../controllers/authController");
-const { ROLES } = require("../utils/constants");
+} from "../controllers/authController.js";
+import { ROLES } from "../utils/constants.js";
 
 const authRouter = express.Router();
 
@@ -23,4 +23,4 @@ authRouter.route("/login").post(login);
 authRouter.route("/logout").get(logout);
 authRouter.route("/loggedin").get(loggedIn);
 
-module.exports = authRouter;
+export default authRouter;

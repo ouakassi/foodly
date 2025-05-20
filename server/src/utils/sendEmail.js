@@ -1,4 +1,5 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
+// import hbs from 'nodemailer-express-handlebars';
 
 const transporter = nodemailer.createTransport({
   service: "gmail", // or use 'smtp.mailtrap.io' or another SMTP provider
@@ -11,7 +12,7 @@ const transporter = nodemailer.createTransport({
 const sendEmail = async ({ to, subject, html }) => {
   try {
     await transporter.sendMail({
-      from: `"Your Shop Name" <${process.env.EMAIL_USER}>`,
+      from: `"Foodly" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
@@ -21,4 +22,4 @@ const sendEmail = async ({ to, subject, html }) => {
   }
 };
 
-module.exports = sendEmail;
+export default sendEmail;

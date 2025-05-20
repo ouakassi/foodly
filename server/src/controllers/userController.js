@@ -1,9 +1,6 @@
-const { where } = require("sequelize");
-const Address = require("../models/addressModel");
-const Role = require("../models/roleModel");
-const User = require("../models/userModel");
-const { ROLES } = require("../utils/constants");
-const Order = require("../models/orderModel");
+import Role from "../models/roleModel.js";
+import User from "../models/userModel.js";
+import Order from "../models/orderModel.js";
 
 // Get all users
 // GET /api/users/
@@ -39,12 +36,11 @@ const getAllUsers = async (req, res) => {
       offset: (page - 1) * limit,
     });
     if (users.length === 0) {
-      res.status(404).json({ message: "no users found" });
-    } else {
-      res.status(200).json(users);
+      return res.status(404).json({ message: "no users found" });
     }
+    return res.status(200).json(users);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -57,7 +53,7 @@ const getUser = async (req, res) => {
     const userId = req.params.id;
     const user = await User.findOne({
       where: { id: userId },
-      include: [Address, Role],
+      include: { model: Role, as: "role", attributes: ["id", "name"] },
     });
 
     if (!user) {
@@ -78,14 +74,13 @@ const updateUser = async (req, res) => {
     const userId = req.params.id;
     const userData = req.body;
 
-    const updatedUser = await User.findOne({ where: { id: userId } });
+    const updatedUser = await User.findByPk(userId);
 
     if (!updatedUser) {
       return res.status(404).json({ message: "user not found" });
     }
-    await User.update(userData, {
-      where: { id: userId },
-    });
+
+    await updatedUser.update(userData);
 
     return res.status(200).json({
       message: `user with id ${userId} updated successfully`,
@@ -141,10 +136,4 @@ const deleteAllUsers = async (req, res) => {
   }
 };
 
-module.exports = {
-  getAllUsers,
-  getUser,
-  updateUser,
-  deleteUser,
-  deleteAllUsers,
-};
+export { getAllUsers, getUser, updateUser, deleteUser, deleteAllUsers };

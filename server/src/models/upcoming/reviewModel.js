@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../../utils/database");
+import { DataTypes } from "sequelize";
+import sequelize from "../../utils/database";
 
 const Review = sequelize.define("review", {
   rating: {
@@ -13,4 +13,4 @@ const Review = sequelize.define("review", {
   },
 });
 
-module.exports = Review;
+export default Review;

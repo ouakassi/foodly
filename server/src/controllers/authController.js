@@ -1,21 +1,21 @@
-const {
+import {
   hashPassword,
   createJWT,
   comparePasswords,
   verifyJWT,
-} = require("../utils/auth");
-const {
+} from "../utils/auth.js";
+import {
   validateRegister,
   validateLogin,
   handleValidationError,
   validateAdminRegister,
-} = require("../utils/validator");
+} from "../utils/validator.js";
 
-const User = require("../models/userModel");
-const Role = require("../models/roleModel");
+import User from "../models/userModel.js";
+import Role from "../models/roleModel.js";
 
-const { ROLES } = require("../utils/constants");
-const { log } = require("../utils/logger");
+import { ROLES } from "../utils/constants.js";
+import { log } from "../utils/logger.js";
 
 // register public user
 // POST /auth/register
@@ -179,8 +179,9 @@ const login = async (req, res) => {
       user,
       token,
     });
-    log("http", "info", "User logged in successfully", { userId: user.id });
+    log("http", "info", "User logged in", { userId: user.id });
   } catch (error) {
+    log("error", "error", "Login failed", { error: error.message });
     res.status(500).json({ error: error.message });
   }
 };
@@ -225,7 +226,7 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   publicRegister,
   adminRegister,
   login,

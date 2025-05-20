@@ -1,6 +1,11 @@
-const { createLogger, format, transports } = require("winston");
-const DailyRotateFile = require("winston-daily-rotate-file");
-const path = require("path");
+import { createLogger, format, transports } from "winston";
+import DailyRotateFile from "winston-daily-rotate-file";
+import path from "path";
+
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const {
   combine,
@@ -133,4 +138,4 @@ const log = (tag = "http", level = "info", message, meta = {}) => {
   }
 };
 
-module.exports = { httpLogger, dbLogger, errorsLogger, log };
+export { httpLogger, dbLogger, errorsLogger, log };
