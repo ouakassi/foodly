@@ -28,5 +28,4 @@ const prodConfig = {
 
 const dbConfig = process.env.NODE_ENV === "dev" ? devConfig : prodConfig;
 
-console.log(process.env.NODE_ENV, "NODE_ENV");
 export default dbConfig;

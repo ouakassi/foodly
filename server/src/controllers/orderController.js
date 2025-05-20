@@ -10,7 +10,7 @@ import {
   ORDER_SORT_OPTIONS,
 } from "../utils/constants.js";
 
-import sendEmail from "../utils/sendEmail.js";
+import { sendEmail } from "../utils/sendEmail.js";
 import User from "../models/userModel.js";
 import { Op } from "sequelize";
 import {
@@ -248,11 +248,13 @@ const createOrder = async (req, res) => {
     });
 
     await sendEmail({
-      to: req.user.email, // assuming email is in JWT user object
-      subject: "Order Confirmation",
-      html: `<h2>Thank you for your order!</h2>
-         <p>Your order <b>${result.id}</b> has been placed successfully.</p>
-         <p>Total: <b>$${result.totalAmount}</b></p>`,
+      to: req.user.email,
+      subject: "Welcome to Foodly!",
+      template: "orderConfirmation",
+      context: {
+        orderId: result.id,
+        totalAmount: "343243242$",
+      },
     });
 
     return res
