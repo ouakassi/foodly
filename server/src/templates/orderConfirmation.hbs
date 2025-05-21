@@ -1,3 +1,55 @@
-<h2>Thank you for your order!</h2>
-<p>Your order <b>{{orderId}}</b> has been placed successfully.</p>
-<p>Total: <b>${{totalAmount}}</b></p>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Order Confirmation</title>
+    <style>
+      body { background-color: #f9f9f9; font-family: "Segoe UI", Tahoma, Geneva,
+      Verdana, sans-serif; margin: 0; padding: 0; } .container { max-width:
+      600px; margin: auto; background: #ffffff; padding: 20px; border-radius:
+      8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); } .header {
+      background-color: #4caf50; padding: 20px; text-align: center; color:
+      white; border-radius: 8px 8px 0 0; } .header h1 { margin: 0; font-size:
+      24px; } .content { padding: 20px; color: #333; } .content h2 { margin-top:
+      0; color: #4caf50; } .order-summary { background: #f1f1f1; padding: 15px;
+      border-radius: 6px; margin-top: 15px; font-size: 14px; } .footer {
+      text-align: center; font-size: 12px; color: #777; padding: 15px; } .button
+      { display: inline-block; background-color: #4caf50; color: rgb(255, 255,
+      255); padding: 10px 20px; text-decoration: none; border-radius: 6px;
+      margin-top: 20px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Thanks for your order, {{customerName}}!</h1>
+      </div>
+      <div class="content">
+        <h2>Order Confirmation</h2>
+        <p>Your order
+          <strong>#{{orderId}}</strong>
+          has been placed successfully on
+          {{orderDate}}.</p>
+
+        <div class="order-summary">
+          <p><strong>Delivery Address:</strong> {{deliveryAddress}}</p>
+          <p><strong>Payment Method:</strong> {{paymentMethod}}</p>
+          <p><strong>Total:</strong> {{totalAmount}} MAD</p>
+        </div>
+
+        <h3>Items Ordered:</h3>
+        <ul>
+          {{#each items}}
+            <li>{{this.name}} x{{this.qty}} - {{this.price}} MAD</li>
+          {{/each}}
+        </ul>
+
+        <a href="{{orderLink}}" class="button">View Your Order</a>
+      </div>
+
+      <div class="footer">
+        <p>Foodly - Nourish Your Life 🍎</p>
+        <p>If you have questions, reply to this email or contact our support.</p>
+      </div>
+    </div>
+  </body>
+</html>

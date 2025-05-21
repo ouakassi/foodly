@@ -140,7 +140,7 @@ const connectDb = async () => {
     await sequelize.authenticate();
     console.log("🔗 Connection has been established successfully.");
     // await db.sync({ logging: true });
-    await sequelize.sync({ force: true, logging: true });
+    await sequelize.sync({ force: false, logging: true });
     await createRandomProducts();
     await createRoles();
     await createAdminUser();

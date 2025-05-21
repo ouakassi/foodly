@@ -247,13 +247,47 @@ const createOrder = async (req, res) => {
       return order;
     });
 
+    const fullOrder = await Order.findByPk(result.id, {
+      include: [
+        {
+          model: User,
+          as: "user",
+          required: true,
+          attributes: ["firstName", "lastName", "email"],
+        },
+        {
+          model: OrderItem,
+          as: "items",
+          include: [
+            {
+              model: Product,
+              as: "product",
+              attributes: ["name", "price"],
+            },
+          ],
+        },
+      ],
+    });
+
+    const orderItems = fullOrder.items.map((item) => ({
+      name: item.product.name,
+      qty: item.quantity,
+      price: item.product.price.toFixed(2),
+    }));
+
     await sendEmail({
       to: req.user.email,
-      subject: "Welcome to Foodly!",
+      subject: "🧾 Your Foodly Order Confirmation",
       template: "orderConfirmation",
       context: {
+        customerName: fullOrder.user.firstName,
         orderId: result.id,
-        totalAmount: "343243242$",
+        orderDate: new Date(result.createdAt).toLocaleDateString("en-US"),
+        deliveryAddress: result.shippingAddress,
+        paymentMethod: result.paymentMethod,
+        totalAmount: result.totalAmount.toFixed(2),
+        items: orderItems,
+        orderLink: "http://localhost:3000/orders",
       },
     });
 
