@@ -17,6 +17,7 @@ import {
   handleValidationError,
   validateOrderQuery,
 } from "../utils/validator.js";
+import emailQueue from "../utils/emailQueue.js";
 
 const getAllOrders = async (req, res) => {
   try {
@@ -275,21 +276,27 @@ const createOrder = async (req, res) => {
       price: item.product.price.toFixed(2),
     }));
 
-    await sendEmail({
-      to: req.user.email,
-      subject: "🧾 Your Foodly Order Confirmation",
-      template: "orderConfirmation",
-      context: {
-        customerName: fullOrder.user.firstName,
-        orderId: result.id,
-        orderDate: new Date(result.createdAt).toLocaleDateString("en-US"),
-        deliveryAddress: result.shippingAddress,
-        paymentMethod: result.paymentMethod,
-        totalAmount: result.totalAmount.toFixed(2),
-        items: orderItems,
-        orderLink: "http://localhost:3000/orders",
+    await emailQueue.add(
+      {
+        to: req.user.email,
+        subject: "🧾 Your Foodly Order Confirmation",
+        template: "orderConfirmation",
+        context: {
+          customerName: fullOrder.user.firstName,
+          orderId: result.id,
+          orderDate: new Date(result.createdAt).toLocaleDateString("en-US"),
+          deliveryAddress: result.shippingAddress,
+          paymentMethod: result.paymentMethod,
+          totalAmount: result.totalAmount.toFixed(2),
+          items: orderItems,
+          orderLink: "http://localhost:3000/orders",
+        },
       },
-    });
+      {
+        attempts: 3,
+        backoff: 5000, // 5 seconds between retries
+      }
+    );
 
     return res
       .status(201)
