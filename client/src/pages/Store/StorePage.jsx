@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./StorePage.css";
-import API from "../../api/api";
+import { axiosInstance } from "../../api/api";
 import ProductCard from "../../components/Product/ProductCard";
 
 export default function StorePage() {
@@ -12,7 +12,7 @@ export default function StorePage() {
     const controller = new AbortController();
     const getProducts = async () => {
       try {
-        const response = await API.get("/api/products/", {
+        const response = await axiosInstance.get("/products/", {
           signal: controller.signal,
         });
         console.log(response.data);

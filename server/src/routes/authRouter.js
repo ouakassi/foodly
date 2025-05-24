@@ -1,5 +1,5 @@
 import express from "express";
-import authenticateToken from "../middlewares/authenticateToken.js";
+import isAuthenticated from "../middlewares/isAuthenticated.js";
 import authRole from "../middlewares/authRole.js";
 import {
   publicRegister,
@@ -15,7 +15,7 @@ const authRouter = express.Router();
 authRouter.route("/register").post(publicRegister);
 authRouter.post(
   "/admin/register",
-  authenticateToken,
+  isAuthenticated,
   authRole(ROLES.ADMIN),
   adminRegister
 );

@@ -26,7 +26,7 @@ import {
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { FaAngleLeft, FaAngleRight, FaRegImage } from "react-icons/fa6";
-import axiosInstance from "../../../api/api";
+import { axiosInstance, API_URL } from "../../../api/api";
 import { toast } from "sonner";
 import { useEffect, useMemo, useRef, useState } from "react";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
@@ -41,7 +41,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import useDebounce from "../../../hooks/useDebounce";
-import { use } from "react";
 
 const tableHeaders = [
   { title: "Image", icon: <FaRegImage /> },
@@ -106,7 +105,7 @@ export default function ProductsPage() {
   };
 
   const { data, isLoading, fetchError, refetch } = useAxiosFetch(
-    "http://localhost:8000/api/products",
+    `${API_URL}/products`,
     params
   );
 

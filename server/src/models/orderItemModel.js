@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../utils/database.js";
 
-const Order = sequelize.define("order_items", {
+const OrderItem = sequelize.define("order_items", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -29,4 +29,4 @@ const Order = sequelize.define("order_items", {
   },
 });
 
-export default Order;
+export default OrderItem;

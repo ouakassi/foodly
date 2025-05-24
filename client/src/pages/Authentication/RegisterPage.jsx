@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState, useEffect } from "react";
-import API from "../../api/api";
+import { axiosInstance } from "../../api/api";
 
 import "./RegisterPage.css";
 import FormContainer from "../../components/Forms/FormContainer";
@@ -65,7 +65,7 @@ export default function RegisterPage() {
     try {
       const { confirmPassword, ...rest } = data;
       console.log(rest);
-      const response = await API.post("/auth/register", rest);
+      const response = await axiosInstance.post("/auth/register", rest);
 
       console.log(response.data.message);
     } catch (err) {

@@ -10,35 +10,34 @@ import {
   editOrderAddress,
   cancelOrder,
 } from "../controllers/orderController.js";
-import authenticateToken from "../middlewares/authenticateToken.js";
+import isAuthenticated from "../middlewares/isAuthenticated.js";
 import authRole from "../middlewares/authRole.js";
 import { ROLES } from "../utils/constants.js";
 
 const orderRouter = express.Router();
 
-orderRouter.route("/my-orders").get(authenticateToken, getUserOrders);
+orderRouter.route("/my-orders").get(isAuthenticated, getUserOrders);
 
 orderRouter
   .route("/")
-  .get(authenticateToken, authRole(ROLES.ADMIN), getAllOrders)
-  .post(authenticateToken, createOrder);
+  // .get(isAuthenticated, authRole(ROLES.ADMIN), getAllOrders)
+  .get(getAllOrders)
+  .post(isAuthenticated, createOrder);
 
 orderRouter
   .route("/:orderId")
-  .get(authenticateToken, authRole(ROLES.ADMIN), getOrder);
+  .get(isAuthenticated, authRole(ROLES.ADMIN), getOrder);
 
 orderRouter
   .route("/:orderId/status")
-  .patch(authenticateToken, authRole(ROLES.ADMIN), updateOrderStatus);
+  .patch(isAuthenticated, authRole(ROLES.ADMIN), updateOrderStatus);
 
 orderRouter
   .route("/:orderId/edit")
-  .patch(authenticateToken, authRole(ROLES.ADMIN), editOrder);
+  .patch(isAuthenticated, authRole(ROLES.ADMIN), editOrder);
 
-orderRouter
-  .route("/:orderId/address")
-  .patch(authenticateToken, editOrderAddress);
+orderRouter.route("/:orderId/address").patch(isAuthenticated, editOrderAddress);
 
-orderRouter.route("/:orderId/cancel").patch(authenticateToken, cancelOrder);
+orderRouter.route("/:orderId/cancel").patch(isAuthenticated, cancelOrder);
 
 export default orderRouter;

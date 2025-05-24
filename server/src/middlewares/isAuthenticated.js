@@ -3,7 +3,7 @@ import { verifyJWT } from "../utils/auth.js";
 import { log } from "../utils/logger.js";
 
 // middleware function for authentication:
-const authenticateToken = (req, res, next) => {
+const isAuthenticated = (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
@@ -27,4 +27,4 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-export default authenticateToken;
+export default isAuthenticated;

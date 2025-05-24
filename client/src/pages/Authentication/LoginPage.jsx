@@ -13,7 +13,7 @@ import FormContainer from "../../components/Forms/FormContainer";
 import InputContainer from "../../components/Forms/InputContainer";
 import Form from "../../components/Forms/Form";
 import ErrorMsg from "../../components/Errors/ErrorMsg";
-import API from "../../api/api";
+import { axiosInstance } from "../../api/api";
 
 //  validation schema
 let validationSchema = Yup.object({
@@ -47,7 +47,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await API.post("/auth/login", data, {
+      const response = await axiosInstance.post("/auth/login", data, {
         withCredentials: true,
       });
       navigate("/");

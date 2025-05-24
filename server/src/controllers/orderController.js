@@ -1,5 +1,5 @@
 import Order from "../models/orderModel.js";
-import OrderItem from "../models/orderItemModal.js";
+import OrderItem from "../models/orderItemModel.js";
 
 import Product from "../models/productModel.js";
 
@@ -21,6 +21,7 @@ import emailQueue from "../utils/emailQueue.js";
 
 const getAllOrders = async (req, res) => {
   try {
+    console.log(Math.round(20.1 * 100));
     const { error, value } = validateOrderQuery(req.query);
     if (error) return handleValidationError(error, res);
 

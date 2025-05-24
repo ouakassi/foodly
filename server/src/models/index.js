@@ -1,6 +1,6 @@
 import User from "./userModel.js";
 import Role from "./roleModel.js";
-import OrderItem from "./orderItemModal.js";
+import OrderItem from "./orderItemModel.js";
 import Order from "./orderModel.js";
 import Product from "./productModel.js";
 
@@ -52,6 +52,92 @@ const createRandomProducts = async () => {
     }
   } catch (error) {
     console.error("Error initializing database:", error);
+  }
+};
+
+const createRandomOrders = async () => {
+  try {
+    const users = await User.findAll();
+    const products = await Product.findAll();
+
+    if (users.length === 0 || products.length === 0) {
+      console.log("❌ Not enough users or products to create orders.");
+      return;
+    }
+
+    const orderStatuses = ["pending", "processing", "shipped", "delivered"];
+
+    for (let i = 0; i < 10; i++) {
+      const user = users[Math.floor(Math.random() * users.length)];
+      const status =
+        orderStatuses[Math.floor(Math.random() * orderStatuses.length)];
+
+      const productSubset = [];
+      const numberOfProducts = Math.floor(Math.random() * 5) + 1;
+
+      while (productSubset.length < numberOfProducts) {
+        const randomProduct =
+          products[Math.floor(Math.random() * products.length)];
+        if (!productSubset.includes(randomProduct)) {
+          productSubset.push(randomProduct);
+        }
+      }
+
+      const orderItems = [];
+      let totalAmount = 0;
+
+      for (const product of productSubset) {
+        const quantity = Math.floor(Math.random() * 3) + 1;
+        const itemTotal = product.price * quantity;
+        totalAmount += itemTotal;
+
+        orderItems.push({
+          productId: product.id,
+          quantity,
+          price: product.price,
+        });
+      }
+
+      // Generate trackingNumber and timestamps conditionally
+      const now = new Date();
+      const shippedAt =
+        status === "shipped" || status === "delivered" ? now : null;
+      const deliveredAt = status === "delivered" ? now : null;
+      const trackingNumber =
+        status === "shipped" || status === "delivered"
+          ? `TRK-${Math.floor(100000000 + Math.random() * 900000000)}`
+          : null;
+
+      const order = await Order.create({
+        userId: user.id,
+        totalAmount: parseFloat(totalAmount.toFixed(2)),
+        shippingAddress: `Street ${Math.floor(Math.random() * 100)}, City ${
+          i + 1
+        }`,
+        status,
+        paymentMethod: "stripe",
+        trackingNumber,
+        shippedAt,
+        deliveredAt,
+      });
+
+      await Promise.all(
+        orderItems.map((item) =>
+          OrderItem.create({
+            orderId: order.id,
+            ...item,
+          })
+        )
+      );
+
+      console.log(
+        `✅ Order ${order.id} (${status}) created with ${orderItems.length} items.`
+      );
+    }
+
+    console.log("🎉 10 Random Orders Inserted!");
+  } catch (error) {
+    console.error("❌ Error creating orders:", error);
   }
 };
 
@@ -144,6 +230,7 @@ const connectDb = async () => {
     await createRandomProducts();
     await createRoles();
     await createAdminUser();
+    await createRandomOrders();
 
     // await createCategories();
     console.log("☑️  All models were synchronized successfully.");

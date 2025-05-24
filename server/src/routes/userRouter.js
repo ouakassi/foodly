@@ -9,18 +9,18 @@ import {
 } from "../controllers/userController.js";
 import authRole from "../middlewares/authRole.js";
 import { ROLES } from "../utils/constants.js";
-import authenticateToken from "../middlewares/authenticateToken.js";
+import isAuthenticated from "../middlewares/isAuthenticated.js";
 
 const userRouter = express.Router();
 
 userRouter
   .route("/")
-  .get(authenticateToken, authRole(ROLES.ADMIN), getAllUsers)
-  .delete(authenticateToken, authRole(ROLES.ADMIN), deleteAllUsers);
+  .get(isAuthenticated, authRole(ROLES.ADMIN), getAllUsers)
+  .delete(isAuthenticated, authRole(ROLES.ADMIN), deleteAllUsers);
 userRouter
   .route("/:id")
-  .get(authenticateToken, getUser)
-  .put(authenticateToken, updateUser)
-  .delete(authenticateToken, authRole(ROLES.ADMIN), deleteUser);
+  .get(isAuthenticated, getUser)
+  .put(isAuthenticated, updateUser)
+  .delete(isAuthenticated, authRole(ROLES.ADMIN), deleteUser);
 
 export default userRouter;
