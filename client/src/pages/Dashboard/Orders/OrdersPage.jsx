@@ -1,9 +1,8 @@
 import "./OrdersPage.css";
 import React, { useState } from "react";
-import { cn } from "@/lib/utils";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { cn } from "@/lib/utils";
 
-import { CiImageOn } from "react-icons/ci";
 import { LuGalleryVerticalEnd } from "react-icons/lu";
 
 import {
@@ -64,6 +63,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { Button } from "@/components/ui/button";
+import { API_URL } from "@/api/api";
 
 import {
   Command,
@@ -95,6 +95,8 @@ import {
 import { RiFilterFill, RiIdCardLine, RiProgress1Line } from "react-icons/ri";
 import {
   FaAddressCard,
+  FaCcStripe,
+  FaPaypal,
   FaPhone,
   FaRegFileAlt,
   FaShippingFast,
@@ -103,189 +105,43 @@ import {
 } from "react-icons/fa";
 import ContentContainer from "../../../components/Dashboard/ContentContainer";
 import ProductRow from "../../../components/Product/ProductRow";
-
-const orders = [
-  {
-    id: "#928472",
-    customer: "John Doe",
-    email: "john@example.com",
-    status: "Completed",
-    date: "2025-04-29",
-    total: 145.0,
-    currency: "USD",
-    paymentStatus: "Paid",
-    fulfillmentStatus: "Delivered",
-  },
-  {
-    id: "#928473",
-    customer: "Sarah Smith",
-    email: "sarah@example.com",
-    status: "Pending",
-    date: "2025-04-28",
-    total: 49.99,
-    currency: "USD",
-    paymentStatus: "Pending",
-    fulfillmentStatus: "Not Fulfilled",
-  },
-  {
-    id: "#928474",
-    customer: "Guest Checkout",
-    email: null,
-    status: "Cancelled",
-    date: "2025-04-20",
-    total: 0.0,
-    currency: "USD",
-    paymentStatus: "Failed",
-    fulfillmentStatus: "Not Applicable",
-  },
-  {
-    id: "#928475",
-    customer: "Adam Johnson",
-    email: "adam@example.com",
-    status: "Refunded",
-    date: "2025-04-10",
-    total: 110.5,
-    currency: "USD",
-    paymentStatus: "Refunded",
-    fulfillmentStatus: "Returned",
-  },
-  {
-    id: "#928476",
-    customer: "Mariam Khalid",
-    email: "mariam@example.com",
-    status: "Shipped",
-    date: "2025-04-15",
-    total: 220.0,
-    currency: "EUR",
-    paymentStatus: "Paid",
-    fulfillmentStatus: "Shipped",
-  },
-  {
-    id: "#928477",
-    customer: "Liam Chen",
-    email: "liamc@example.com",
-    status: "Processing",
-    date: "2025-04-27",
-    total: 75.25,
-    currency: "USD",
-    paymentStatus: "Authorized",
-    fulfillmentStatus: "In Progress",
-  },
-  {
-    id: "#928472",
-    customer: "John Doe",
-    email: "john@example.com",
-    status: "Completed",
-    date: "2025-04-29",
-    total: 145.0,
-    currency: "USD",
-    paymentStatus: "Paid",
-    fulfillmentStatus: "Delivered",
-  },
-  {
-    id: "#928476",
-    customer: "Mariam Khalid",
-    email: "mariam@example.com",
-    status: "Shipped",
-    date: "2025-04-15",
-    total: 220.0,
-    currency: "EUR",
-    paymentStatus: "Paid",
-    fulfillmentStatus: "Shipped",
-  },
-  {
-    id: "#928475",
-    customer: "Adam Johnson",
-    email: "adam@example.com",
-    status: "Refunded",
-    date: "2025-04-10",
-    total: 110.5,
-    currency: "USD",
-    paymentStatus: "Refunded",
-    fulfillmentStatus: "Returned",
-  },
-  {
-    id: "#928472",
-    customer: "John Doe",
-    email: "john@example.com",
-    status: "Completed",
-    date: "2025-04-29",
-    total: 145.0,
-    currency: "USD",
-    paymentStatus: "Paid",
-    fulfillmentStatus: "Delivered",
-  },
-];
-const orderBoxes = [
-  {
-    icon: <PiBasketFill />,
-    label: "Total Orders",
-    value: "4545",
-    trend: "+25",
-    trendDirection: "up", // or "down"
-    description: "compared last month",
-  },
-  {
-    icon: <MdOutlineAttachMoney />,
-    label: "Total Revenue",
-    value: "$120,000",
-    trend: "+10",
-    trendDirection: "up",
-    description: "compared last month",
-  },
-  {
-    icon: <RiProgress1Line />,
-    label: "Orders in Progress",
-    value: "320",
-    trend: "+8",
-    trendDirection: "up",
-    description: "since last week",
-  },
-  {
-    icon: <BiRotateLeft />,
-    label: "Cancelled Orders",
-    value: "45",
-    trend: "-5",
-    trendDirection: "down",
-    description: "compared last month",
-  },
-  // {
-  //   icon: "🕒",
-  //   label: "Pending Orders",
-  //   value: "89",
-  //   trend: "+2",
-  //   trendDirection: "up",
-  //   description: "since yesterday",
-  // },
-];
+import useAxiosFetch from "../../../hooks/useAxiosFetch";
+import { useSearchParams } from "react-router-dom";
+import useDebounce from "../../../hooks/useDebounce";
+import { NextBtn, PreviousBtn } from "../../../components/Table/TableBtns";
 
 const statusConfig = {
-  Completed: {
+  completed: {
     icon: <BiCheckCircle />,
     className: "status-completed",
     text: "Order completed successfully",
   },
-  Pending: {
+  pending: {
     icon: <BiLoader />,
     className: "status-pending",
     text: "Awaiting confirmation or payment",
   },
-  Cancelled: {
+  cancelled: {
     icon: <BiRotateLeft />,
     className: "status-cancelled",
     text: "Order was cancelled",
   },
-  Refunded: {
+  refunded: {
     icon: <BiInfoCircle />,
     className: "status-refunded",
     text: "Customer refunded",
   },
-  Shipped: {
+  shipped: {
     icon: <MdOutlineLocalShipping />,
     className: "status-shipped",
     text: "Shipped to customer",
   },
-  Processing: {
+  delivered: {
+    icon: <MdOutlineLocalShipping />,
+    className: "status-shipped",
+    text: "Shipped to customer",
+  },
+  processing: {
     icon: <BiLoader />,
     className: "status-processing",
     text: "Order is being processed",
@@ -307,60 +163,114 @@ const statusConfig = {
   },
 };
 
-const paymentStatusConfig = {
-  Paid: { icon: <MdOutlineFactCheck />, className: "payment-paid" },
-  Pending: { icon: <BiLoader />, className: "payment-pending" },
-  Failed: { icon: <BiXCircle />, className: "payment-failed" },
-  Refunded: { icon: <BiRotateLeft />, className: "payment-refunded" },
-  Authorized: { icon: <BiTimeFive />, className: "payment-authorized" },
-};
-
-const fulfillmentStatusConfig = {
-  Delivered: { icon: <BiCheckCircle />, className: "fulfillment-delivered" },
-  "Not Fulfilled": {
-    icon: <BiXCircle />,
-    className: "fulfillment-not-fulfilled",
-  },
-  "Not Applicable": {
-    icon: <BiMinusCircle />,
-    className: "fulfillment-not-applicable",
-  },
-  Returned: { icon: <BiRotateLeft />, className: "fulfillment-returned" },
-  Shipped: { icon: <BsFillSendCheckFill />, className: "fulfillment-shipped" },
-  "In Progress": { icon: <BiLoader />, className: "fulfillment-in-progress" },
-};
-
-function calculateOrderStatus(paymentStatus, fulfillmentStatus) {
-  if (paymentStatus === "Refunded") return "Refunded";
-  if (paymentStatus === "Failed") return "Cancelled";
-
-  if (paymentStatus === "Pending" || paymentStatus === "Authorized") {
-    return "Pending";
-  }
-
-  if (paymentStatus === "Paid") {
-    if (fulfillmentStatus === "Delivered") return "Completed";
-    if (fulfillmentStatus === "Returned") return "Refunded";
-    if (fulfillmentStatus === "Shipped") return "Shipped";
-    if (fulfillmentStatus === "In Progress") return "Processing";
-    if (
-      fulfillmentStatus === "Not Fulfilled" ||
-      fulfillmentStatus === "Not Applicable"
-    ) {
-      return "Processing";
-    }
-  }
-
-  return "Pending"; // default fallback
-}
-
 export default function OrdersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState("none");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = searchParams.get("page") || 1;
+  const limit = searchParams.get("limit") || 10;
+  const search = searchParams.get("search");
+  const sort = searchParams.get("sort") || "";
+  const status = searchParams.get("status");
+
+  const debouncedSearch = useDebounce(search, 500); // 500ms delay
+
+  const params = {
+    ...(search && { search: debouncedSearch }),
+    limit: limit,
+    page: page,
+    ...(status !== "all" && { status: status }),
+    sort: sort ? sort : {},
+  };
+
+  const { data, loading, error } = useAxiosFetch(
+    API_URL + "/api/orders",
+    params
+  );
+  console.log(data);
+  const { orders, totalOrders, totalPages, currentPage } = data || {};
+
+  const orderBoxes = [
+    {
+      icon: <PiBasketFill />,
+      label: "Total Orders",
+      value: totalOrders,
+      trend: "+25",
+      trendDirection: "up", // or "down"
+      description: "compared last month",
+    },
+    {
+      icon: <MdOutlineAttachMoney />,
+      label: "Total Revenue",
+      value: "$120,000",
+      trend: "+10",
+      trendDirection: "up",
+      description: "compared last month",
+    },
+    {
+      icon: <RiProgress1Line />,
+      label: "Orders in Progress",
+      value: "320",
+      trend: "+8",
+      trendDirection: "up",
+      description: "since last week",
+    },
+    {
+      icon: <BiRotateLeft />,
+      label: "Cancelled Orders",
+      value: "45",
+      trend: "-5",
+      trendDirection: "down",
+      description: "compared last month",
+    },
+    // {
+    //   icon: "🕒",
+    //   label: "Pending Orders",
+    //   value: "89",
+    //   trend: "+2",
+    //   trendDirection: "up",
+    //   description: "since yesterday",
+    // },
+  ];
+
+  // function to handle the 'page' param and update the URL
+  const updatePageParam = (newPage) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("page", newPage);
+    setSearchParams(newSearchParams);
+  };
+
+  const handleStatusChange = (value) => {
+    // reset the 'status' param and 'page'
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("status", value);
+    newSearchParams.set("page", 1);
+
+    setSearchParams(newSearchParams);
+  };
 
   const handleOpen = (type) => {
     setDialogType(type);
     setIsDialogOpen(true);
+  };
+
+  const handleNextPage = () => {
+    if (page >= totalPages) {
+      toast.info("You are already on the last page");
+      return;
+    }
+
+    updatePageParam(+page + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (page <= 1) {
+      toast.info("You are already on the first page");
+      return;
+    }
+
+    updatePageParam(+page - 1);
   };
 
   const formattedCurrency = (amount, currency) => {
@@ -374,6 +284,21 @@ export default function OrdersPage() {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", options);
   };
+
+  const PaymentIcon = ({ method }) => {
+    switch (method) {
+      case "stripe":
+        return <FaCcStripe />;
+      case "paypal":
+        return <FaPaypal />;
+      default:
+        return null;
+    }
+  };
+
+  if (loading) return <p>Loading orders...</p>; // Or a spinner component
+  if (error) return <p>Error fetching orders: {error.message}</p>;
+  if (!orders || orders.length === 0) return <p>No orders found.</p>;
 
   return (
     <div className="orders-page">
@@ -396,82 +321,82 @@ export default function OrdersPage() {
         {/* <OrdersTotalChart /> */}
       </div>
       <div className="orders-page-container">
-        {/* <OrdersAndRevenuesChart /> */}
-        {/* <div>
-          <p>orders revenue</p>
-          <p>total orders</p>
-          <p>avg orders value</p>
-        </div> */}
-        <ComboboxDemo />
+        <header>
+          <ComboboxDemo handleStatusChange={handleStatusChange} />
+          <div className="table-pages-buttons">
+            <PreviousBtn onClick={handlePreviousPage} page={page} />
+
+            <NextBtn
+              onClick={handleNextPage}
+              page={page}
+              totalPages={totalPages}
+            />
+          </div>
+        </header>
         <table className="orders-table">
           <thead>
             <tr>
               <th>Order ID</th>
-              <th>Customer</th>
+
+              <th>Email</th>
               <th>Status</th>
               <th>Date</th>
               <th>Total</th>
-              <th>Payment</th>
-              <th>Fulfillment</th>
+              <th>Payment Method</th>
+
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {orders.map(
-              ({
-                id,
-                customer,
-                status,
-                date,
-                total,
-                paymentStatus,
-                fulfillmentStatus,
-              }) => (
+            {orders &&
+              orders.map((order) => (
                 <tr>
-                  <td className="order-id">{id}</td>
-                  <td className="name">
-                    <FaUserCircle />
-                    {customer}
+                  <td className="order-id">
+                    <TooltipProvider delayDuration={100}>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <span>{"#" + order.id.slice(0, 8) + ".."}</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="tooltip-content">{order.id}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </td>
-                  <td className={`status ${statusConfig[status].className}`}>
+                  <td className="email">
+                    <TooltipProvider delayDuration={100}>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <span>{order.user.email}</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="tooltip-content">
+                            {order.user.firstName + " " + order.user.lastName}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </td>
+                  <td
+                    className={`status ${statusConfig[order.status].className}`}
+                  >
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
                         <TooltipTrigger>
                           <span>
-                            {
-                              statusConfig[
-                                calculateOrderStatus(
-                                  paymentStatus,
-                                  fulfillmentStatus
-                                )
-                              ].icon
-                            }
-                            {calculateOrderStatus(
-                              paymentStatus,
-                              fulfillmentStatus
-                            )}
+                            {statusConfig[order.status].icon}
+                            {order.status}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p
-                            className={`tooltip-content ${statusConfig[status].className}`}
+                            className={`tooltip-content ${
+                              statusConfig[order.status].className
+                            }`}
                           >
-                            {
-                              statusConfig[
-                                calculateOrderStatus(
-                                  paymentStatus,
-                                  fulfillmentStatus
-                                )
-                              ].icon
-                            }
-                            {
-                              statusConfig[
-                                calculateOrderStatus(
-                                  paymentStatus,
-                                  fulfillmentStatus
-                                )
-                              ].text
-                            }
+                            {statusConfig[order.status].icon}
+
+                            {statusConfig[order.status].text}
                           </p>
                         </TooltipContent>
                       </Tooltip>
@@ -479,20 +404,18 @@ export default function OrdersPage() {
 
                     {/* {status} */}
                   </td>
-                  <td className="date">{date}</td>
-                  <td className="total">{formattedCurrency(total, "MAD")}</td>
-                  <td
-                    className={`payment ${paymentStatusConfig[paymentStatus].className}`}
-                  >
-                    {paymentStatusConfig[paymentStatus].icon}
-                    {paymentStatus}
+                  <td className="date">{formatDate(order.createdAt)}</td>
+
+                  <td className="total">
+                    {formattedCurrency(order.totalAmount, "MAD")}
                   </td>
-                  <td
-                    className={`fulfillmentStatus ${statusConfig[status].className}`}
-                  >
-                    {fulfillmentStatusConfig[fulfillmentStatus].icon}
-                    {fulfillmentStatus}
+                  <td className="payment">
+                    <span className={order.paymentMethod}>
+                      <PaymentIcon method={order.paymentMethod} />
+                      {order.paymentMethod}
+                    </span>
                   </td>
+
                   <td className="actions">
                     <DropdownMenu modal={false}>
                       <DropdownMenuTrigger asChild>
@@ -523,8 +446,7 @@ export default function OrdersPage() {
                     </Dialog>
                   </td>
                 </tr>
-              )
-            )}
+              ))}
           </tbody>
         </table>
       </div>
@@ -575,7 +497,7 @@ const DialogShowOrderDetails = ({ order }) => {
                 <span>May 6, 2025, 2:14 PM</span>
               </p>
 
-              <p className="order-status">
+              {/* <p className="order-status">
                 <span>
                   <strong>
                     <PiAirplaneTaxiingThin className="icon" />
@@ -588,7 +510,7 @@ const DialogShowOrderDetails = ({ order }) => {
                   {statusConfig[calculateOrderStatus("Paid", "Delivered")].icon}
                   {calculateOrderStatus("Paid", "Delivered")}
                 </span>
-              </p>
+              </p> */}
 
               <p className="payment-status">
                 <span>
@@ -812,7 +734,7 @@ const statusOptions = [
   },
 ];
 
-export function ComboboxDemo() {
+export function ComboboxDemo({ handleStatusChange }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -849,6 +771,7 @@ export function ComboboxDemo() {
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
+                    handleStatusChange(status.value.toLowerCase());
                   }}
                 >
                   {status.icon}
@@ -1004,7 +927,6 @@ const OrderRow = ({ order }) => (
     <td className="name">{order.productName}</td>
     <td className="quantity">{order.quantity}</td>
     <td className="price">{order.formattedPrice}</td>
-
     <td className="date">{order.orderDate}</td>
   </tr>
 );

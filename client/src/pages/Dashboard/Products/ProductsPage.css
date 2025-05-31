@@ -72,27 +72,7 @@
   /* gap: var(--gap-4); */
 }
 
-.products-page .table-pages-buttons {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.products-page .table-pages-buttons button,
-.table-footer button {
-  padding: 6px 10px;
-  background: rgb(255 255 255);
-  border: 1px rgb(221 221 221 / 15%) solid;
-  color: rgb(77 77 77);
-  border-radius: 5px;
-  width: fit-content;
-  border: none;
-  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-}
 
-.products-page .table-pages-buttons button:hover,
-.table-footer button:hover {
-  background-color: rgb(245, 245, 245);
-}
 
 .products-page .table-footer {
   display: flex;

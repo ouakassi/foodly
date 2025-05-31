@@ -34,13 +34,9 @@ import InputContainer from "../../../components/Forms/InputContainer";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 import useDebounce from "../../../hooks/useDebounce";
+import { NextBtn, PreviousBtn } from "../../../components/Table/TableBtns";
 
 const tableHeaders = [
   { title: "Image", icon: <FaRegImage /> },
@@ -105,7 +101,7 @@ export default function ProductsPage() {
   };
 
   const { data, isLoading, fetchError, refetch } = useAxiosFetch(
-    `${API_URL}/products`,
+    `${API_URL}/api/products`,
     params
   );
 
@@ -366,47 +362,6 @@ export default function ProductsPage() {
     </section>
   );
 }
-
-const PreviousBtn = ({ onClick, page, prevBtnRef }) => {
-  const isFirstPage = page <= 1;
-  return (
-    <TooltipProvider delayDuration={100}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span onClick={onClick} ref={prevBtnRef}>
-            <CustomButton disabled={isFirstPage} icon={<FaAngleLeft />} />
-          </span>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{!isFirstPage ? "Previous Page" : "You're in first page"}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-};
-
-const NextBtn = ({ onClick, page, totalPages, nextBtnRef }) => {
-  const isLastPage = page >= totalPages;
-
-  return (
-    <TooltipProvider delayDuration={100}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span ref={nextBtnRef} onClick={onClick}>
-            <CustomButton
-              disabled={isLastPage}
-              icon={<FaAngleRight />}
-              aria-label="Next Page"
-            />
-          </span>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{!isLastPage ? "Next Page" : "Already in Last page"}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-};
 
 const Badge = ({ children }) => <span className="badge">{children}</span>;
 

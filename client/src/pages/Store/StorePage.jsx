@@ -12,7 +12,7 @@ export default function StorePage() {
     const controller = new AbortController();
     const getProducts = async () => {
       try {
-        const response = await axiosInstance.get("/products/", {
+        const response = await axiosInstance.get("api/products", {
           signal: controller.signal,
         });
         console.log(response.data);

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import CreateProductPage from "./CreateProductPage";
+import { API_URL } from "../../../api/api";
 
 export default function EditProductPage() {
   const { productId } = useParams(); // Get product ID from URL
@@ -10,7 +11,7 @@ export default function EditProductPage() {
     data: product,
     fetchError,
     isLoading,
-  } = useAxiosFetch(`http://localhost:8000/api/products/${productId}`);
+  } = useAxiosFetch(`${API_URL}/products/${productId}`);
 
   const navigate = useNavigate();
 

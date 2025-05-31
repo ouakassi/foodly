@@ -19,7 +19,7 @@ import { TbHomeSignal, TbBrandProducthunt } from "react-icons/tb";
 import { BiArchiveIn } from "react-icons/bi";
 import { AiOutlineDollar, AiOutlinePercentage } from "react-icons/ai";
 
-import { axiosInstance } from "@/api/api";
+import { axiosInstance, API_URL } from "@/api/api";
 import { toast } from "sonner";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { useNavigate } from "react-router-dom";
@@ -120,7 +120,7 @@ export default function CreateProductPage(defaultValues = {}) {
     fetchError,
     isLoading,
     error,
-  } = useAxiosFetch("http://localhost:8000/api/products");
+  } = useAxiosFetch(`${API_URL}/api/products`);
 
   useEffect(() => {
     setFocus("name");
@@ -229,7 +229,7 @@ export default function CreateProductPage(defaultValues = {}) {
     try {
       setIsFormLoading(true);
 
-      const imgRes = await axiosInstance.post("/upload", {
+      const imgRes = await axiosInstance.post("/api/upload", {
         imgUrl: imagePreview,
         category: selectedCategory || "nuts", // Default to "nuts" if no category is selected
       });
@@ -245,7 +245,7 @@ export default function CreateProductPage(defaultValues = {}) {
       data.imgUrl = uploadedImgUrl;
 
       if (isEditSession) {
-        await axiosInstance.put(`/products/${editId}`, {
+        await axiosInstance.put(`/api/products/${editId}`, {
           ...data,
         });
         console.log("edit data", data);
@@ -254,7 +254,7 @@ export default function CreateProductPage(defaultValues = {}) {
         return;
       }
 
-      await axiosInstance.post("/products/", {
+      await axiosInstance.post("/api/products/", {
         ...data,
       });
 
