@@ -28,7 +28,7 @@ const getAllProducts = async (req, res) => {
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
 
-    const filterConditions = {};
+    const filterConditions = { isDeleted: false };
 
     if (search) {
       filterConditions.name = { [Op.like]: `%${search}%` };
@@ -158,20 +158,31 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const productId = req.params.id;
-    const deletedProduct = await Product.findOne({ where: { id: productId } });
 
-    if (!deletedProduct)
-      return res.status(500).json({
-        message: `product with id ${productId} not found or there is an error`,
-      });
-
-    await Product.destroy({
+    // Use unscoped query to find even deleted products (optional)
+    const product = await Product.scope(null).findOne({
       where: { id: productId },
     });
+
+    if (!product) {
+      return res.status(404).json({
+        message: `Product with id ${productId} not found.`,
+      });
+    }
+
+    if (product.isDeleted) {
+      return res.status(400).json({
+        message: `Product with id ${productId} is already deleted.`,
+      });
+    }
+
+    await product.update({ isDeleted: true });
+
     return res.status(200).json({
-      message: `product with id ${productId} deleted successfully`,
+      message: `Product with id ${productId} deleted successfully.`,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 };

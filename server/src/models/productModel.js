@@ -45,6 +45,11 @@ const Product = sequelize.define("product", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  isDeleted: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 export default Product;

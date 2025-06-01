@@ -207,7 +207,7 @@ export default function ProductsPage() {
       return;
     }
     try {
-      await axiosInstance.delete(`/api/products/${product.id}`);
+      await axiosInstance.put(`/api/products/${product.id}/delete/`);
       toast.success("Product Deleted Successfully");
 
       const updatedProducts = products.filter((p) => p.id !== product.id);

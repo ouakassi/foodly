@@ -20,6 +20,7 @@ import {
   MdEditDocument,
   MdEmail,
   MdOutlineAttachMoney,
+  MdOutlineErrorOutline,
   MdOutlineFactCheck,
   MdOutlineLocalShipping,
   MdOutlineZoomOutMap,
@@ -92,7 +93,12 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { RiFilterFill, RiIdCardLine, RiProgress1Line } from "react-icons/ri";
+import {
+  RiFilterFill,
+  RiIdCardLine,
+  RiMoneyDollarCircleFill,
+  RiProgress1Line,
+} from "react-icons/ri";
 import {
   FaAddressCard,
   FaCcStripe,
@@ -291,14 +297,16 @@ export default function OrdersPage() {
         return <FaCcStripe />;
       case "paypal":
         return <FaPaypal />;
+      case "cash":
+        return <RiMoneyDollarCircleFill />;
       default:
         return null;
     }
   };
 
-  if (loading) return <p>Loading orders...</p>; // Or a spinner component
-  if (error) return <p>Error fetching orders: {error.message}</p>;
-  if (!orders || orders.length === 0) return <p>No orders found.</p>;
+  // if (loading) return <p>Loading orders...</p>;
+  // if (error) return <p>Error fetching orders: {error.message}</p>;
+  // if (!orders || orders.length === 0) return <p>No orders found.</p>;
 
   return (
     <div className="orders-page">
@@ -323,15 +331,17 @@ export default function OrdersPage() {
       <div className="orders-page-container">
         <header>
           <ComboboxDemo handleStatusChange={handleStatusChange} />
-          <div className="table-pages-buttons">
-            <PreviousBtn onClick={handlePreviousPage} page={page} />
+          {data && (
+            <div className="table-pages-buttons">
+              <PreviousBtn onClick={handlePreviousPage} page={page} />
 
-            <NextBtn
-              onClick={handleNextPage}
-              page={page}
-              totalPages={totalPages}
-            />
-          </div>
+              <NextBtn
+                onClick={handleNextPage}
+                page={page}
+                totalPages={totalPages}
+              />
+            </div>
+          )}
         </header>
         <table className="orders-table">
           <thead>
@@ -348,6 +358,17 @@ export default function OrdersPage() {
             </tr>
           </thead>
           <tbody>
+            {(orders && orders.length === 0) ||
+              (!orders && (
+                <tr>
+                  <td colSpan="7" className="no-orders">
+                    <p>
+                      <MdOutlineErrorOutline />
+                      No orders found.
+                    </p>
+                  </td>
+                </tr>
+              ))}
             {orders &&
               orders.map((order) => (
                 <tr>
