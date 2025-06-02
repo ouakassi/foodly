@@ -30,6 +30,7 @@ import { TbForbid2 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { CiWarning } from "react-icons/ci";
 import { GoDotFill } from "react-icons/go";
+import { formatCurrency, formatDate } from "../../lib/helpers";
 
 const buttonStyle = {
   color: "white",
@@ -58,25 +59,8 @@ export default function ProductRow({ product, handleDeleteProduct }) {
 
   const navigate = useNavigate();
 
-  const formattedPrice = new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2, // Ensures at least 2 decimal places are shown
-    maximumFractionDigits: 20, // Allows up to 20 decimal places (you can adjust as needed)
-  }).format(+price);
-
   const isActive = status === true;
   const isStockLow = stock <= 30;
-
-  const date = new Date(publishedDate);
-  const publishedYear = date.getFullYear();
-  const publishedMonth = date.toLocaleString("en", { month: "long" });
-  const publishedDay = date.toLocaleString("en", { day: "2-digit" });
-  // const publishedTimeString = date.toLocaleString("en", {
-  //   hour: "2-digit",
-  //   minute: "2-digit",
-  // });
-  const publishedDateString = `${publishedDay} ${publishedMonth} ${publishedYear}`;
 
   return (
     <tr className="product-row">
@@ -118,10 +102,10 @@ export default function ProductRow({ product, handleDeleteProduct }) {
           stock
         )}
       </td>
-      <td className="price">{formattedPrice}</td>
+      <td className="price">{formatCurrency(price)}</td>
       <td>{category}</td>
       <td>{`${discount}%`}</td>
-      <td className="published">{publishedDateString}</td>
+      <td className="published">{formatDate(publishedDate)}</td>
       {handleDeleteProduct && (
         <td className="action">
           <TooltipProvider delayDuration={100}>

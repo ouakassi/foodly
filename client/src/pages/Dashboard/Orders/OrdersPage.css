@@ -91,7 +91,9 @@
 }
 
 .orders-table thead tr th:last-child,
-.orders-table tbody tr td:last-child {
+.orders-table tbody tr td:last-child,
+.orders-table thead tr th:nth-last-child(2),
+.orders-table tbody tr td:nth-last-child(2) {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,6 +138,10 @@
   color: rgb(26 140 209);
   text-decoration: underline;
   text-underline-offset: 0.2rem;
+}
+
+.orders-table .email {
+  font-weight: 600;
 }
 
 .orders-table .status button span {

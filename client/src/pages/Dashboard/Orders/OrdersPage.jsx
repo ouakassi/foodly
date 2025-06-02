@@ -115,6 +115,7 @@ import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { useSearchParams } from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
 import { NextBtn, PreviousBtn } from "../../../components/Table/TableBtns";
+import { formatCurrency, formatDate } from "../../../lib/helpers";
 
 const statusConfig = {
   completed: {
@@ -279,18 +280,6 @@ export default function OrdersPage() {
     updatePageParam(+page - 1);
   };
 
-  const formattedCurrency = (amount, currency) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency,
-    }).format(amount);
-  };
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", options);
-  };
-
   const PaymentIcon = ({ method }) => {
     switch (method) {
       case "stripe":
@@ -428,7 +417,7 @@ export default function OrdersPage() {
                   <td className="date">{formatDate(order.createdAt)}</td>
 
                   <td className="total">
-                    {formattedCurrency(order.totalAmount, "MAD")}
+                    {formatCurrency(+order.totalAmount, "USD")}
                   </td>
                   <td className="payment">
                     <span className={order.paymentMethod}>
