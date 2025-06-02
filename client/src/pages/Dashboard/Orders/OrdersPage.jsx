@@ -1,5 +1,5 @@
 import "./OrdersPage.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
 
@@ -116,6 +116,8 @@ import { useSearchParams } from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
 import { NextBtn, PreviousBtn } from "../../../components/Table/TableBtns";
 import { formatCurrency, formatDate } from "../../../lib/helpers";
+import CustomButton from "../../../components/Buttons/CustomButton";
+import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 
 const statusConfig = {
   completed: {
@@ -191,12 +193,20 @@ export default function OrdersPage() {
     sort: sort ? sort : {},
   };
 
-  const { data, loading, error } = useAxiosFetch(
+  const { data, isLoading, error } = useAxiosFetch(
     API_URL + "/api/orders",
     params
   );
-  console.log(data);
+
   const { orders, totalOrders, totalPages, currentPage } = data || {};
+
+  useEffect(() => {
+    if (!data) {
+      updatePageParam(1);
+
+      return;
+    }
+  }, [data]);
 
   const orderBoxes = [
     {
@@ -252,14 +262,21 @@ export default function OrdersPage() {
     // reset the 'status' param and 'page'
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("status", value);
-    newSearchParams.set("page", 1);
+    updatePageParam(1); // reset to page 1
+    if (value === "all") {
+      newSearchParams.delete("status"); // remove status if 'all' is selected
+    }
 
     setSearchParams(newSearchParams);
   };
 
-  const handleOpen = (type) => {
-    setDialogType(type);
-    setIsDialogOpen(true);
+  const handleSortChange = (sortValue) => {
+    if (sortValue) {
+      searchParams.set("sort", sortValue);
+    } else {
+      searchParams.delete("sort");
+    }
+    setSearchParams(searchParams, { replace: true }); // updates the URL without navigation
   };
 
   const handleNextPage = () => {
@@ -319,7 +336,10 @@ export default function OrdersPage() {
       </div>
       <div className="orders-page-container">
         <header>
-          <ComboboxDemo handleStatusChange={handleStatusChange} />
+          <div>
+            <StatusFilterDropdown handleStatusChange={handleStatusChange} />
+            {orders && <SortDropdown handleSortChange={handleSortChange} />}
+          </div>
           {data && (
             <div className="table-pages-buttons">
               <PreviousBtn onClick={handlePreviousPage} page={page} />
@@ -348,16 +368,33 @@ export default function OrdersPage() {
           </thead>
           <tbody>
             {(orders && orders.length === 0) ||
-              (!orders && (
+              (!orders && !isLoading && (
                 <tr>
                   <td colSpan="7" className="no-orders">
-                    <p>
-                      <MdOutlineErrorOutline />
-                      No orders found.
-                    </p>
+                    <span>
+                      <p>
+                        <MdOutlineErrorOutline />
+                        No orders found.
+                      </p>
+                      {
+                        <CustomButton
+                          icon={<LuGalleryVerticalEnd />}
+                          style={{ width: "fit-content" }}
+                          text="Show all Orders"
+                          onClick={() => handleStatusChange("all")}
+                        />
+                      }
+                    </span>
                   </td>
                 </tr>
               ))}
+            {isLoading && (
+              <tr>
+                <td colSpan="7" className="loading">
+                  <LoadingSpinner />
+                </td>
+              </tr>
+            )}
             {orders &&
               orders.map((order) => (
                 <tr>
@@ -710,61 +747,72 @@ const statusOptions = [
     value: "All",
     label: "All",
     icon: <LuGalleryVerticalEnd />,
+    className: "status-all",
   },
-
   {
     value: "Completed",
     label: "Completed",
     icon: <BiCheckCircle />,
+    className: "status-completed",
   },
   {
     value: "Pending",
     label: "Pending",
     icon: <BiLoader />,
+    className: "status-pending",
   },
   {
     value: "Cancelled",
     label: "Cancelled",
     icon: <BiRotateLeft />,
+    className: "status-cancelled",
   },
   {
     value: "Refunded",
     label: "Refunded",
     icon: <BiInfoCircle />,
+    className: "status-refunded",
   },
   {
     value: "Shipped",
     label: "Shipped",
     icon: <MdOutlineLocalShipping />,
+    className: "status-shipped",
   },
   {
     value: "Processing",
     label: "Processing",
     icon: <BiLoader />,
+    className: "status-processing",
   },
 ];
 
-export function ComboboxDemo({ handleStatusChange }) {
+export function StatusFilterDropdown({ handleStatusChange }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [selectedStatus, setSelectedStatus] = React.useState("");
+
+  const checkStatus = (value) => {
+    return statusOptions.find((status) => status.value === value);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger className="gap-2" asChild>
+      <PopoverTrigger className="gap-1 " asChild>
         <Button
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] "
+          className={
+            "w-[200px] rounded-full " +
+            (selectedStatus ? checkStatus(selectedStatus).className : "")
+          }
         >
-          {value ? (
-            statusOptions.find((status) => status.value === value)?.icon
+          {selectedStatus ? (
+            checkStatus(selectedStatus)?.icon
           ) : (
             <RiFilterFill />
           )}
-          {value
-            ? statusOptions.find((status) => status.value === value)?.label
-            : "Filters"}
+          {selectedStatus ? checkStatus(selectedStatus)?.label : "Filters"}
           <HiSwitchVertical className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -779,7 +827,9 @@ export function ComboboxDemo({ handleStatusChange }) {
                   key={status.value}
                   value={status.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setSelectedStatus(
+                      currentValue === selectedStatus ? "" : currentValue
+                    );
                     setOpen(false);
                     handleStatusChange(status.value.toLowerCase());
                   }}
@@ -789,7 +839,9 @@ export function ComboboxDemo({ handleStatusChange }) {
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === status.value ? "opacity-100" : "opacity-0"
+                      selectedStatus === status.value
+                        ? "opacity-100"
+                        : "opacity-0"
                     )}
                   />
                 </CommandItem>
@@ -801,7 +853,105 @@ export function ComboboxDemo({ handleStatusChange }) {
     </Popover>
   );
 }
+const sortOptions = [
+  {
+    value: "createdAt_asc",
+    label: "Created At (Oldest)",
+    icon: <span>📅⬆️</span>,
+    className: "bg-yellow-100",
+  },
+  {
+    value: "createdAt_desc",
+    label: "Created At (Newest)",
+    icon: <span>📅⬇️</span>,
+    className: "bg-red-100",
+  },
+  {
+    value: "updatedAt_asc",
+    label: "Updated At (Oldest)",
+    icon: <span>📝⬆️</span>,
+    className: "bg-yellow-200",
+  },
+  {
+    value: "updatedAt_desc",
+    label: "Updated At (Newest)",
+    icon: <span>📝⬇️</span>,
+    className: "bg-red-200",
+  },
+  {
+    value: "totalAmount_asc",
+    label: "Total Amount (Low to High)",
+    icon: <span>💰⬆️</span>,
+    className: "bg-green-100",
+  },
+  {
+    value: "totalAmount_desc",
+    label: "Total Amount (High to Low)",
+    icon: <span>💰⬇️</span>,
+    className: "bg-blue-100",
+  },
+];
 
+export function SortDropdown({ handleSortChange }) {
+  const [open, setOpen] = React.useState(false);
+  const [selectedSort, setSelectedSort] = React.useState("");
+
+  const getSortOption = (value) => {
+    return sortOptions.find((option) => option.value === value);
+  };
+
+  const selectedOption = getSortOption(selectedSort);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger className="gap-1" asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn("w-[200px] rounded-full", selectedOption?.className)}
+        >
+          {selectedSort ? selectedOption?.icon : <RiFilterFill />}
+          {selectedSort ? selectedOption?.label : "Sort By"}
+          <HiSwitchVertical className="opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-full p-0">
+        <Command>
+          <CommandList>
+            <CommandEmpty>No Sort Options found.</CommandEmpty>
+            <CommandGroup>
+              {sortOptions.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  value={option.value}
+                  onSelect={(currentValue) => {
+                    setSelectedSort(
+                      currentValue === selectedSort ? "" : currentValue
+                    );
+                    setOpen(false);
+                    handleSortChange(option.value);
+                  }}
+                >
+                  {option.icon}
+                  {option.label}
+                  <Check
+                    className={cn(
+                      "ml-auto",
+                      selectedSort === option.value
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
 export function OrdersTotalChart({ title, desc }) {
   const chartData = [
     { month: "January", desktop: 18622 },
