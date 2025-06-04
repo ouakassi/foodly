@@ -2,8 +2,9 @@ import "./OrdersPage.css";
 import React, { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
-
+import { toast } from "sonner";
 import { LuGalleryVerticalEnd } from "react-icons/lu";
+import { LiaSortAmountDownAltSolid } from "react-icons/lia";
 
 import {
   BiLoader,
@@ -15,14 +16,18 @@ import {
   BiCalendar,
   BiMinusCircle,
 } from "react-icons/bi";
+import { HiArrowLongDown, HiArrowLongUp } from "react-icons/hi2";
+
 import {
   MdDateRange,
   MdEditDocument,
   MdEmail,
   MdOutlineAttachMoney,
+  MdOutlineDateRange,
   MdOutlineErrorOutline,
   MdOutlineFactCheck,
   MdOutlineLocalShipping,
+  MdOutlineUpgrade,
   MdOutlineZoomOutMap,
 } from "react-icons/md";
 import { PiAirplaneTaxiingThin, PiBasketFill } from "react-icons/pi";
@@ -118,6 +123,7 @@ import { NextBtn, PreviousBtn } from "../../../components/Table/TableBtns";
 import { formatCurrency, formatDate } from "../../../lib/helpers";
 import CustomButton from "../../../components/Buttons/CustomButton";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
+import { GoSortDesc } from "react-icons/go";
 
 const statusConfig = {
   completed: {
@@ -176,6 +182,7 @@ export default function OrdersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState("none");
   const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   const page = searchParams.get("page") || 1;
   const limit = searchParams.get("limit") || 10;
@@ -198,15 +205,17 @@ export default function OrdersPage() {
     params
   );
 
+  const {
+    data: orderData,
+    isLoading: isOrderDataLoading,
+    error: orderError,
+  } = useAxiosFetch(
+    selectedOrderId ? API_URL + "/api/orders/" + selectedOrderId : null
+  );
+
+  console.log(selectedOrderId, "selectedId");
+
   const { orders, totalOrders, totalPages, currentPage } = data || {};
-
-  useEffect(() => {
-    if (!data) {
-      updatePageParam(1);
-
-      return;
-    }
-  }, [data]);
 
   const orderBoxes = [
     {
@@ -251,6 +260,11 @@ export default function OrdersPage() {
     // },
   ];
 
+  const handleOpen = (type) => {
+    setDialogType(type);
+    setIsDialogOpen(true);
+  };
+
   // function to handle the 'page' param and update the URL
   const updatePageParam = (newPage) => {
     const newSearchParams = new URLSearchParams(searchParams);
@@ -273,6 +287,7 @@ export default function OrdersPage() {
   const handleSortChange = (sortValue) => {
     if (sortValue) {
       searchParams.set("sort", sortValue);
+      updatePageParam(1);
     } else {
       searchParams.delete("sort");
     }
@@ -309,10 +324,6 @@ export default function OrdersPage() {
         return null;
     }
   };
-
-  // if (loading) return <p>Loading orders...</p>;
-  // if (error) return <p>Error fetching orders: {error.message}</p>;
-  // if (!orders || orders.length === 0) return <p>No orders found.</p>;
 
   return (
     <div className="orders-page">
@@ -397,7 +408,7 @@ export default function OrdersPage() {
             )}
             {orders &&
               orders.map((order) => (
-                <tr>
+                <tr key={order.id} className="order-row">
                   <td className="order-id">
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
@@ -414,36 +425,38 @@ export default function OrdersPage() {
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
                         <TooltipTrigger>
-                          <span>{order.user.email}</span>
+                          <span>{order.user?.email}</span>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="tooltip-content">
-                            {order.user.firstName + " " + order.user.lastName}
+                            {order.user?.firstName + " " + order.user?.lastName}
                           </p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </td>
                   <td
-                    className={`status ${statusConfig[order.status].className}`}
+                    className={`status ${
+                      statusConfig[order.status.toLowerCase()].className
+                    }`}
                   >
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
                         <TooltipTrigger>
                           <span>
-                            {statusConfig[order.status].icon}
-                            {order.status}
+                            {statusConfig[order.status.toLowerCase()].icon}
+                            {order.status.toLowerCase()}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p
                             className={`tooltip-content ${
-                              statusConfig[order.status].className
+                              statusConfig[order.status.toLowerCase()].className
                             }`}
                           >
-                            {statusConfig[order.status].icon}
+                            {statusConfig[order.status.toLowerCase()].icon}
 
-                            {statusConfig[order.status].text}
+                            {statusConfig[order.status.toLowerCase()].text}
                           </p>
                         </TooltipContent>
                       </Tooltip>
@@ -472,7 +485,10 @@ export default function OrdersPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
                         <DropdownMenuItem
-                          onSelect={() => handleOpen("showOrder")}
+                          onSelect={() => {
+                            handleOpen("showOrder");
+                            setSelectedOrderId(order.id);
+                          }}
                         >
                           <MdOutlineZoomOutMap />
                           View Order
@@ -486,28 +502,44 @@ export default function OrdersPage() {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-
-                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                      {dialogType === "showOrder" && <DialogShowOrderDetails />}
-                      {dialogType === "editOrder" && <DialogEditOrderDetails />}
-                    </Dialog>
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
       </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        {dialogType === "showOrder" && (
+          <DialogShowOrderDetails
+            orderData={orderData}
+            isOrderDataLoading={isOrderDataLoading}
+            orderError={orderError}
+          />
+        )}
+        {dialogType === "editOrder" && <DialogEditOrderDetails />}
+      </Dialog>
     </div>
   );
 }
 
-const DialogShowOrderDetails = ({ order }) => {
+const DialogShowOrderDetails = ({
+  orderData: currentOrder,
+  isOrderDataLoading,
+  orderError,
+}) => {
+  const { order, user } = currentOrder || {};
+  console.log(order);
+  if (isOrderDataLoading)
+    return <LoadingSpinner height={"1rem"} width={"1rem"} />;
+  if (orderError) return <p>Error loading order.</p>;
+  if (!currentOrder) return <p>No order details found.</p>;
+
   return (
     <DialogContent className="w-auto max-w-full min-h-[80vh] max-h-full">
       <DialogHeader>
         <DialogTitle>
           <FaRegFileAlt className="icon" />
-          Order N-232321{" "}
+          Order {currentOrder.id}
           {/* <span className={`status ${statusConfig["Completed"].className}`}>
             {statusConfig[calculateOrderStatus("Paid", "Delivered")].icon}
             {calculateOrderStatus("Paid", "Delivered")}
@@ -586,7 +618,7 @@ const DialogShowOrderDetails = ({ order }) => {
                     Tracking Number:
                   </strong>
                 </span>
-                <span>ARX982734983</span>
+                <span>{order.totalAmount}</span>
               </p>
             </ContentContainer>
           </TabsContent>
@@ -677,7 +709,7 @@ const DialogShowOrderDetails = ({ order }) => {
                   }}
                 />
               </table>
-              <div class="order-summary">
+              <div className="order-summary">
                 <p>
                   <strong>Subtotal:</strong> $40.00
                 </p>
@@ -689,7 +721,7 @@ const DialogShowOrderDetails = ({ order }) => {
                 </p>
                 <p>
                   <strong>Total:</strong>{" "}
-                  <span class="total-amount">$39.99</span>
+                  <span className="total-amount">$39.99</span>
                 </p>
               </div>
             </ContentContainer>
@@ -857,37 +889,45 @@ const sortOptions = [
   {
     value: "createdAt_asc",
     label: "Created At (Oldest)",
-    icon: <span>📅⬆️</span>,
+    icon: (
+      <>
+        <HiArrowLongUp />
+        <MdOutlineDateRange />
+      </>
+    ),
     className: "bg-yellow-100",
   },
   {
     value: "createdAt_desc",
     label: "Created At (Newest)",
-    icon: <span>📅⬇️</span>,
+    icon: (
+      <>
+        <HiArrowLongDown />
+        <MdOutlineDateRange />
+      </>
+    ),
     className: "bg-red-100",
-  },
-  {
-    value: "updatedAt_asc",
-    label: "Updated At (Oldest)",
-    icon: <span>📝⬆️</span>,
-    className: "bg-yellow-200",
-  },
-  {
-    value: "updatedAt_desc",
-    label: "Updated At (Newest)",
-    icon: <span>📝⬇️</span>,
-    className: "bg-red-200",
   },
   {
     value: "totalAmount_asc",
     label: "Total Amount (Low to High)",
-    icon: <span>💰⬆️</span>,
+    icon: (
+      <>
+        <HiArrowLongUp />
+        <MdOutlineAttachMoney />
+      </>
+    ),
     className: "bg-green-100",
   },
   {
     value: "totalAmount_desc",
     label: "Total Amount (High to Low)",
-    icon: <span>💰⬇️</span>,
+    icon: (
+      <>
+        <HiArrowLongDown />
+        <MdOutlineAttachMoney />
+      </>
+    ),
     className: "bg-blue-100",
   },
 ];
@@ -919,7 +959,7 @@ export function SortDropdown({ handleSortChange }) {
       <PopoverContent className="w-full p-0">
         <Command>
           <CommandList>
-            <CommandEmpty>No Sort Options found.</CommandEmpty>
+            <CommandEmpty>No Sort Option found.</CommandEmpty>
             <CommandGroup>
               {sortOptions.map((option) => (
                 <CommandItem
@@ -935,6 +975,7 @@ export function SortDropdown({ handleSortChange }) {
                 >
                   {option.icon}
                   {option.label}
+
                   <Check
                     className={cn(
                       "ml-auto",
@@ -965,7 +1006,7 @@ export function OrdersTotalChart({ title, desc }) {
   const chartConfig = {
     desktop: {
       label: "Desktop",
-      color: "var(--color-3",
+      color: "var(--color-3)",
     },
   };
   return (

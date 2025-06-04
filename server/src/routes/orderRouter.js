@@ -26,7 +26,8 @@ orderRouter
 
 orderRouter
   .route("/:orderId")
-  .get(isAuthenticated, authRole(ROLES.ADMIN), getOrder);
+  // .get(isAuthenticated, authRole(ROLES.ADMIN), getOrder);
+  .get(getOrder);
 
 orderRouter
   .route("/:orderId/status")

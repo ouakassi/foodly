@@ -1,5 +1,7 @@
 import "./LoadingSpinner.css";
 
-export default function LoadingSpinner() {
-  return <span className="loader"></span>;
+export default function LoadingSpinner({ height, width }) {
+  return (
+    <span style={{ height: height, width: width }} className="loader"></span>
+  );
 }
