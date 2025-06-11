@@ -21,7 +21,6 @@ import emailQueue from "../utils/emailQueue.js";
 
 const getAllOrders = async (req, res) => {
   try {
-    console.log(Math.round(20.1 * 100));
     const { error, value } = validateOrderQuery(req.query);
     if (error) return handleValidationError(error, res);
 
@@ -138,6 +137,12 @@ const getOrder = async (req, res, next) => {
               as: "product", // if you aliased this in your model
             },
           ],
+        },
+        {
+          model: User,
+          as: "user",
+          required: true,
+          attributes: ["id", "firstName", "lastName", "email", "phone"],
         },
       ],
     });

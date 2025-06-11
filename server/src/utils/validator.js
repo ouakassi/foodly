@@ -47,10 +47,19 @@ const orderQuerySchema = Joi.object({
   status: Joi.string().valid(...ORDER_STATUS_VALUES_ARRAY),
 });
 
+// ── Validator Function ──
+const analyticsSchema = Joi.object({
+  startDate: Joi.date().iso(),
+  endDate: Joi.date().iso(),
+  // status: Joi.string()
+  //   .valid(...ORDER_STATUS_VALUES_ARRAY)
+  //   .optional(),
+});
+
 // Error Handler
 function handleValidationError(error, res) {
   const errors = error.details.map(({ message: errorMsg }) => errorMsg);
-  return res.status(400).json({ error: errors });
+  return res.status(400).json({ message: "Validation Failed", error: errors });
 }
 
 // Exported validated functions
@@ -58,6 +67,27 @@ const validateAdminRegister = validator(adminRegisterSchema);
 const validateRegister = validator(registerSchema);
 const validateLogin = validator(loginSchema);
 const validateOrderQuery = validator(orderQuerySchema);
+const validateAnalytics = validator(analyticsSchema);
+
+const validateDateRange = (startDate, endDate) => {
+  if (!startDate || !endDate) {
+    return { status: 400, message: "Start date and end date are required." };
+  }
+
+  const parsedStartDate = new Date(startDate);
+  const parsedEndDate = new Date(endDate);
+
+  if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
+    return { status: 400, message: "Invalid date format." };
+  }
+
+  if (parsedStartDate > parsedEndDate) {
+    return { status: 400, message: "Start date cannot be after end date." };
+  }
+
+  // No errors
+  return null;
+};
 
 export {
   validateAdminRegister,
@@ -65,4 +95,6 @@ export {
   validateLogin,
   handleValidationError,
   validateOrderQuery,
+  validateAnalytics,
+  validateDateRange,
 };
