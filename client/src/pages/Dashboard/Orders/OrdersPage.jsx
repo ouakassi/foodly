@@ -1,5 +1,5 @@
 import "./OrdersPage.css";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -10,38 +10,21 @@ import {
   BiLoader,
   BiInfoCircle,
   BiRotateLeft,
-  BiTimeFive,
   BiCheckCircle,
-  BiXCircle,
-  BiCalendar,
-  BiMinusCircle,
 } from "react-icons/bi";
 import { HiArrowLongDown, HiArrowLongUp } from "react-icons/hi2";
 
 import {
-  MdDateRange,
   MdEditDocument,
-  MdEmail,
   MdOutlineAttachMoney,
   MdOutlineDateRange,
   MdOutlineErrorOutline,
-  MdOutlineFactCheck,
   MdOutlineLocalShipping,
-  MdOutlineUpgrade,
   MdOutlineZoomOutMap,
 } from "react-icons/md";
-import { PiAirplaneTaxiingThin, PiBasketFill } from "react-icons/pi";
+import { PiBasketFill } from "react-icons/pi";
 
-import {
-  BsBagCheckFill,
-  BsCreditCard2Back,
-  BsFillSendCheckFill,
-} from "react-icons/bs";
-import {
-  HiDotsVertical,
-  HiOutlineDotsHorizontal,
-  HiSwitchVertical,
-} from "react-icons/hi";
+import { HiDotsVertical, HiSwitchVertical } from "react-icons/hi";
 import { Check, TrendingUp, TrendingDown } from "lucide-react";
 
 import {
@@ -54,19 +37,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
 import { API_URL } from "@/api/api";
@@ -75,7 +48,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -85,14 +57,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
@@ -100,22 +65,11 @@ import {
 } from "@/components/ui/chart";
 import {
   RiFilterFill,
-  RiIdCardLine,
   RiMoneyDollarCircleFill,
   RiProgress1Line,
 } from "react-icons/ri";
-import {
-  FaAddressCard,
-  FaCcStripe,
-  FaPaypal,
-  FaPhone,
-  FaRegFileAlt,
-  FaShippingFast,
-  FaUser,
-  FaUserCircle,
-} from "react-icons/fa";
-import ContentContainer from "../../../components/Dashboard/ContentContainer";
-import ProductRow from "../../../components/Product/ProductRow";
+import { FaCcStripe, FaPaypal } from "react-icons/fa";
+
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { useSearchParams } from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
@@ -123,60 +77,10 @@ import { NextBtn, PreviousBtn } from "../../../components/Table/TableBtns";
 import { formatCurrency, formatDate } from "../../../lib/helpers";
 import CustomButton from "../../../components/Buttons/CustomButton";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
-import { GoSortDesc } from "react-icons/go";
-
-const statusConfig = {
-  completed: {
-    icon: <BiCheckCircle />,
-    className: "status-completed",
-    text: "Order completed successfully",
-  },
-  pending: {
-    icon: <BiLoader />,
-    className: "status-pending",
-    text: "Awaiting confirmation or payment",
-  },
-  cancelled: {
-    icon: <BiRotateLeft />,
-    className: "status-cancelled",
-    text: "Order was cancelled",
-  },
-  refunded: {
-    icon: <BiInfoCircle />,
-    className: "status-refunded",
-    text: "Customer refunded",
-  },
-  shipped: {
-    icon: <MdOutlineLocalShipping />,
-    className: "status-shipped",
-    text: "Shipped to customer",
-  },
-  delivered: {
-    icon: <MdOutlineLocalShipping />,
-    className: "status-shipped",
-    text: "Shipped to customer",
-  },
-  processing: {
-    icon: <BiLoader />,
-    className: "status-processing",
-    text: "Order is being processed",
-  },
-  "In Progress": {
-    icon: <BiLoader />,
-    className: "status-in-progress",
-    text: "Order is in progress",
-  },
-  "Not Fulfilled": {
-    icon: <BiInfoCircle />,
-    className: "status-not-fulfilled",
-    text: "Order not yet fulfilled",
-  },
-  "Not Applicable": {
-    icon: <BiInfoCircle />,
-    className: "status-not-applicable",
-    text: "No fulfillment required",
-  },
-};
+import DialogEditOrderDetails from "./dialogs/DialogEditOrderDetails";
+import DialogShowOrderDetails from "./dialogs/DialogShowOrderDetails";
+import { sortOptions, statusOptions } from "../../../constants/orderFilters";
+import { API_ENDPOINTS, APP_CONFIG } from "../../../constants/index";
 
 export default function OrdersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -185,12 +89,12 @@ export default function OrdersPage() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   const page = searchParams.get("page") || 1;
-  const limit = searchParams.get("limit") || 10;
+  const limit = searchParams.get("limit") || APP_CONFIG.DEFAULT_PAGE_LIMIT;
   const search = searchParams.get("search");
   const sort = searchParams.get("sort") || "";
   const status = searchParams.get("status");
 
-  const debouncedSearch = useDebounce(search, 500); // 500ms delay
+  const debouncedSearch = useDebounce(search, APP_CONFIG.DEBOUNCE_DELAY);
 
   const params = {
     ...(search && { search: debouncedSearch }),
@@ -201,19 +105,78 @@ export default function OrdersPage() {
   };
 
   const { data, isLoading, error } = useAxiosFetch(
-    API_URL + "/api/orders",
+    API_URL + API_ENDPOINTS.ORDERS,
     params
   );
-
+  const statusConfig = useMemo(
+    () => ({
+      completed: {
+        icon: <BiCheckCircle />,
+        className: "status-completed",
+        text: "Order completed successfully",
+      },
+      pending: {
+        icon: <BiLoader />,
+        className: "status-pending",
+        text: "Awaiting confirmation or payment",
+      },
+      cancelled: {
+        icon: <BiRotateLeft />,
+        className: "status-cancelled",
+        text: "Order was cancelled",
+      },
+      refunded: {
+        icon: <BiInfoCircle />,
+        className: "status-refunded",
+        text: "Customer refunded",
+      },
+      shipped: {
+        icon: <MdOutlineLocalShipping />,
+        className: "status-shipped",
+        text: "Shipped to customer",
+      },
+      delivered: {
+        icon: <MdOutlineLocalShipping />,
+        className: "status-shipped",
+        text: "Shipped to customer",
+      },
+      processing: {
+        icon: <BiLoader />,
+        className: "status-processing",
+        text: "Order is being processed",
+      },
+      failed: {
+        icon: <MdOutlineErrorOutline />,
+        className: "status-processing",
+        text: "Order failed",
+      },
+      returned: {
+        icon: <BiRotateLeft />,
+        className: "status-returned",
+        text: "Order returned by customer",
+      },
+      expired: {
+        icon: <MdOutlineErrorOutline />,
+        className: "status-expired",
+        text: "Order expired",
+      },
+      default: {
+        icon: <MdOutlineErrorOutline />,
+        className: "status-default",
+        text: "Unknown status",
+      },
+    }),
+    []
+  );
   const {
     data: orderData,
     isLoading: isOrderDataLoading,
     error: orderError,
   } = useAxiosFetch(
-    selectedOrderId ? API_URL + "/api/orders/" + selectedOrderId : null
+    selectedOrderId
+      ? API_URL + API_ENDPOINTS.ORDER_DETAIL(selectedOrderId)
+      : null
   );
-
-  console.log(selectedOrderId, "selectedId");
 
   const { orders, totalOrders, totalPages, currentPage } = data || {};
 
@@ -250,6 +213,7 @@ export default function OrdersPage() {
       trendDirection: "down",
       description: "compared last month",
     },
+
     // {
     //   icon: "🕒",
     //   label: "Pending Orders",
@@ -272,27 +236,37 @@ export default function OrdersPage() {
     setSearchParams(newSearchParams);
   };
 
-  const handleStatusChange = (value) => {
-    // reset the 'status' param and 'page'
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set("status", value);
-    updatePageParam(1); // reset to page 1
-    if (value === "all") {
-      newSearchParams.delete("status"); // remove status if 'all' is selected
-    }
+  const handleStatusChange = useCallback(
+    (value) => {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set("page", "1");
 
-    setSearchParams(newSearchParams);
-  };
+      if (value === "all") {
+        newSearchParams.delete("status");
+      } else {
+        newSearchParams.set("status", value);
+      }
 
-  const handleSortChange = (sortValue) => {
-    if (sortValue) {
-      searchParams.set("sort", sortValue);
-      updatePageParam(1);
-    } else {
-      searchParams.delete("sort");
-    }
-    setSearchParams(searchParams, { replace: true }); // updates the URL without navigation
-  };
+      setSearchParams(newSearchParams);
+    },
+    [searchParams, setSearchParams]
+  );
+
+  const handleSortChange = useCallback(
+    (sortValue) => {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set("page", "1"); // Reset to page 1
+
+      if (sortValue) {
+        newSearchParams.set("sort", sortValue);
+      } else {
+        newSearchParams.delete("sort");
+      }
+
+      setSearchParams(newSearchParams, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
 
   const handleNextPage = () => {
     if (page >= totalPages) {
@@ -399,6 +373,26 @@ export default function OrdersPage() {
                   </td>
                 </tr>
               ))}
+            {error && (
+              <tr>
+                <td colSpan="7" className="error">
+                  <span>
+                    <p>
+                      <MdOutlineErrorOutline />
+                      Error loading orders: {error.message}
+                    </p>
+                    <CustomButton
+                      icon={<LiaSortAmountDownAltSolid />}
+                      style={{ width: "fit-content" }}
+                      text="Retry"
+                      onClick={() => {
+                        window.location.reload();
+                      }}
+                    />
+                  </span>
+                </td>
+              </tr>
+            )}
             {isLoading && (
               <tr>
                 <td colSpan="7" className="loading">
@@ -407,104 +401,118 @@ export default function OrdersPage() {
               </tr>
             )}
             {orders &&
-              orders.map((order) => (
-                <tr key={order.id} className="order-row">
-                  <td className="order-id">
-                    <TooltipProvider delayDuration={100}>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <span>{"#" + order.id.slice(0, 8) + ".."}</span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="tooltip-content">{order.id}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </td>
-                  <td className="email">
-                    <TooltipProvider delayDuration={100}>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <span>{order.user?.email}</span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="tooltip-content">
-                            {order.user?.firstName + " " + order.user?.lastName}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </td>
-                  <td
-                    className={`status ${
-                      statusConfig[order.status.toLowerCase()].className
-                    }`}
-                  >
-                    <TooltipProvider delayDuration={100}>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <span>
-                            {statusConfig[order.status.toLowerCase()].icon}
-                            {order.status.toLowerCase()}
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p
-                            className={`tooltip-content ${
-                              statusConfig[order.status.toLowerCase()].className
-                            }`}
+              orders.map((order) => {
+                const status = order.status.toLowerCase();
+                const statusClass =
+                  statusConfig[status]?.className ||
+                  statusConfig.default.className;
+                const statusIcon =
+                  statusConfig[status]?.icon || statusConfig.default.icon;
+                const statusDescription =
+                  statusConfig[status]?.text || statusConfig.default.text;
+
+                return (
+                  <tr key={order.id} className="order-row">
+                    <td className="order-id">
+                      <TooltipProvider delayDuration={100}>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <span>
+                              {"#" +
+                                order.id.slice(
+                                  0,
+                                  APP_CONFIG.ORDER_ID_DISPLAY_LENGTH
+                                ) +
+                                ".."}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="tooltip-content">{order.id}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </td>
+                    <td className="email">
+                      <TooltipProvider delayDuration={100}>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <span>{order.user?.email}</span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="tooltip-content">
+                              {order.user?.firstName +
+                                " " +
+                                order.user?.lastName}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </td>
+                    <td className={`status ${statusClass}`}>
+                      <TooltipProvider delayDuration={100}>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <span>
+                              {statusIcon}
+                              {status}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p
+                              className={`tooltip-content ${status.className}`}
+                            >
+                              {statusIcon}
+
+                              {statusDescription}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+
+                      {/* {status} */}
+                    </td>
+                    <td className="date">{formatDate(order.createdAt)}</td>
+
+                    <td className="total">
+                      {formatCurrency(+order.totalAmount, "USD")}
+                    </td>
+                    <td className="payment">
+                      <span className={order.paymentMethod}>
+                        <PaymentIcon method={order.paymentMethod} />
+                        {order.paymentMethod}
+                      </span>
+                    </td>
+
+                    <td className="actions">
+                      <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <button className="actions-btn">
+                            <HiDotsVertical />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              handleOpen("showOrder");
+                              setSelectedOrderId(order.id);
+                            }}
                           >
-                            {statusConfig[order.status.toLowerCase()].icon}
+                            <MdOutlineZoomOutMap />
+                            View Order
+                          </DropdownMenuItem>
 
-                            {statusConfig[order.status.toLowerCase()].text}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-
-                    {/* {status} */}
-                  </td>
-                  <td className="date">{formatDate(order.createdAt)}</td>
-
-                  <td className="total">
-                    {formatCurrency(+order.totalAmount, "USD")}
-                  </td>
-                  <td className="payment">
-                    <span className={order.paymentMethod}>
-                      <PaymentIcon method={order.paymentMethod} />
-                      {order.paymentMethod}
-                    </span>
-                  </td>
-
-                  <td className="actions">
-                    <DropdownMenu modal={false}>
-                      <DropdownMenuTrigger asChild>
-                        <button className="actions-btn">
-                          <HiDotsVertical />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem
-                          onSelect={() => {
-                            handleOpen("showOrder");
-                            setSelectedOrderId(order.id);
-                          }}
-                        >
-                          <MdOutlineZoomOutMap />
-                          View Order
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem
-                          onSelect={() => handleOpen("editOrder")}
-                        >
-                          <MdEditDocument />
-                          Edit Order
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
-                </tr>
-              ))}
+                          <DropdownMenuItem
+                            onSelect={() => handleOpen("editOrder")}
+                          >
+                            <MdEditDocument />
+                            Edit Order
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       </div>
@@ -521,303 +529,6 @@ export default function OrdersPage() {
     </div>
   );
 }
-
-const DialogShowOrderDetails = ({
-  orderData: currentOrder,
-  isOrderDataLoading,
-  orderError,
-}) => {
-  const { order, user } = currentOrder || {};
-  console.log(order);
-  if (isOrderDataLoading)
-    return <LoadingSpinner height={"1rem"} width={"1rem"} />;
-  if (orderError) return <p>Error loading order.</p>;
-  if (!currentOrder) return <p>No order details found.</p>;
-
-  return (
-    <DialogContent className="w-auto max-w-full min-h-[80vh] max-h-full">
-      <DialogHeader>
-        <DialogTitle>
-          <FaRegFileAlt className="icon" />
-          Order {currentOrder.id}
-          {/* <span className={`status ${statusConfig["Completed"].className}`}>
-            {statusConfig[calculateOrderStatus("Paid", "Delivered")].icon}
-            {calculateOrderStatus("Paid", "Delivered")}
-          </span> */}
-        </DialogTitle>
-      </DialogHeader>
-      <div className="order-details-buttons">
-        <Tabs defaultValue="details" className="w-[400px]">
-          <TabsList style={{ padding: "1.5rem 1rem" }}>
-            <TabsTrigger style={{ padding: "0.5rem" }} value="details">
-              🧾 Order Details{" "}
-            </TabsTrigger>
-            <TabsTrigger value="Customer">👤 Customer Information</TabsTrigger>
-            <TabsTrigger value="Items">📦 Order Items</TabsTrigger>
-            <TabsTrigger value="shipping">💳 Payment & Shipping</TabsTrigger>
-          </TabsList>
-          <TabsContent value="details">
-            <ContentContainer
-              className="order-details-content"
-              title={
-                <>
-                  <FaRegFileAlt className="icon" />
-                  Order Details – Order #20438
-                </>
-              }
-            >
-              <p className="order-date">
-                <span>
-                  <strong>
-                    <MdDateRange className="icon" />
-                    Order Date:
-                  </strong>
-                </span>
-                <span>May 6, 2025, 2:14 PM</span>
-              </p>
-
-              {/* <p className="order-status">
-                <span>
-                  <strong>
-                    <PiAirplaneTaxiingThin className="icon" />
-                    Status:
-                  </strong>
-                </span>
-                <span
-                  className={`status ${statusConfig["Completed"].className}`}
-                >
-                  {statusConfig[calculateOrderStatus("Paid", "Delivered")].icon}
-                  {calculateOrderStatus("Paid", "Delivered")}
-                </span>
-              </p> */}
-
-              <p className="payment-status">
-                <span>
-                  <strong>
-                    <BsCreditCard2Back className="icon" />
-                    Payment Status:
-                  </strong>
-                </span>
-                <span>Paid </span>
-              </p>
-
-              <p className="delivery-method">
-                <span>
-                  <strong>
-                    <FaShippingFast className="icon" />
-                    Delivery Method:
-                  </strong>
-                </span>
-                <span>Aramex Express</span>
-              </p>
-
-              <p className="tracking-number">
-                <span>
-                  <strong>
-                    <HiOutlineDotsHorizontal className="icon" />
-                    Tracking Number:
-                  </strong>
-                </span>
-                <span>{order.totalAmount}</span>
-              </p>
-            </ContentContainer>
-          </TabsContent>
-          <TabsContent value="Customer">
-            <ContentContainer
-              className={"order-details-content"}
-              title={
-                <>
-                  <FaUser className="icon" />
-                  Customer Information
-                </>
-              }
-            >
-              <p>
-                <span>
-                  <RiIdCardLine className="icon" />
-                  <strong>Name:</strong>
-                </span>
-                <span>Fatima El Amrani</span>
-              </p>
-
-              <p>
-                <span>
-                  <MdEmail className="icon" />
-                  <strong>Email:</strong>
-                </span>
-                <span>fatima@example.com</span>
-              </p>
-
-              <p>
-                <span>
-                  <FaPhone className="icon" />
-                  <strong>Phone:</strong>
-                </span>
-                <span>+212 600-000000</span>
-              </p>
-
-              <p>
-                <span>
-                  <FaAddressCard className="icon" />
-                  <strong>Billing Address:</strong>
-                </span>
-                <span>23 Rue Hassan II, Casablanca, Morocco</span>
-              </p>
-
-              <p>
-                <span>
-                  <FaShippingFast className="icon" />
-                  <strong>Shipping Address:</strong>
-                </span>
-                <span>23 Rue Hassan II, Casablanca, Morocco</span>
-              </p>
-            </ContentContainer>
-          </TabsContent>
-
-          <TabsContent value="Items">
-            <ContentContainer
-              className={"order-details-content"}
-              title={<>📦 Order Items</>}
-            >
-              <table>
-                <tr>
-                  <th>Product</th>
-                  <th>Name</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                  <th>Date</th>
-                </tr>
-
-                <OrderRow
-                  order={{
-                    productName: "Dark Herbs",
-                    productImg:
-                      "https://res.cloudinary.com/djfsxp9z0/image/upload/v1727295271/products/coffees/6172705011f98cfbe6f5304a764fc862.png",
-                    formattedPrice: 255,
-                    quantity: 2,
-                    orderDate: 2024,
-                  }}
-                />
-                <OrderRow
-                  order={{
-                    productName: "Dark Herbs",
-                    productImg:
-                      "https://res.cloudinary.com/djfsxp9z0/image/upload/v1727295271/products/coffees/6172705011f98cfbe6f5304a764fc862.png",
-                    formattedPrice: 255,
-                    quantity: 2,
-                    orderDate: 2024,
-                  }}
-                />
-              </table>
-              <div className="order-summary">
-                <p>
-                  <strong>Subtotal:</strong> $40.00
-                </p>
-                <p>
-                  <strong>Shipping:</strong> $4.99
-                </p>
-                <p>
-                  <strong>Discount:</strong> -$5.00 (SPRING5)
-                </p>
-                <p>
-                  <strong>Total:</strong>{" "}
-                  <span className="total-amount">$39.99</span>
-                </p>
-              </div>
-            </ContentContainer>
-          </TabsContent>
-          <TabsContent value="shipping">
-            <ContentContainer
-              className={"order-details-content"}
-              title={
-                <>
-                  <h3>📦 Order Items</h3>
-                </>
-              }
-            >
-              <p>
-                <strong>Payment Method:</strong> Credit Card (Stripe)
-              </p>
-              <p>
-                <strong>Transaction ID:</strong> pi_34sdklfj9348sdlkj
-              </p>
-            </ContentContainer>
-            <ContentContainer title={<>🚚 Shipping Information</>}>
-              <p>
-                <strong>Courier:</strong> Aramex
-              </p>
-              <p>
-                <strong>Tracking Number:</strong> ARX982734983
-              </p>
-              <p>
-                <strong>Estimated Delivery:</strong> May 9, 2025
-              </p>
-              <p>
-                <strong>Delivered On:</strong> May 8, 2025
-              </p>
-            </ContentContainer>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </DialogContent>
-  );
-};
-const DialogEditOrderDetails = ({ order }) => {
-  return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Edit Order</DialogTitle>
-      </DialogHeader>
-      <p>Form to edit the order will go here.</p>
-      <input type="checkbox" />
-      <button>Submit</button>
-    </DialogContent>
-  );
-};
-const statusOptions = [
-  {
-    value: "All",
-    label: "All",
-    icon: <LuGalleryVerticalEnd />,
-    className: "status-all",
-  },
-  {
-    value: "Completed",
-    label: "Completed",
-    icon: <BiCheckCircle />,
-    className: "status-completed",
-  },
-  {
-    value: "Pending",
-    label: "Pending",
-    icon: <BiLoader />,
-    className: "status-pending",
-  },
-  {
-    value: "Cancelled",
-    label: "Cancelled",
-    icon: <BiRotateLeft />,
-    className: "status-cancelled",
-  },
-  {
-    value: "Refunded",
-    label: "Refunded",
-    icon: <BiInfoCircle />,
-    className: "status-refunded",
-  },
-  {
-    value: "Shipped",
-    label: "Shipped",
-    icon: <MdOutlineLocalShipping />,
-    className: "status-shipped",
-  },
-  {
-    value: "Processing",
-    label: "Processing",
-    icon: <BiLoader />,
-    className: "status-processing",
-  },
-];
 
 export function StatusFilterDropdown({ handleStatusChange }) {
   const [open, setOpen] = React.useState(false);
@@ -885,52 +596,6 @@ export function StatusFilterDropdown({ handleStatusChange }) {
     </Popover>
   );
 }
-const sortOptions = [
-  {
-    value: "createdAt_asc",
-    label: "Created At (Oldest)",
-    icon: (
-      <>
-        <HiArrowLongUp />
-        <MdOutlineDateRange />
-      </>
-    ),
-    className: "bg-yellow-100",
-  },
-  {
-    value: "createdAt_desc",
-    label: "Created At (Newest)",
-    icon: (
-      <>
-        <HiArrowLongDown />
-        <MdOutlineDateRange />
-      </>
-    ),
-    className: "bg-red-100",
-  },
-  {
-    value: "totalAmount_asc",
-    label: "Total Amount (Low to High)",
-    icon: (
-      <>
-        <HiArrowLongUp />
-        <MdOutlineAttachMoney />
-      </>
-    ),
-    className: "bg-green-100",
-  },
-  {
-    value: "totalAmount_desc",
-    label: "Total Amount (High to Low)",
-    icon: (
-      <>
-        <HiArrowLongDown />
-        <MdOutlineAttachMoney />
-      </>
-    ),
-    className: "bg-blue-100",
-  },
-];
 
 export function SortDropdown({ handleSortChange }) {
   const [open, setOpen] = React.useState(false);
@@ -1115,19 +780,3 @@ const OrderBox = ({
     </div>
   );
 };
-
-const OrderRow = ({ order }) => (
-  <tr className="order-row">
-    <td>
-      <img
-        src={order.productImg}
-        alt={order.productName}
-        className="product-img"
-      />
-    </td>
-    <td className="name">{order.productName}</td>
-    <td className="quantity">{order.quantity}</td>
-    <td className="price">{order.formattedPrice}</td>
-    <td className="date">{order.orderDate}</td>
-  </tr>
-);
