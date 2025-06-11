@@ -76,9 +76,14 @@ const validateDateRange = (startDate, endDate) => {
 
   const parsedStartDate = new Date(startDate);
   const parsedEndDate = new Date(endDate);
+  const now = new Date();
 
   if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
     return { status: 400, message: "Invalid date format." };
+  }
+
+  if (parsedEndDate > now) {
+    return { status: 400, message: "End date cannot be in the future." };
   }
 
   if (parsedStartDate > parsedEndDate) {

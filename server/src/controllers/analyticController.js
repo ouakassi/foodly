@@ -13,7 +13,7 @@ const getTotalSales = async (req, res) => {
     return res.status(error.status).json({ message: error.message });
   }
   try {
-    const totalSales = await Order.sum("total", {
+    const totalSales = await Order.sum("totalAmount", {
       where: {
         status: ORDER_STATUSES.COMPLETED,
         createdAt: {
@@ -21,8 +21,16 @@ const getTotalSales = async (req, res) => {
         },
       },
     });
+    const formattedTotalSales = totalSales
+      ? parseFloat(totalSales.toFixed(2)) // Ensure two decimal places
+      : null; // Handle case where no sales are found
 
-    res.json({ totalSales });
+    res.json({
+      message: "Total sales fetched successfully. ",
+      dateRange: { startDate, endDate },
+      totalSales,
+      formattedTotalSales,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch total sales." });
