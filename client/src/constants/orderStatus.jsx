@@ -6,7 +6,7 @@ import {
 } from "react-icons/bi";
 import { MdOutlineLocalShipping } from "react-icons/md";
 
-export const ORDER_STATUS = {
+const ORDER_STATUS = {
   COMPLETED: "completed",
   PENDING: "pending",
   CANCELLED: "cancelled",
@@ -14,12 +14,12 @@ export const ORDER_STATUS = {
   SHIPPED: "shipped",
   DELIVERED: "delivered",
   PROCESSING: "processing",
-  IN_PROGRESS: "In Progress",
-  NOT_FULFILLED: "Not Fulfilled",
-  NOT_APPLICABLE: "Not Applicable",
+  RETURNED: "returned",
+  EXPIRED: "expired",
+  DEFAULT: "default",
 };
 
-export const statusConfig = {
+const statusConfig = {
   [ORDER_STATUS.COMPLETED]: {
     icon: <BiCheckCircle />,
     className: "status-completed",
@@ -62,22 +62,24 @@ export const statusConfig = {
     text: "Order is being processed",
     color: "#f59e0b", // amber
   },
-  [ORDER_STATUS.IN_PROGRESS]: {
-    icon: <BiLoader />,
-    className: "status-in-progress",
-    text: "Order is in progress",
-    color: "#06b6d4", // cyan
-  },
-  [ORDER_STATUS.NOT_FULFILLED]: {
+  [ORDER_STATUS.RETURNED]: {
     icon: <BiInfoCircle />,
-    className: "status-not-fulfilled",
-    text: "Order not yet fulfilled",
+    className: "status-returned",
+    text: "Order was returned",
+    color: "#ef4444", // red (for returned status)
+  },
+  [ORDER_STATUS.EXPIRED]: {
+    icon: <BiInfoCircle />,
+    className: "status-expired",
+    text: "Order expired",
     color: "#6b7280", // gray
   },
-  [ORDER_STATUS.NOT_APPLICABLE]: {
+  [ORDER_STATUS.DEFAULT]: {
     icon: <BiInfoCircle />,
     className: "status-not-applicable",
     text: "No fulfillment required",
     color: "#6b7280", // gray
   },
 };
+
+export default statusConfig;

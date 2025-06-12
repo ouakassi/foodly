@@ -15,6 +15,10 @@ export const API_ENDPOINTS = {
   PRODUCTS: "/api/products",
   USERS: "/api/users",
   AUTH: "/api/auth",
+  ANALYTICS_TOTAL_ORDERS: "/api/analytics/total-orders",
+  ANALYTICS_TOTAL_SALES: "/api/analytics/total-sales",
+  ANALYTICS_TOTAL_ORDERS_BY_STATUS: (status) => `/api/analytics/${status}`,
+  ANALYTICS_DAILY_ORDERS_PER_MONTH: `/api/analytics/daily-orders`,
 };
 
 // export const AUTH_ROUTES = {

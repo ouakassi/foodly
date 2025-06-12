@@ -14,43 +14,43 @@ import { HiArrowLongDown, HiArrowLongUp } from "react-icons/hi2";
 
 const statusOptions = [
   {
-    value: "All",
+    value: "all",
     label: "All",
     icon: <LuGalleryVerticalEnd />,
     className: "status-all",
   },
   {
-    value: "Completed",
+    value: "completed",
     label: "Completed",
     icon: <BiCheckCircle />,
     className: "status-completed",
   },
   {
-    value: "Pending",
+    value: "pending",
     label: "Pending",
     icon: <BiLoader />,
     className: "status-pending",
   },
   {
-    value: "Cancelled",
+    value: "cancelled",
     label: "Cancelled",
     icon: <BiRotateLeft />,
     className: "status-cancelled",
   },
   {
-    value: "Refunded",
+    value: "refunded",
     label: "Refunded",
     icon: <BiInfoCircle />,
     className: "status-refunded",
   },
   {
-    value: "Shipped",
+    value: "shipped",
     label: "Shipped",
     icon: <MdOutlineLocalShipping />,
     className: "status-shipped",
   },
   {
-    value: "Processing",
+    value: "processing",
     label: "Processing",
     icon: <BiLoader />,
     className: "status-processing",

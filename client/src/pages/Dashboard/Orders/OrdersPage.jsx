@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { LuGalleryVerticalEnd } from "react-icons/lu";
 import { LiaSortAmountDownAltSolid } from "react-icons/lia";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   BiLoader,
@@ -80,6 +81,7 @@ import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 import DialogEditOrderDetails from "./dialogs/DialogEditOrderDetails";
 import DialogShowOrderDetails from "./dialogs/DialogShowOrderDetails";
 import { sortOptions, statusOptions } from "../../../constants/orderFilters";
+import statusConfig from "../../../constants/orderStatus";
 import { API_ENDPOINTS, APP_CONFIG } from "../../../constants/index";
 
 export default function OrdersPage() {
@@ -108,66 +110,7 @@ export default function OrdersPage() {
     API_URL + API_ENDPOINTS.ORDERS,
     params
   );
-  const statusConfig = useMemo(
-    () => ({
-      completed: {
-        icon: <BiCheckCircle />,
-        className: "status-completed",
-        text: "Order completed successfully",
-      },
-      pending: {
-        icon: <BiLoader />,
-        className: "status-pending",
-        text: "Awaiting confirmation or payment",
-      },
-      cancelled: {
-        icon: <BiRotateLeft />,
-        className: "status-cancelled",
-        text: "Order was cancelled",
-      },
-      refunded: {
-        icon: <BiInfoCircle />,
-        className: "status-refunded",
-        text: "Customer refunded",
-      },
-      shipped: {
-        icon: <MdOutlineLocalShipping />,
-        className: "status-shipped",
-        text: "Shipped to customer",
-      },
-      delivered: {
-        icon: <MdOutlineLocalShipping />,
-        className: "status-shipped",
-        text: "Shipped to customer",
-      },
-      processing: {
-        icon: <BiLoader />,
-        className: "status-processing",
-        text: "Order is being processed",
-      },
-      failed: {
-        icon: <MdOutlineErrorOutline />,
-        className: "status-processing",
-        text: "Order failed",
-      },
-      returned: {
-        icon: <BiRotateLeft />,
-        className: "status-returned",
-        text: "Order returned by customer",
-      },
-      expired: {
-        icon: <MdOutlineErrorOutline />,
-        className: "status-expired",
-        text: "Order expired",
-      },
-      default: {
-        icon: <MdOutlineErrorOutline />,
-        className: "status-default",
-        text: "Unknown status",
-      },
-    }),
-    []
-  );
+
   const {
     data: orderData,
     isLoading: isOrderDataLoading,
@@ -178,7 +121,19 @@ export default function OrdersPage() {
       : null
   );
 
+  const {
+    data: analyticsData,
+    isLoading: isAnalyticsLoading,
+    error: analyticsError,
+  } = useAxiosFetch(API_URL + API_ENDPOINTS.ANALYTICS_TOTAL_SALES, {
+    startDate: "2025-01-01",
+    endDate: "2025-06-11",
+  });
+
   const { orders, totalOrders, totalPages, currentPage } = data || {};
+
+  const { formattedTotalSales } = analyticsData || {};
+  console.log(analyticsData);
 
   const orderBoxes = [
     {
@@ -192,7 +147,7 @@ export default function OrdersPage() {
     {
       icon: <MdOutlineAttachMoney />,
       label: "Total Revenue",
-      value: "$120,000",
+      value: formatCurrency(formattedTotalSales, "USD"),
       trend: "+10",
       trendDirection: "up",
       description: "compared last month",
@@ -352,28 +307,8 @@ export default function OrdersPage() {
             </tr>
           </thead>
           <tbody>
-            {(orders && orders.length === 0) ||
-              (!orders && !isLoading && (
-                <tr>
-                  <td colSpan="7" className="no-orders">
-                    <span>
-                      <p>
-                        <MdOutlineErrorOutline />
-                        No orders found.
-                      </p>
-                      {
-                        <CustomButton
-                          icon={<LuGalleryVerticalEnd />}
-                          style={{ width: "fit-content" }}
-                          text="Show all Orders"
-                          onClick={() => handleStatusChange("all")}
-                        />
-                      }
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            {error && (
+            {isLoading && <TableSkeleton rows={10} />}
+            {!isLoading && error && (
               <tr>
                 <td colSpan="7" className="error">
                   <span>
@@ -393,14 +328,30 @@ export default function OrdersPage() {
                 </td>
               </tr>
             )}
-            {isLoading && (
+            {!isLoading && !error && orders && orders.length === 0 && (
               <tr>
-                <td colSpan="7" className="loading">
-                  <LoadingSpinner />
+                <td colSpan="7" className="no-orders">
+                  <span>
+                    <p>
+                      <MdOutlineErrorOutline />
+                      No orders found.
+                    </p>
+                    {
+                      <CustomButton
+                        icon={<LuGalleryVerticalEnd />}
+                        style={{ width: "fit-content" }}
+                        text="Show all Orders"
+                        onClick={() => handleStatusChange("all")}
+                      />
+                    }
+                  </span>
                 </td>
               </tr>
             )}
-            {orders &&
+            {!isLoading &&
+              !error &&
+              orders &&
+              orders.length > 0 &&
               orders.map((order) => {
                 const status = order.status.toLowerCase();
                 const statusClass =
@@ -530,12 +481,93 @@ export default function OrdersPage() {
   );
 }
 
+const TableSkeleton = ({ rows = 5 }) => {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, index) => (
+        <tr key={index} className="order-row p-4 gap-4">
+          <td className="order-id">
+            <Skeleton className="h-8 w-full" />
+          </td>
+
+          <td className="email">
+            <Skeleton className="h-8 w-full" />
+          </td>
+          <td className="status ">
+            <Skeleton className="h-8 w-full " />
+          </td>
+          <td className="date">
+            <Skeleton className="h-8 w-full" />
+          </td>
+          <td className="total">
+            <Skeleton className="h-8 w-full" />
+          </td>
+          <td className="payment">
+            <div className="flex items-center">
+              <Skeleton className="h-4 w-4 rounded-full" />
+              {/* <Skeleton className="h-4 w-20" /> */}
+            </div>
+          </td>
+          <td className="actions">
+            <div className="flex items-center ">
+              <Skeleton className="h-4 w-4 rounded-full" />
+              {/* <Skeleton className="h-4 w-20" /> */}
+            </div>
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+};
+
 export function StatusFilterDropdown({ handleStatusChange }) {
-  const [open, setOpen] = React.useState(false);
-  const [selectedStatus, setSelectedStatus] = React.useState("");
+  const [searchParams] = useSearchParams();
+  const [open, setOpen] = useState(false);
+
+  // Get initial status from URL params
+  const getInitialStatus = () => {
+    const urlStatus = searchParams.get("status");
+    if (
+      urlStatus &&
+      statusOptions.find((option) => option.value === urlStatus)
+    ) {
+      return urlStatus;
+    }
+    return "all";
+  };
+
+  const [selectedStatus, setSelectedStatus] = useState(getInitialStatus);
+
+  // Sync with URL changes
+  useEffect(() => {
+    const urlStatus = searchParams.get("status");
+    const newStatus =
+      urlStatus && statusOptions.find((option) => option.value === urlStatus)
+        ? urlStatus
+        : "all";
+    if (newStatus !== selectedStatus) {
+      setSelectedStatus(newStatus);
+    }
+  }, [searchParams, selectedStatus]);
 
   const checkStatus = (value) => {
     return statusOptions.find((status) => status.value === value);
+  };
+
+  const handleStatusSelect = (statusValue) => {
+    let newStatus;
+
+    if (statusValue === selectedStatus) {
+      // If clicking the same status, toggle back to 'all'
+      newStatus = "all";
+    } else {
+      // If clicking a different status, select it
+      newStatus = statusValue;
+    }
+
+    setSelectedStatus(newStatus);
+    setOpen(false);
+    handleStatusChange(newStatus);
   };
 
   return (
@@ -547,15 +579,15 @@ export function StatusFilterDropdown({ handleStatusChange }) {
           aria-expanded={open}
           className={
             "w-[200px] rounded-full " +
-            (selectedStatus ? checkStatus(selectedStatus).className : "")
+            (selectedStatus && selectedStatus !== "all"
+              ? checkStatus(selectedStatus)?.className
+              : "")
           }
         >
-          {selectedStatus ? (
-            checkStatus(selectedStatus)?.icon
-          ) : (
-            <RiFilterFill />
-          )}
-          {selectedStatus ? checkStatus(selectedStatus)?.label : "Filters"}
+          {checkStatus(selectedStatus)?.icon || <RiFilterFill />}
+          {selectedStatus && selectedStatus !== "all"
+            ? checkStatus(selectedStatus)?.label
+            : "Filters"}
           <HiSwitchVertical className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -569,20 +601,14 @@ export function StatusFilterDropdown({ handleStatusChange }) {
                 <CommandItem
                   key={status.value}
                   value={status.value}
-                  onSelect={(currentValue) => {
-                    setSelectedStatus(
-                      currentValue === selectedStatus ? "" : currentValue
-                    );
-                    setOpen(false);
-                    handleStatusChange(status.value.toLowerCase());
-                  }}
+                  onSelect={() => handleStatusSelect(status.value)}
                 >
                   {status.icon}
                   {status.label}
                   <Check
                     className={cn(
                       "ml-auto",
-                      selectedStatus === status.value
+                      selectedStatus === status.value.toLocaleLowerCase()
                         ? "opacity-100"
                         : "opacity-0"
                     )}
