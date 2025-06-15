@@ -102,13 +102,13 @@ const getAllOrders = async (req, res) => {
     }
 
     return res.status(200).json({
-      orders: rows,
       totalOrders: count,
       totalPages: Math.ceil(count / limit),
       currentPage: page,
       message: search ? "Search results" : "All orders retrieved successfully.",
       searchQuery: search || null,
       filters: filterConditions,
+      orders: rows,
     });
   } catch (err) {
     console.error("Error fetching orders:", err);

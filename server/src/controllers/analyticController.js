@@ -87,7 +87,12 @@ const getTotalOrdersByStatus = async (req, res) => {
       },
     });
 
-    res.json({ orders });
+    res.json({
+      message: "Total orders fetched successfully.",
+
+      status: orderStatus,
+      totalOrders: orders,
+    });
 
     if (!orders) {
       return res

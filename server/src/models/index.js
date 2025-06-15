@@ -66,7 +66,13 @@ const createRandomOrdersFor30Days = async (year, month) => {
     }
 
     // const orderStatuses = ORDER_STATUS_VALUES_ARRAY;
-    const orderStatuses = ["completed", "pending"];
+    const orderStatuses = [
+      "completed",
+      "pending",
+      "shipped",
+      "delivered",
+      "cancelled",
+    ];
 
     const daysInMonth = new Date(year, month, 0).getDate(); // month = 1-12
 
