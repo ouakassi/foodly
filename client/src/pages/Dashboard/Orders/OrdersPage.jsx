@@ -1,5 +1,11 @@
 import "./OrdersPage.css";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -26,7 +32,7 @@ import {
 import { PiBasketFill } from "react-icons/pi";
 
 import { HiDotsVertical, HiSwitchVertical } from "react-icons/hi";
-import { Check, TrendingUp, TrendingDown } from "lucide-react";
+import { Check, TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
 
 import {
   Tooltip,
@@ -81,15 +87,32 @@ import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 import DialogEditOrderDetails from "./dialogs/DialogEditOrderDetails";
 import DialogShowOrderDetails from "./dialogs/DialogShowOrderDetails";
 import { sortOptions, statusOptions } from "../../../constants/orderFilters";
-import statusConfig from "../../../constants/orderStatus";
+import { STATUS_CONFIG, ORDER_STATUSES } from "../../../constants/orderStatus";
 import { API_ENDPOINTS, APP_CONFIG } from "../../../constants/index";
+
+import { ChevronDownIcon } from "lucide-react";
+
+import { Calendar } from "@/components/ui/calendar";
 
 export default function OrdersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState("none");
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-
+  const [selectedDateRange, setSelectedDateRange] = useState({
+    startDate: null,
+    endDate: null || new Date(),
+  });
+  const [analyticData, setAnalyticData] = useReducer((state, action) => {
+    switch (action.type) {
+      case "SET_DATA":
+        return { ...state, ...action.payload };
+      case "RESET":
+        return { startDate: null, endDate: null };
+      default:
+        return state;
+    }
+  });
   const page = searchParams.get("page") || 1;
   const limit = searchParams.get("limit") || APP_CONFIG.DEFAULT_PAGE_LIMIT;
   const search = searchParams.get("search");
@@ -106,10 +129,11 @@ export default function OrdersPage() {
     sort: sort ? sort : {},
   };
 
-  const { data, isLoading, error } = useAxiosFetch(
-    API_URL + API_ENDPOINTS.ORDERS,
-    params
-  );
+  const {
+    data: ordersData,
+    isLoading,
+    error,
+  } = useAxiosFetch(API_URL + API_ENDPOINTS.ORDERS, params);
 
   const {
     data: orderData,
@@ -122,24 +146,68 @@ export default function OrdersPage() {
   );
 
   const {
-    data: analyticsData,
-    isLoading: isAnalyticsLoading,
-    error: analyticsError,
-  } = useAxiosFetch(API_URL + API_ENDPOINTS.ANALYTICS_TOTAL_SALES, {
-    startDate: "2025-01-01",
-    endDate: "2025-06-11",
+    data: analyticsTotalSalesData,
+    isLoading: isAnalyticsTotalSalesLoading,
+    error: analyticsTotalSalesError,
+  } = useAxiosFetch(API_URL + API_ENDPOINTS.ANALYTICS_TOTAL_SALES_BY_DATE, {
+    startDate: "2025-06-01",
+    endDate: "2025-06-14",
   });
 
-  const { orders, totalOrders, totalPages, currentPage } = data || {};
+  const {
+    data: analyticsTotalOrdersData,
+    isLoading: isAnalyticsTotalOrdersLoading,
+    error: analyticsTotalOrdersError,
+  } = useAxiosFetch(API_URL + API_ENDPOINTS.ANALYTICS_TOTAL_ORDERS, {
+    startDate: "2025-06-01",
+    endDate: "2025-06-14",
+  });
 
-  const { formattedTotalSales } = analyticsData || {};
-  console.log(analyticsData);
+  const {
+    data: analyticsTotalOrdersByPendingData,
+    isLoading: isAnalyticsTotalOrdersByPendingLoading,
+    error: analyticsTotalOrdersByPendingError,
+  } = useAxiosFetch(
+    API_URL +
+      API_ENDPOINTS.ANALYTICS_TOTAL_ORDERS_BY_STATUS(ORDER_STATUSES.CANCELLED),
+    {
+      startDate: "2025-06-01",
+      endDate: "2025-06-14",
+    }
+  );
+
+  const {
+    data: analyticsTotalOrdersByCancelledData,
+    isLoading: isAnalyticsTotalOrdersByCancelledLoading,
+    error: analyticsTotalOrdersByCancelledError,
+  } = useAxiosFetch(
+    API_URL +
+      API_ENDPOINTS.ANALYTICS_TOTAL_ORDERS_BY_STATUS(ORDER_STATUSES.COMPLETED),
+    {
+      startDate: "2025-06-01",
+      endDate: "2025-06-14",
+    }
+  );
+
+  const { orders, totalOrders, totalPages, currentPage } = useMemo(() => {
+    return ordersData || {};
+  }, [ordersData]);
+  const { totalOrders: totalOrdersCount } = analyticsTotalOrdersData || {};
+  const { totalOrders: totalOrdersPendingCount } =
+    analyticsTotalOrdersByPendingData || {};
+  const { totalOrders: totalOrdersCanceledCount } =
+    analyticsTotalOrdersByCancelledData || {};
+
+  const { formattedTotalSales } = analyticsTotalSalesData || {};
+
+  console.log(analyticsTotalOrdersData);
+  console.log(orders);
 
   const orderBoxes = [
     {
       icon: <PiBasketFill />,
       label: "Total Orders",
-      value: totalOrders,
+      value: totalOrdersCount ? totalOrdersCount : 0,
       trend: "+25",
       trendDirection: "up", // or "down"
       description: "compared last month",
@@ -147,7 +215,10 @@ export default function OrdersPage() {
     {
       icon: <MdOutlineAttachMoney />,
       label: "Total Revenue",
-      value: formatCurrency(formattedTotalSales, "USD"),
+      value: formatCurrency(
+        isNaN(formattedTotalSales) ? 0 : formattedTotalSales,
+        "USD"
+      ),
       trend: "+10",
       trendDirection: "up",
       description: "compared last month",
@@ -155,7 +226,13 @@ export default function OrdersPage() {
     {
       icon: <RiProgress1Line />,
       label: "Orders in Progress",
-      value: "320",
+      value: isAnalyticsTotalOrdersByPendingLoading ? (
+        <LoadingSpinner />
+      ) : totalOrdersPendingCount ? (
+        totalOrdersPendingCount
+      ) : (
+        0
+      ),
       trend: "+8",
       trendDirection: "up",
       description: "since last week",
@@ -163,7 +240,7 @@ export default function OrdersPage() {
     {
       icon: <BiRotateLeft />,
       label: "Cancelled Orders",
-      value: "45",
+      value: totalOrdersCanceledCount ? totalOrdersCanceledCount : 0,
       trend: "-5",
       trendDirection: "down",
       description: "compared last month",
@@ -280,7 +357,13 @@ export default function OrdersPage() {
             <StatusFilterDropdown handleStatusChange={handleStatusChange} />
             {orders && <SortDropdown handleSortChange={handleSortChange} />}
           </div>
-          {data && (
+          <div>
+            <DatePicker
+              selectedDateRange={selectedDateRange}
+              setSelectedDateRange={setSelectedDateRange}
+            />
+          </div>
+          {orders && (
             <div className="table-pages-buttons">
               <PreviousBtn onClick={handlePreviousPage} page={page} />
 
@@ -355,12 +438,12 @@ export default function OrdersPage() {
               orders.map((order) => {
                 const status = order.status.toLowerCase();
                 const statusClass =
-                  statusConfig[status]?.className ||
-                  statusConfig.default.className;
+                  STATUS_CONFIG[status]?.className ||
+                  STATUS_CONFIG.default.className;
                 const statusIcon =
-                  statusConfig[status]?.icon || statusConfig.default.icon;
+                  STATUS_CONFIG[status]?.icon || STATUS_CONFIG.default.icon;
                 const statusDescription =
-                  statusConfig[status]?.text || statusConfig.default.text;
+                  STATUS_CONFIG[status]?.text || STATUS_CONFIG.default.text;
 
                 return (
                   <tr key={order.id} className="order-row">
@@ -806,3 +889,98 @@ const OrderBox = ({
     </div>
   );
 };
+
+function DatePicker({ selectedDateRange, setSelectedDateRange }) {
+  const [startOpen, setStartOpen] = React.useState(false);
+  const [endOpen, setEndOpen] = React.useState(false);
+
+  const today = new Date();
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex gap-2">
+        {/* Start Date */}
+        <Popover open={startOpen} onOpenChange={setStartOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-48 justify-between font-normal text-left"
+            >
+              <span className="flex items-center gap-2">
+                {/* <CalendarDays className="h-4 w-4" /> */}
+                {selectedDateRange.startDate
+                  ? formatDate(selectedDateRange.startDate)
+                  : "From Date"}
+              </span>
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={selectedDateRange.startDate}
+              onSelect={(date) => {
+                setSelectedDateRange((prev) => ({
+                  ...prev,
+                  startDate: date,
+                }));
+                setStartOpen(false);
+              }}
+              captionLayout="dropdown"
+              disabled={(date) => {
+                // Disable future dates (dates after today)
+                if (date > today) return true;
+
+                // Disable dates after end date if end date is selected
+                return (
+                  selectedDateRange.endDate && date > selectedDateRange.endDate
+                );
+              }}
+            />
+          </PopoverContent>
+        </Popover>
+
+        {/* End Date */}
+        <Popover open={endOpen} onOpenChange={setEndOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-48 justify-between font-normal text-left"
+            >
+              <span className="flex items-center gap-2">
+                {/* <CalendarDays className="h-4 w-4" /> */}
+                {selectedDateRange.endDate
+                  ? formatDate(selectedDateRange.endDate)
+                  : "To Date"}
+              </span>
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={selectedDateRange.endDate}
+              onSelect={(date) => {
+                setSelectedDateRange((prev) => ({
+                  ...prev,
+                  endDate: date,
+                }));
+                setEndOpen(false);
+              }}
+              captionLayout="dropdown"
+              disabled={(date) => {
+                // Disable future dates (dates after today)
+                if (date > today) return true;
+
+                // Disable dates before start date if start date is selected
+                return (
+                  selectedDateRange.startDate &&
+                  date < selectedDateRange.startDate
+                );
+              }}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+    </div>
+  );
+}

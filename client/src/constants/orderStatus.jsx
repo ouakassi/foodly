@@ -6,75 +6,76 @@ import {
 } from "react-icons/bi";
 import { MdOutlineLocalShipping } from "react-icons/md";
 
-const ORDER_STATUS = {
-  COMPLETED: "completed",
+const ORDER_STATUSES = {
   PENDING: "pending",
-  CANCELLED: "cancelled",
-  REFUNDED: "refunded",
+  PAID: "paid",
+  PROCESSING: "processing",
   SHIPPED: "shipped",
   DELIVERED: "delivered",
-  PROCESSING: "processing",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
   RETURNED: "returned",
+  REFUNDED: "refunded",
+  FAILED: "failed",
   EXPIRED: "expired",
-  DEFAULT: "default",
 };
 
-const statusConfig = {
-  [ORDER_STATUS.COMPLETED]: {
+const STATUS_CONFIG = {
+  [ORDER_STATUSES.COMPLETED]: {
     icon: <BiCheckCircle />,
     className: "status-completed",
     text: "Order completed successfully",
     color: "#10b981", // green
   },
-  [ORDER_STATUS.PENDING]: {
+  [ORDER_STATUSES.PENDING]: {
     icon: <BiLoader />,
     className: "status-pending",
     text: "Awaiting confirmation or payment",
     color: "#f59e0b", // amber
   },
-  [ORDER_STATUS.CANCELLED]: {
+  [ORDER_STATUSES.CANCELLED]: {
     icon: <BiRotateLeft />,
     className: "status-cancelled",
     text: "Order was cancelled",
     color: "#ef4444", // red
   },
-  [ORDER_STATUS.REFUNDED]: {
+  [ORDER_STATUSES.REFUNDED]: {
     icon: <BiInfoCircle />,
     className: "status-refunded",
     text: "Customer refunded",
     color: "#8b5cf6", // purple
   },
-  [ORDER_STATUS.SHIPPED]: {
+  [ORDER_STATUSES.SHIPPED]: {
     icon: <MdOutlineLocalShipping />,
     className: "status-shipped",
     text: "Shipped to customer",
     color: "#3b82f6", // blue
   },
-  [ORDER_STATUS.DELIVERED]: {
+  [ORDER_STATUSES.DELIVERED]: {
     icon: <MdOutlineLocalShipping />,
     className: "status-shipped",
     text: "Delivered to customer",
     color: "#10b981", // green
   },
-  [ORDER_STATUS.PROCESSING]: {
+  [ORDER_STATUSES.PROCESSING]: {
     icon: <BiLoader />,
     className: "status-processing",
     text: "Order is being processed",
     color: "#f59e0b", // amber
   },
-  [ORDER_STATUS.RETURNED]: {
+  [ORDER_STATUSES.RETURNED]: {
     icon: <BiInfoCircle />,
     className: "status-returned",
     text: "Order was returned",
     color: "#ef4444", // red (for returned status)
   },
-  [ORDER_STATUS.EXPIRED]: {
+  [ORDER_STATUSES.EXPIRED]: {
     icon: <BiInfoCircle />,
     className: "status-expired",
     text: "Order expired",
     color: "#6b7280", // gray
   },
-  [ORDER_STATUS.DEFAULT]: {
+  [ORDER_STATUSES.DEFAULT]: {
     icon: <BiInfoCircle />,
     className: "status-not-applicable",
     text: "No fulfillment required",
@@ -82,4 +83,4 @@ const statusConfig = {
   },
 };
 
-export default statusConfig;
+export { STATUS_CONFIG, ORDER_STATUSES };

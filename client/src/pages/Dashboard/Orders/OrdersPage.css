@@ -36,16 +36,23 @@
   width: 100%;
   /* width: fit-content; */
   box-shadow: var(--box-shadow-content-container);
+  background: linear-gradient(345deg, #f1f1f1, transparent);
 }
 .order-box div:first-child {
   display: flex;
+  align-items: center;
   font-size: var(--fs-m);
   color: #808080;
-  gap: 0.4rem;
+  gap: 0.5rem;
+}
+.order-box div:first-child span:first-child {
+  background: #f7713c;
+  padding: 0.3rem;
+  border-radius: 10px;
 }
 .order-box div:first-child svg {
   font-size: 1.6rem;
-  color: #ff6d01;
+  color: #ffffff;
 }
 
 .order-box div:last-child {

@@ -15,10 +15,21 @@ export const API_ENDPOINTS = {
   PRODUCTS: "/api/products",
   USERS: "/api/users",
   AUTH: "/api/auth",
-  ANALYTICS_TOTAL_ORDERS: "/api/analytics/total-orders",
-  ANALYTICS_TOTAL_SALES: "/api/analytics/total-sales",
-  ANALYTICS_TOTAL_ORDERS_BY_STATUS: (status) => `/api/analytics/${status}`,
-  ANALYTICS_DAILY_ORDERS_PER_MONTH: `/api/analytics/daily-orders`,
+  ANALYTICS_TOTAL_ORDERS: "/api/analytics/total-orders", // params: { month, year }
+  ANALYTICS_TOTAL_SALES_BY_DATE: "/api/analytics/total-sales", // params: { startDate, endDate }
+  // ANALYTICS_SALES_BY_PRODUCT: (productId) => `/api/analytics/sales/${productId}`, // params: { startDate, endDate }
+  ANALYTICS_SALES_BY_PRODUCT: (productId) =>
+    `/api/analytics/sales/${productId}`, // params: { startDate, endDate }
+  ANALYTICS_SALES_BY_CATEGORY: (categoryId) =>
+    `/api/analytics/sales/category/${categoryId}`, // params: { startDate, endDate }
+  ANALYTICS_TOP_PRODUCTS: `/api/analytics/top-products`, // params: { month, year }
+  ANALYTICS_TOP_CATEGORIES: `/api/analytics/top-categories`, // params: { month, year }
+  ANALYTICS_TOP_CUSTOMERS: `/api/analytics/top-customers`, // params: { month, year }
+  ANALYTICS_SALES_BY_PAYMENT_METHOD: `/api/analytics/sales/payment-method`, // params: { startDate, endDate }
+  ANALYTICS_SALES_BY_REGION: `/api/analytics/sales/region`, // params: { startDate, endDate }
+  ANALYTICS_TOTAL_ORDERS_BY_STATUS: (status) =>
+    `/api/analytics/total-orders/${status}`,
+  ANALYTICS_DAILY_ORDERS_PER_MONTH: `/api/analytics/daily-orders`, // params: { month, year }
 };
 
 // export const AUTH_ROUTES = {
