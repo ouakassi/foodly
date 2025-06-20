@@ -8,14 +8,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-const PreviousBtn = ({ onClick, page, prevBtnRef }) => {
+const PreviousBtn = ({ onClick, page, prevBtnRef, totalPages }) => {
   const isFirstPage = page <= 1;
+  const isTotalPageEmpty = totalPages === 0 || totalPages === undefined;
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>
           <span onClick={onClick} ref={prevBtnRef}>
-            <CustomButton disabled={isFirstPage} icon={<FaAngleLeft />} />
+            <CustomButton
+              disabled={isFirstPage || isTotalPageEmpty}
+              icon={<FaAngleLeft />}
+            />
           </span>
         </TooltipTrigger>
         <TooltipContent>
@@ -28,6 +32,7 @@ const PreviousBtn = ({ onClick, page, prevBtnRef }) => {
 
 const NextBtn = ({ onClick, page, totalPages, nextBtnRef }) => {
   const isLastPage = page >= totalPages;
+  const isTotalPageEmpty = totalPages === 0 || totalPages === undefined;
 
   return (
     <TooltipProvider delayDuration={100}>
@@ -35,7 +40,7 @@ const NextBtn = ({ onClick, page, totalPages, nextBtnRef }) => {
         <TooltipTrigger asChild>
           <span ref={nextBtnRef} onClick={onClick}>
             <CustomButton
-              disabled={isLastPage}
+              disabled={isLastPage || isTotalPageEmpty}
               icon={<FaAngleRight />}
               aria-label="Next Page"
             />

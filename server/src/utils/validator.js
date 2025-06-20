@@ -45,6 +45,8 @@ const orderQuerySchema = Joi.object({
   search: Joi.string().allow(""),
   sort: Joi.valid(...ORDER_SORT_KEYS),
   status: Joi.string().valid(...ORDER_STATUS_VALUES_ARRAY),
+  startDate: Joi.date().iso(),
+  endDate: Joi.date().iso(),
 });
 
 // ── Validator Function ──
@@ -76,7 +78,7 @@ const validateDateRange = (startDate, endDate) => {
 
   const parsedStartDate = new Date(startDate);
   const parsedEndDate = new Date(endDate);
-  const now = new Date();
+  const now = new Date().toISOString();
 
   if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
     return { status: 400, message: "Invalid date format." };
