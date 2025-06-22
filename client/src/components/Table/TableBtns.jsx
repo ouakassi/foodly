@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 
 const PreviousBtn = ({ onClick, page, prevBtnRef, totalPages }) => {
+  console.log(totalPages);
   const isFirstPage = page <= 1;
   const isTotalPageEmpty = totalPages === 0 || totalPages === undefined;
   return (
@@ -30,7 +31,7 @@ const PreviousBtn = ({ onClick, page, prevBtnRef, totalPages }) => {
   );
 };
 
-const NextBtn = ({ onClick, page, totalPages, nextBtnRef }) => {
+const NextBtn = ({ onClick, page, totalPages }) => {
   const isLastPage = page >= totalPages;
   const isTotalPageEmpty = totalPages === 0 || totalPages === undefined;
 
@@ -38,7 +39,7 @@ const NextBtn = ({ onClick, page, totalPages, nextBtnRef }) => {
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span ref={nextBtnRef} onClick={onClick}>
+          <span onClick={onClick}>
             <CustomButton
               disabled={isLastPage || isTotalPageEmpty}
               icon={<FaAngleRight />}

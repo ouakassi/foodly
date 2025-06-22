@@ -290,7 +290,11 @@ export default function ProductsPage() {
               </InputContainer>
 
               <div className="table-pages-buttons">
-                <PreviousBtn onClick={handlePreviousPage} page={page} />
+                <PreviousBtn
+                  onClick={handlePreviousPage}
+                  page={page}
+                  totalPages={totalPages}
+                />
 
                 <NextBtn
                   onClick={handleNextPage}
@@ -341,7 +345,7 @@ export default function ProductsPage() {
               <PreviousBtn
                 onClick={handlePreviousPage}
                 page={page}
-                prevBtnRef={prevBtnRef}
+                totalPages={totalPages}
               />
               <span className="page-info">
                 <span className="page-current">{page}</span>/
