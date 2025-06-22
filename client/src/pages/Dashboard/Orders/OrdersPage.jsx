@@ -87,6 +87,8 @@ import {
   formatCurrency,
   formatDate,
   formatDateToYMD,
+  getCurrentMonthYear,
+  getMonthRange,
 } from "../../../lib/helpers";
 import CustomButton from "../../../components/Buttons/CustomButton";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
@@ -105,13 +107,6 @@ export default function OrdersPage() {
   const [dialogType, setDialogType] = useState("none");
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-  const [selectedDateRange, setSelectedDateRange] = useState({
-    startDate: null, // Default start date
-    endDate: null,
-  });
-
-  const todayMonth = new Date().getMonth() + 1;
-  const todayYear = new Date().getFullYear();
 
   const page = searchParams.get("page") || 1;
   const limit = searchParams.get("limit") || APP_CONFIG.DEFAULT_PAGE_LIMIT;
@@ -125,6 +120,12 @@ export default function OrdersPage() {
 
   const todayYMD = formatDateToYMD(new Date());
 
+  // console.log(getCurrentMonthYear());
+  const { year, month } = getCurrentMonthYear();
+  const { firstDay, lastDay } = getMonthRange(year, month);
+  const OverviewStartDate = formatDateToYMD(firstDay);
+  const OverviewEndDate = formatDateToYMD(new Date());
+
   const params = {
     ...(search && { search: debouncedSearch }),
     limit,
@@ -133,7 +134,8 @@ export default function OrdersPage() {
     ...(sort && { sort }),
 
     startDate: startDate,
-    endDate: endDate || todayYMD,
+    // endDate: endDate || todayYMD,
+    endDate: endDate,
   };
 
   const {
@@ -157,7 +159,8 @@ export default function OrdersPage() {
     isLoading: isAnalyticsTotalSalesLoading,
     error: analyticsTotalSalesError,
   } = useAxiosFetch(API_URL + API_ENDPOINTS.ANALYTICS_TOTAL_SALES_BY_DATE, {
-    ...selectedDateRange,
+    startDate: OverviewStartDate,
+    endDate: OverviewEndDate,
   });
 
   const {
@@ -165,7 +168,8 @@ export default function OrdersPage() {
     isLoading: isAnalyticsTotalOrdersLoading,
     error: analyticsTotalOrdersError,
   } = useAxiosFetch(API_URL + API_ENDPOINTS.ANALYTICS_TOTAL_ORDERS, {
-    ...selectedDateRange,
+    startDate: OverviewStartDate,
+    endDate: OverviewEndDate,
   });
 
   const {
@@ -176,7 +180,8 @@ export default function OrdersPage() {
     API_URL +
       API_ENDPOINTS.ANALYTICS_TOTAL_ORDERS_BY_STATUS(ORDER_STATUSES.PENDING),
     {
-      ...selectedDateRange,
+      startDate: OverviewStartDate,
+      endDate: OverviewEndDate,
     }
   );
 
@@ -188,7 +193,8 @@ export default function OrdersPage() {
     API_URL +
       API_ENDPOINTS.ANALYTICS_TOTAL_ORDERS_BY_STATUS(ORDER_STATUSES.CANCELLED),
     {
-      ...selectedDateRange,
+      startDate: OverviewStartDate,
+      endDate: OverviewEndDate,
     }
   );
 
@@ -232,7 +238,7 @@ export default function OrdersPage() {
       icon: STATUS_CONFIG[ORDER_STATUSES.PENDING]?.icon,
       label: "Orders in Progress",
       value: isAnalyticsTotalOrdersByPendingLoading ? (
-        <LoadingSpinner />
+        <LoadingSpinner height={"2rem"} width={"2rem"} />
       ) : totalOrdersPendingCount ? (
         totalOrdersPendingCount
       ) : (
@@ -368,8 +374,6 @@ export default function OrdersPage() {
             {orders && <SortDropdown handleSortChange={handleSortChange} />}
             <div>
               <DatePicker
-                selectedDateRange={selectedDateRange}
-                setSelectedDateRange={setSelectedDateRange}
                 updatePageParam={updatePageParam}
                 startDate={startDate}
                 endDate={endDate}
@@ -602,10 +606,7 @@ const TableSkeleton = ({ rows = 5 }) => {
             <Skeleton className="h-8 w-full" />
           </td>
           <td className="payment">
-            <div className="flex items-center">
-              <Skeleton className="h-4 w-4 rounded-full" />
-              {/* <Skeleton className="h-4 w-20" /> */}
-            </div>
+            <Skeleton className="h-8 w-full" />
           </td>
           <td className="actions">
             <div className="flex items-center ">
@@ -907,13 +908,7 @@ const OrderBox = ({
   );
 };
 
-function DatePicker({
-  selectedDateRange,
-  setSelectedDateRange,
-  updatePageParam,
-  startDate,
-  endDate,
-}) {
+function DatePicker({ startDate, endDate }) {
   const [startOpen, setStartOpen] = React.useState(false);
   const [endOpen, setEndOpen] = React.useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -921,14 +916,13 @@ function DatePicker({
   const today = new Date();
 
   const handleStartDateSelect = (date) => {
-    updatePageParam(1);
     const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", 1);
 
     if (!date) {
       // Deselect: remove both start & end dates
       newParams.delete("startDate");
       newParams.delete("endDate");
-      setSelectedDateRange({ startDate: null, endDate: null });
     } else {
       const formatted = formatDateToYMD(date);
       const todayFormatted = formatDateToYMD(today);
@@ -939,35 +933,22 @@ function DatePicker({
       if (endDate) {
         newParams.set("endDate", todayFormatted);
       }
-
-      setSelectedDateRange((prev) => ({
-        ...prev,
-        startDate: formatted,
-        endDate: prev.endDate || todayFormatted,
-      }));
     }
 
     setSearchParams(newParams);
     setStartOpen(false);
+    setEndOpen(true); // Open end date picker after selecting start date
   };
 
   const handleEndDateSelect = (date) => {
-    updatePageParam(1);
     const newParams = new URLSearchParams(searchParams);
 
+    newParams.set("page", 1);
     if (!date) {
       newParams.delete("endDate");
-      setSelectedDateRange((prev) => ({
-        ...prev,
-        endDate: null,
-      }));
     } else {
       const formatted = formatDateToYMD(date);
       newParams.set("endDate", formatted);
-      setSelectedDateRange((prev) => ({
-        ...prev,
-        endDate: formatted,
-      }));
     }
 
     setSearchParams(newParams);

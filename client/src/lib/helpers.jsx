@@ -31,3 +31,19 @@ export function formatDateToYMD(date) {
 
   return `${year}-${month}-${day}`;
 }
+
+export function getMonthRange(year, month) {
+  // month is 0-indexed: 0 = Jan, 11 = Dec
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month, 0); // Day 0 of next month = last day of current month
+
+  return { firstDay, lastDay };
+}
+
+export function getCurrentMonthYear() {
+  const now = new Date();
+  return {
+    year: now.getFullYear(),
+    month: now.getMonth(), // 0-indexed: 0 = Jan, 11 = Dec
+  };
+}

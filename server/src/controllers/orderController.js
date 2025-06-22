@@ -55,8 +55,12 @@ const getAllOrders = async (req, res) => {
     }
 
     if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999); // Include full endDate
+
       filterConditions.createdAt = {
-        [Op.between]: [new Date(startDate), new Date(endDate)],
+        [Op.between]: [start, end],
       };
     }
 
@@ -117,9 +121,6 @@ const getAllOrders = async (req, res) => {
       .json({ message: "Internal server error. Failed to fetch orders." });
   }
 };
-
-// ! problem when i request getOrder o get the order even if orderId is wrong
-// ! i get nothing when hitting my-orders endpoint
 
 const getOrder = async (req, res, next) => {
   try {

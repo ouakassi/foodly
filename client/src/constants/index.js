@@ -2,6 +2,10 @@ export const APP_CONFIG = {
   DEFAULT_PAGE_LIMIT: 10,
   DEBOUNCE_DELAY: 500,
   ORDER_ID_DISPLAY_LENGTH: 8,
+  ORDERS_OVERVIEW_DATES: {
+    startDate: "2023-01-01",
+    endDate: "2023-12-31",
+  },
   //   MAX_RETRIES: 3,
 };
 export const API_ENDPOINTS = {
