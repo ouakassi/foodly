@@ -117,7 +117,7 @@
   justify-content: space-between;
   padding: 0 1rem;
 }
-.orders-page-container header div {
+.orders-page-container header > div {
   display: flex;
   align-items: center;
   gap: 1rem;

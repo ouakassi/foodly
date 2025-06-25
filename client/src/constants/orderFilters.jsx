@@ -71,17 +71,6 @@ const SORT_DIRECTIONS = {
 
 const sortOptions = [
   {
-    value: `${SORT_FIELDS.CREATED_AT}_${SORT_DIRECTIONS.ASC}`,
-    label: "Created At (Oldest)",
-    icon: (
-      <>
-        <HiArrowLongUp />
-        <MdOutlineDateRange />
-      </>
-    ),
-    className: "bg-yellow-100",
-  },
-  {
     value: `${SORT_FIELDS.CREATED_AT}_${SORT_DIRECTIONS.DESC}`,
     label: "Created At (Newest)",
     icon: (
@@ -91,6 +80,17 @@ const sortOptions = [
       </>
     ),
     className: "bg-red-100",
+  },
+  {
+    value: `${SORT_FIELDS.CREATED_AT}_${SORT_DIRECTIONS.ASC}`,
+    label: "Created At (Oldest)",
+    icon: (
+      <>
+        <HiArrowLongUp />
+        <MdOutlineDateRange />
+      </>
+    ),
+    className: "bg-yellow-100",
   },
   {
     value: `${SORT_FIELDS.TOTAL_AMOUNT}_${SORT_DIRECTIONS.ASC}`,

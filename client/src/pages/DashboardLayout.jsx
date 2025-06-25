@@ -26,7 +26,9 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    location.pathname === "/dashboard" && navigate("/dashboard/overview");
+    (location.pathname === "/dashboard" ||
+      location.pathname === "/dashboard/") &&
+      navigate("/dashboard/overview");
   }, [location, navigate]);
 
   return (

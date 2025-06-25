@@ -19,6 +19,8 @@ import {
   BiRotateLeft,
   BiCheckCircle,
   BiCross,
+  BiSolidCalendarCheck,
+  BiCalendarPlus,
 } from "react-icons/bi";
 import { HiArrowLongDown, HiArrowLongUp } from "react-icons/hi2";
 
@@ -31,7 +33,11 @@ import {
   MdOutlineLocalShipping,
   MdOutlineZoomOutMap,
 } from "react-icons/md";
-import { PiBasketFill } from "react-icons/pi";
+import {
+  PiBasketFill,
+  PiCalendarCheckDuotone,
+  PiCalendarCheckFill,
+} from "react-icons/pi";
 
 import { HiDotsVertical, HiSwitchVertical } from "react-icons/hi";
 import { Check, TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
@@ -723,65 +729,122 @@ export function StatusFilterDropdown({ handleStatusChange }) {
   );
 }
 
-export function SortDropdown({ handleSortChange }) {
-  const [open, setOpen] = React.useState(false);
-  const [selectedSort, setSelectedSort] = React.useState("");
+export function SortDropdown({
+  handleSortChange,
+  className,
+  placeholder = "Sort By",
+  width = "w-[200px]",
+}) {
+  const [open, setOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const getSortOption = (value) => {
-    return sortOptions.find((option) => option.value === value);
+  // Get current sort from URL
+  const currentSort = searchParams.get("sort") || "";
+
+  // Find the selected option based on URL params
+  const selectedOption = useMemo(() => {
+    return sortOptions.find((option) => option.value === currentSort);
+  }, [currentSort]);
+
+  // Handle sort selection
+  const handleSortSelect = (sortValue) => {
+    const newParams = new URLSearchParams(searchParams);
+
+    if (sortValue === currentSort) {
+      // Toggle off - remove sort
+      newParams.delete("sort");
+    } else {
+      // Set new sort value
+      newParams.set("sort", sortValue);
+      // Reset to first page when sorting changes
+      newParams.set("page", "1");
+    }
+
+    setSearchParams(newParams);
+    setOpen(false);
+
+    // Call parent handler if provided
   };
 
-  const selectedOption = getSortOption(selectedSort);
-
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger className="gap-1" asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className={cn("w-[200px] rounded-full", selectedOption?.className)}
-        >
-          {selectedSort ? selectedOption?.icon : <RiFilterFill />}
-          {selectedSort ? selectedOption?.label : "Sort By"}
-          <HiSwitchVertical className="opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-full p-0">
-        <Command>
-          <CommandList>
-            <CommandEmpty>No Sort Option found.</CommandEmpty>
-            <CommandGroup>
-              {sortOptions.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  value={option.value}
-                  onSelect={(currentValue) => {
-                    setSelectedSort(
-                      currentValue === selectedSort ? "" : currentValue
-                    );
-                    setOpen(false);
-                    handleSortChange(option.value);
-                  }}
-                >
-                  {option.icon}
-                  {option.label}
+    <div className="relative">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            aria-label={
+              selectedOption ? `Sorted by ${selectedOption.label}` : placeholder
+            }
+            className={cn(
+              width,
+              "justify-between rounded-full gap-2",
+              selectedOption?.className,
+              className
+            )}
+          >
+            <div className="flex items-center gap-2">
+              {selectedOption ? selectedOption.icon : <RiFilterFill />}
+              <span className="truncate">
+                {selectedOption ? selectedOption.label : placeholder}
+              </span>
+            </div>
+            <HiSwitchVertical className="h-4 w-4 opacity-50 flex-shrink-0" />
+          </Button>
+        </PopoverTrigger>
 
-                  <Check
-                    className={cn(
-                      "ml-auto",
-                      selectedSort === option.value
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+        <PopoverContent className="w-full p-0" align="start">
+          <Command>
+            <CommandList>
+              <CommandEmpty>No sort options found.</CommandEmpty>
+              <CommandGroup>
+                {sortOptions.map((option) => (
+                  <CommandItem
+                    key={option.value}
+                    value={option.value}
+                    onSelect={() => handleSortSelect(option.value)}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 flex-1">
+                      {option.icon}
+                      <span>{option.label}</span>
+                    </div>
+                    <Check
+                      className={cn(
+                        "h-4 w-4",
+                        currentSort === option.value
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+
+                {/* Clear option */}
+                {currentSort && (
+                  <>
+                    <div className="border-t my-1" />
+                    <CommandItem
+                      // onSelect={clearSort}
+                      className="flex items-center gap-2 cursor-pointer text-muted-foreground"
+                    >
+                      {/* <RiFilterFill className="h-4 w-4" /> */}
+                      <span>Clear Sort</span>
+                    </CommandItem>
+                  </>
+                )}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+
+      {/* Optional: Show active sort indicator */}
+      {selectedOption && (
+        <div className="absolute -top-1 -right-1 h-3 w-3 bg-blue-500 rounded-full border-2 border-white" />
+      )}
+    </div>
   );
 }
 export function OrdersTotalChart({ title, desc }) {
@@ -937,7 +1000,7 @@ function DatePicker({ startDate, endDate }) {
 
     setSearchParams(newParams);
     setStartOpen(false);
-    setEndOpen(true); // Open end date picker after selecting start date
+    !endDate && setEndOpen(true); // Open end date picker after selecting start date
   };
 
   const handleEndDateSelect = (date) => {
@@ -963,9 +1026,20 @@ function DatePicker({ startDate, endDate }) {
           <PopoverTrigger asChild>
             <Button
               variant="outline"
+              style={
+                startDate ? { backgroundColor: "#16a34a", color: "white" } : {}
+              }
               className="w-48 justify-between font-normal text-left"
             >
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-2 ">
+                {startDate ? (
+                  <BiSolidCalendarCheck
+                    fontSize={"1.2rem"}
+                    // color="var(--color-3)"
+                  />
+                ) : (
+                  <BiCalendarPlus fontSize={"1.2rem"} />
+                )}
                 {startDate || "From Date"}
               </span>
               <ChevronDown className="h-4 w-4 opacity-50" />
@@ -989,10 +1063,24 @@ function DatePicker({ startDate, endDate }) {
           <Popover open={endOpen} onOpenChange={setEndOpen}>
             <PopoverTrigger asChild>
               <Button
+                style={
+                  endDate
+                    ? {
+                        backgroundColor: "#16a34a",
+                        color: "white",
+                      }
+                    : {}
+                }
                 variant="outline"
                 className="w-48 justify-between font-normal text-left"
               >
                 <span className="flex items-center gap-2">
+                  {endDate ? (
+                    <BiSolidCalendarCheck fontSize={"1.2rem"} />
+                  ) : (
+                    <BiCalendarPlus fontSize={"1.2rem"} />
+                  )}
+
                   {endDate || "To Date"}
                 </span>
                 <ChevronDown className="h-4 w-4 opacity-50" />

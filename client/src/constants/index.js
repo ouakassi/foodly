@@ -9,6 +9,13 @@ export const APP_CONFIG = {
   //   MAX_RETRIES: 3,
 };
 export const API_ENDPOINTS = {
+  //Products
+  PRODUCTS: "/api/products",
+  PRODUCT_DETAIL: (id) => `/api/products/${id}`,
+  PRODUCT_CREATE: "/api/products/",
+  PRODUCT_UPDATE: (id) => `/api/products/${id}`,
+  PRODUCT_DELETE: (id) => `/api/products/${id}/delete`,
+
   // Orders
   ORDERS: "/api/orders",
   ORDER_DETAIL: (id) => `/api/orders/${id}`,
