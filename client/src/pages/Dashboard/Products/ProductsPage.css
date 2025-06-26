@@ -72,8 +72,6 @@
   /* gap: var(--gap-4); */
 }
 
-
-
 .products-page .table-footer {
   display: flex;
   align-items: center;
@@ -83,31 +81,11 @@
   /* max-width: fit-content; */
 }
 
-.products-page .table-footer span {
-  font-family: var(--font-1);
-  /* font-weight: bold; */
-  font-size: var(--fs-sm);
-}
-
-.page-info {
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-.page-current {
-  font-weight: 700;
-  color: var(--color-3-dark);
-}
-.total-pages {
-  /* font-weight: 700;
-  color: var(--color-4); */
-}
-
 .badge {
   background-color: #ffffff;
   color: #000000;
-  border-radius: 5px;
-  padding: 5px;
+  border-radius: 10px;
+  padding: 4px;
   margin-left: 8px;
   font-weight: 700;
   box-shadow: var(--box-shadow-content-container);

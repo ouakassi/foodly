@@ -19,3 +19,25 @@
 .table-footer button:hover {
   background-color: rgb(245, 245, 245);
 }
+
+.page-info {
+  font-family: var(--font-1);
+  /* font-weight: bold; */
+  font-size: var(--fs-sm);
+  gap: 1rem;
+  display: flex;
+}
+
+.page-info {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.page-current {
+  font-weight: 700;
+  color: var(--color-3-dark);
+}
+.total-pages {
+  /* font-weight: 700;
+  color: var(--color-4); */
+}

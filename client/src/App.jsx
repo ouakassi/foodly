@@ -28,7 +28,7 @@ import StorePage from "./pages/Store/StorePage";
 // dashboard
 import DashboardLayout from "./pages/DashboardLayout";
 import OverviewPage from "./pages/Dashboard/OverviewPage";
-import CustomersPage from "./pages/Dashboard/CustomersPage";
+import UsersPage from "./pages/Dashboard/UsersPage";
 import OrdersPage from "./pages/Dashboard/Orders/OrdersPage";
 import ProductsPage from "./pages/Dashboard/Products/ProductsPage";
 import ReportsPage from "./pages/Dashboard/ReportsPage";
@@ -70,7 +70,7 @@ function App() {
         <Route path="dashboard" element={<DashboardLayout />}>
           <Route index path="overview" element={<OverviewPage />} />
           <Route path="orders" element={<OrdersPage />} />
-          <Route path="customers" element={<CustomersPage />} />
+          <Route path="users" element={<UsersPage />} />
           <Route path="products" element={<ProductsLayout />}>
             <Route index element={<ProductsPage />} />
             {/* <Route path=":productId" element={<ProductsPage />} /> */}

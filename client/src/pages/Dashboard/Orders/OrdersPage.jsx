@@ -10,7 +10,7 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { LuGalleryVerticalEnd } from "react-icons/lu";
-import { LiaSortAmountDownAltSolid } from "react-icons/lia";
+import { LiaRedoAltSolid, LiaSortAmountDownAltSolid } from "react-icons/lia";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import {
@@ -88,7 +88,11 @@ import { FaCcStripe, FaPaypal } from "react-icons/fa";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { useSearchParams } from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
-import { NextBtn, PreviousBtn } from "../../../components/Table/TableBtns";
+import {
+  NextBtn,
+  PagesCount,
+  PreviousBtn,
+} from "../../../components/Table/TableBtns";
 import {
   formatCurrency,
   formatDate,
@@ -303,22 +307,6 @@ export default function OrdersPage() {
     [searchParams, setSearchParams]
   );
 
-  const handleSortChange = useCallback(
-    (sortValue) => {
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set("page", "1"); // Reset to page 1
-
-      if (sortValue) {
-        newSearchParams.set("sort", sortValue);
-      } else {
-        newSearchParams.delete("sort");
-      }
-
-      setSearchParams(newSearchParams, { replace: true });
-    },
-    [searchParams, setSearchParams]
-  );
-
   const handleNextPage = () => {
     if (page >= totalPages) {
       toast.info("You are already on the last page");
@@ -368,16 +356,12 @@ export default function OrdersPage() {
           )
         )}
       </div>
-      <div className="orders-charts">
-        {/* <OrdersTotalChart title={"total orders"} /> */}
-        {/* <OrdersTotalChart title={"orders revenue"} /> */}
-        {/* <OrdersTotalChart /> */}
-      </div>
+
       <div className="orders-page-container">
         <header>
           <div>
             <StatusFilterDropdown handleStatusChange={handleStatusChange} />
-            {orders && <SortDropdown handleSortChange={handleSortChange} />}
+            {orders && <SortDropdown />}
             <div>
               <DatePicker
                 updatePageParam={updatePageParam}
@@ -393,6 +377,7 @@ export default function OrdersPage() {
               page={page}
               totalPages={totalPages}
             />
+            <PagesCount totalPages={totalPages} page={page} />
 
             <NextBtn
               onClick={handleNextPage}
@@ -437,7 +422,7 @@ export default function OrdersPage() {
                 </td>
               </tr>
             )}
-            {!isLoading && !error && orders && orders.length === 0 && (
+            {!isLoading && !orders && (
               <tr>
                 <td colSpan="7" className="no-orders">
                   <span>
@@ -447,9 +432,9 @@ export default function OrdersPage() {
                     </p>
                     {
                       <CustomButton
-                        icon={<LuGalleryVerticalEnd />}
+                        icon={<LiaRedoAltSolid />}
                         style={{ width: "fit-content" }}
-                        text="Show all Orders"
+                        text="Reset Filters"
                         onClick={() => handleStatusChange("all")}
                       />
                     }
@@ -575,6 +560,21 @@ export default function OrdersPage() {
               })}
           </tbody>
         </table>
+        <div className="table-footer">
+          <div className="table-pages-buttons">
+            <PreviousBtn
+              onClick={handlePreviousPage}
+              page={currentPage}
+              totalPages={totalPages}
+            />
+
+            <NextBtn
+              onClick={handleNextPage}
+              page={currentPage}
+              totalPages={totalPages}
+            />
+          </div>
+        </div>
       </div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         {dialogType === "showOrder" && (
@@ -730,7 +730,6 @@ export function StatusFilterDropdown({ handleStatusChange }) {
 }
 
 export function SortDropdown({
-  handleSortChange,
   className,
   placeholder = "Sort By",
   width = "w-[200px]",
@@ -820,30 +819,11 @@ export function SortDropdown({
                     />
                   </CommandItem>
                 ))}
-
-                {/* Clear option */}
-                {currentSort && (
-                  <>
-                    <div className="border-t my-1" />
-                    <CommandItem
-                      // onSelect={clearSort}
-                      className="flex items-center gap-2 cursor-pointer text-muted-foreground"
-                    >
-                      {/* <RiFilterFill className="h-4 w-4" /> */}
-                      <span>Clear Sort</span>
-                    </CommandItem>
-                  </>
-                )}
               </CommandGroup>
             </CommandList>
           </Command>
         </PopoverContent>
       </Popover>
-
-      {/* Optional: Show active sort indicator */}
-      {selectedOption && (
-        <div className="absolute -top-1 -right-1 h-3 w-3 bg-blue-500 rounded-full border-2 border-white" />
-      )}
     </div>
   );
 }

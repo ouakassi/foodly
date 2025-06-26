@@ -57,8 +57,8 @@ const navItems = [
     icon: <BsPeople />,
     hoverIcon: <BsPeopleFill />,
 
-    name: "customers",
-    link: "customers",
+    name: "users",
+    link: "users",
   },
   {
     icon: <BsClipboardData />,

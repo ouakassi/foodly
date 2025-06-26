@@ -36,7 +36,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import useDebounce from "../../../hooks/useDebounce";
-import { NextBtn, PreviousBtn } from "../../../components/Table/TableBtns";
+import {
+  NextBtn,
+  PagesCount,
+  PreviousBtn,
+} from "../../../components/Table/TableBtns";
 
 const tableHeaders = [
   { title: "Image", icon: <FaRegImage /> },
@@ -347,10 +351,7 @@ export default function ProductsPage() {
                 page={page}
                 totalPages={totalPages}
               />
-              <span className="page-info">
-                <span className="page-current">{page}</span>/
-                <span className="total-pages">{totalPages}</span>
-              </span>
+              <PagesCount page={page} totalPages={totalPages} />
 
               <NextBtn
                 onClick={handleNextPage}
