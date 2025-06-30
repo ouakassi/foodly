@@ -9,38 +9,19 @@ import React, {
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { LuGalleryVerticalEnd } from "react-icons/lu";
 import { LiaRedoAltSolid, LiaSortAmountDownAltSolid } from "react-icons/lia";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import {
-  BiLoader,
-  BiInfoCircle,
-  BiRotateLeft,
-  BiCheckCircle,
-  BiCross,
-  BiSolidCalendarCheck,
-  BiCalendarPlus,
-} from "react-icons/bi";
-import { HiArrowLongDown, HiArrowLongUp } from "react-icons/hi2";
+import { BiSolidCalendarCheck, BiCalendarPlus } from "react-icons/bi";
 
 import {
-  MdCropSquare,
   MdEditDocument,
-  MdOutlineAttachMoney,
-  MdOutlineDateRange,
   MdOutlineErrorOutline,
-  MdOutlineLocalShipping,
   MdOutlineZoomOutMap,
 } from "react-icons/md";
-import {
-  PiBasketFill,
-  PiCalendarCheckDuotone,
-  PiCalendarCheckFill,
-} from "react-icons/pi";
 
 import { HiDotsVertical, HiSwitchVertical } from "react-icons/hi";
-import { Check, TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 
 import {
   Tooltip,
@@ -97,20 +78,37 @@ import {
   formatCurrency,
   formatDate,
   formatDateToYMD,
-  getCurrentMonthYear,
-  getMonthRange,
 } from "../../../lib/helpers";
 import CustomButton from "../../../components/Buttons/CustomButton";
-import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 import DialogEditOrderDetails from "./dialogs/DialogEditOrderDetails";
 import DialogShowOrderDetails from "./dialogs/DialogShowOrderDetails";
 import { sortOptions, statusOptions } from "../../../constants/orderFilters";
-import { STATUS_CONFIG, ORDER_STATUSES } from "../../../constants/orderStatus";
-import { API_ENDPOINTS, APP_CONFIG } from "../../../constants/index";
-
-import { ChevronDownIcon } from "lucide-react";
+import { STATUS_CONFIG } from "../../../constants/orderStatus";
+import {
+  API_ENDPOINTS,
+  APP_CONFIG,
+  LINKS_WITH_ICONS,
+} from "../../../constants/index";
 
 import { Calendar } from "@/components/ui/calendar";
+import {
+  Table,
+  TableBody,
+  TableHead,
+} from "../../../components/Table/TableComponents";
+import PageTitle from "../../../components/Dashboard/PageTitle";
+import AnalyticCard from "../../../components/Dashboard/AnalyticCard";
+import OrdersOverview from "./OrdersOverview";
+
+const orderColumns = [
+  "Order ID",
+  "Email",
+  "Status",
+  "Date",
+  "Total",
+  "Payment Method",
+  "Actions",
+];
 
 export default function OrdersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -127,14 +125,6 @@ export default function OrdersPage() {
   const endDate = searchParams.get("endDate");
 
   const debouncedSearch = useDebounce(search, APP_CONFIG.DEBOUNCE_DELAY);
-
-  const todayYMD = formatDateToYMD(new Date());
-
-  // console.log(getCurrentMonthYear());
-  const { year, month } = getCurrentMonthYear();
-  const { firstDay, lastDay } = getMonthRange(year, month);
-  const OverviewStartDate = formatDateToYMD(firstDay);
-  const OverviewEndDate = formatDateToYMD(new Date());
 
   const params = {
     ...(search && { search: debouncedSearch }),
@@ -164,120 +154,9 @@ export default function OrdersPage() {
       : null
   );
 
-  const {
-    data: analyticsTotalSalesData,
-    isLoading: isAnalyticsTotalSalesLoading,
-    error: analyticsTotalSalesError,
-  } = useAxiosFetch(API_URL + API_ENDPOINTS.ANALYTICS_TOTAL_SALES_BY_DATE, {
-    startDate: OverviewStartDate,
-    endDate: OverviewEndDate,
-  });
-
-  const {
-    data: analyticsTotalOrdersData,
-    isLoading: isAnalyticsTotalOrdersLoading,
-    error: analyticsTotalOrdersError,
-  } = useAxiosFetch(API_URL + API_ENDPOINTS.ANALYTICS_TOTAL_ORDERS, {
-    startDate: OverviewStartDate,
-    endDate: OverviewEndDate,
-  });
-
-  const {
-    data: analyticsTotalOrdersByPendingData,
-    isLoading: isAnalyticsTotalOrdersByPendingLoading,
-    error: analyticsTotalOrdersByPendingError,
-  } = useAxiosFetch(
-    API_URL +
-      API_ENDPOINTS.ANALYTICS_TOTAL_ORDERS_BY_STATUS(ORDER_STATUSES.PENDING),
-    {
-      startDate: OverviewStartDate,
-      endDate: OverviewEndDate,
-    }
-  );
-
-  const {
-    data: analyticsTotalOrdersByCancelledData,
-    isLoading: isAnalyticsTotalOrdersByCancelledLoading,
-    error: analyticsTotalOrdersByCancelledError,
-  } = useAxiosFetch(
-    API_URL +
-      API_ENDPOINTS.ANALYTICS_TOTAL_ORDERS_BY_STATUS(ORDER_STATUSES.CANCELLED),
-    {
-      startDate: OverviewStartDate,
-      endDate: OverviewEndDate,
-    }
-  );
-
   const { orders, totalOrders, totalPages, currentPage } = useMemo(() => {
     return ordersData || {};
   }, [ordersData]);
-
-  const { totalOrders: totalOrdersCount } = analyticsTotalOrdersData || {};
-
-  const { totalOrders: totalOrdersPendingCount } =
-    analyticsTotalOrdersByPendingData || {};
-
-  const { totalOrders: totalOrdersCanceledCount } =
-    analyticsTotalOrdersByCancelledData || {};
-
-  const { formattedTotalSales } = analyticsTotalSalesData || {};
-
-  const orderBoxes = [
-    {
-      icon: <PiBasketFill />,
-      label: "Total Orders",
-      value: totalOrdersCount ? totalOrdersCount : 0,
-      trend: "+25",
-      trendDirection: "up", // or "down"
-      description: "compared last month",
-      className: "total-orders",
-    },
-    {
-      icon: <MdOutlineAttachMoney />,
-      label: "Total Revenue",
-      value: formatCurrency(
-        isNaN(formattedTotalSales) ? 0 : formattedTotalSales,
-        "USD"
-      ),
-      trend: "+10",
-      trendDirection: "up",
-      description: "compared last month",
-      className: "total-revenue",
-    },
-    {
-      icon: STATUS_CONFIG[ORDER_STATUSES.PENDING]?.icon,
-      label: "Orders in Progress",
-      value: isAnalyticsTotalOrdersByPendingLoading ? (
-        <LoadingSpinner height={"2rem"} width={"2rem"} />
-      ) : totalOrdersPendingCount ? (
-        totalOrdersPendingCount
-      ) : (
-        0
-      ),
-      trend: "+8",
-      trendDirection: "up",
-      description: "since last week",
-      className: "orders-progress",
-    },
-    {
-      icon: STATUS_CONFIG[ORDER_STATUSES.CANCELLED]?.icon,
-      label: "Cancelled Orders",
-      value: totalOrdersCanceledCount ? totalOrdersCanceledCount : 0,
-      trend: "-5",
-      trendDirection: "down",
-      description: "compared last month",
-      className: "orders-cancelled",
-    },
-
-    // {
-    //   icon: "🕒",
-    //   label: "Pending Orders",
-    //   value: "89",
-    //   trend: "+2",
-    //   trendDirection: "up",
-    //   description: "since yesterday",
-    // },
-  ];
 
   const handleOpen = (type) => {
     setDialogType(type);
@@ -339,22 +218,13 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="orders-page">
-      <h1>Orders </h1>
+    <section className="orders-page">
+      <PageTitle
+        icon={React.createElement(LINKS_WITH_ICONS.orders.icon)}
+        title={LINKS_WITH_ICONS.orders.label}
+      />
       <div className="order-boxes">
-        {orderBoxes.map(
-          ({ icon, label, value, trend, description, className }, index) => (
-            <OrderBox
-              key={index}
-              icon={icon}
-              label={label}
-              value={value}
-              trend={trend}
-              description={description}
-              className={className}
-            />
-          )
-        )}
+        <OrdersOverview />
       </div>
 
       <div className="orders-page-container">
@@ -386,21 +256,10 @@ export default function OrdersPage() {
             />
           </div>
         </header>
-        <table className="orders-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
+        <Table className="orders-table">
+          <TableHead columns={orderColumns} />
 
-              <th>Email</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Total</th>
-              <th>Payment Method</th>
-
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+          <TableBody>
             {isLoading && <TableSkeleton rows={10} />}
             {!isLoading && error && (
               <tr>
@@ -435,7 +294,7 @@ export default function OrdersPage() {
                         icon={<LiaRedoAltSolid />}
                         style={{ width: "fit-content" }}
                         text="Reset Filters"
-                        onClick={() => handleStatusChange("all")}
+                        onClick={() => setSearchParams({})}
                       />
                     }
                   </span>
@@ -558,8 +417,8 @@ export default function OrdersPage() {
                   </tr>
                 );
               })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
         <div className="table-footer">
           <div className="table-pages-buttons">
             <PreviousBtn
@@ -586,7 +445,7 @@ export default function OrdersPage() {
         )}
         {dialogType === "editOrder" && <DialogEditOrderDetails />}
       </Dialog>
-    </div>
+    </section>
   );
 }
 
@@ -923,33 +782,6 @@ export function OrdersTotalChart({ title, desc }) {
     </Card>
   );
 }
-
-const OrderBox = ({
-  icon,
-  label,
-  value,
-  trend,
-  trendDirection,
-  description,
-  className,
-}) => {
-  return (
-    <div className={`order-box ${className}`}>
-      <div>
-        <span className="box-icon">{icon}</span>
-        <span className="label">{label}</span>
-      </div>
-      <span className="value">{value}</span>
-      <div>
-        <p className={`trend ${+trend > 0 ? "up" : "down"}`}>
-          {trend > 0 ? <TrendingUp /> : <TrendingDown />}
-          {trend}%
-        </p>
-        <span className="desc">{description || "compared last month"}</span>
-      </div>
-    </div>
-  );
-};
 
 function DatePicker({ startDate, endDate }) {
   const [startOpen, setStartOpen] = React.useState(false);

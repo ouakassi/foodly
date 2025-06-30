@@ -1,3 +1,24 @@
+import {
+  BsGrid,
+  BsGridFill,
+  BsBasket,
+  BsBasketFill,
+  BsClipboardCheck,
+  BsClipboardCheckFill,
+  BsClipboardData,
+  BsClipboardDataFill,
+  BsBarChart,
+  BsBarChartFill,
+  BsGear,
+  BsGearFill,
+  BsQuestionCircle,
+  BsQuestionCircleFill,
+  BsBoxArrowRight,
+  BsPeople,
+  BsPeopleFill,
+  BsPersonCircle,
+} from "react-icons/bs";
+
 export const APP_CONFIG = {
   DEFAULT_PAGE_LIMIT: 10,
   DEBOUNCE_DELAY: 500,
@@ -18,6 +39,7 @@ export const API_ENDPOINTS = {
 
   // Orders
   ORDERS: "/api/orders",
+  ORDERS_OVERVIEW: "/api/orders/overview",
   ORDER_DETAIL: (id) => `/api/orders/${id}`,
   ORDER_UPDATE: (id) => `/api/orders/${id}`,
   ORDER_CANCEL: (id) => `/api/orders/${id}/cancel`,
@@ -53,6 +75,68 @@ export const API_ENDPOINTS = {
 
   // Analytics - Daily Trends
   ANALYTICS_DAILY_ORDERS_PER_MONTH: "/api/analytics/daily-orders", // params: { month, year }
+};
+
+export const LINKS_WITH_ICONS = {
+  dashboard: {
+    icon: BsGrid,
+    filledIcon: BsGridFill,
+    label: "Overview",
+    path: "/overview",
+  },
+  overview: {
+    icon: BsGrid,
+    filledIcon: BsGridFill,
+    label: "Overview",
+    path: "/overview",
+  },
+  products: {
+    icon: BsBasket,
+    filledIcon: BsBasketFill,
+    label: "Products",
+    path: "/products",
+  },
+  orders: {
+    icon: BsClipboardCheck,
+    filledIcon: BsClipboardCheckFill,
+    label: "Orders",
+    path: "/orders",
+  },
+  users: {
+    icon: BsPeople,
+    filledIcon: BsPeopleFill,
+    label: "Users",
+    path: "/users",
+  },
+  reports: {
+    icon: BsClipboardData,
+    filledIcon: BsClipboardDataFill,
+    label: "Reports",
+    path: "/reports",
+  },
+  analytics: {
+    icon: BsBarChart,
+    filledIcon: BsBarChartFill,
+    label: "Analytics",
+    path: "/analytics",
+  },
+  settings: {
+    icon: BsGear,
+    filledIcon: BsGearFill,
+    label: "Settings",
+    path: "/settings",
+  },
+  help: {
+    icon: BsQuestionCircle,
+    filledIcon: BsQuestionCircleFill,
+    label: "Help",
+    path: "/help",
+  },
+  logout: {
+    icon: BsBoxArrowRight,
+    label: "Logout",
+    path: "/logout",
+  },
 };
 
 // export const AUTH_ROUTES = {

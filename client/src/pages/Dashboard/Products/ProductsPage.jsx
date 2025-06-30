@@ -28,7 +28,7 @@ import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { FaAngleLeft, FaAngleRight, FaRegImage } from "react-icons/fa6";
 import { axiosInstance, API_URL } from "../../../api/api";
 import { toast } from "sonner";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 import InputContainer from "../../../components/Forms/InputContainer";
 
@@ -41,6 +41,8 @@ import {
   PagesCount,
   PreviousBtn,
 } from "../../../components/Table/TableBtns";
+import PageTitle from "../../../components/Dashboard/PageTitle";
+import { LINKS_WITH_ICONS } from "../../../constants";
 
 const tableHeaders = [
   { title: "Image", icon: <FaRegImage /> },
@@ -268,7 +270,10 @@ export default function ProductsPage() {
       {products && (
         <>
           <header>
-            <h1>Products</h1>
+            <PageTitle
+              icon={React.createElement(LINKS_WITH_ICONS.products.icon)}
+              title={LINKS_WITH_ICONS.products.label}
+            />
 
             <Link to={"create"}>
               <CustomButton

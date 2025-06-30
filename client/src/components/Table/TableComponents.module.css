@@ -1,0 +1,30 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.tableHead tr,
+.tableBody tr {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-1);
+  border-radius: 10px;
+  padding: 1rem;
+  transition: 0.2s;
+  text-align: left;
+}
+
+.tableHead th {
+  font-weight: 400;
+  flex: 1;
+  color: #8b8b8b;
+}
+
+.tableBody tr:hover {
+  background-color: #dddddd34;
+}
+
+.tableBody td {
+  flex: 1;
+}

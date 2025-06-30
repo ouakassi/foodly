@@ -1,0 +1,16 @@
+.page-title {
+  font-size: var(--fs-xl);
+  font-weight: 400;
+  font-family: var(--font-2);
+  color: var(--text-color);
+  margin: 0.5rem 0;
+  text-transform: capitalize;
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.page-title svg {
+  font-size: var(--fs-lg);
+  color: #f75c14;
+}

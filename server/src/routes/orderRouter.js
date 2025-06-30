@@ -13,10 +13,12 @@ import {
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import authRole from "../middlewares/authRole.js";
 import { ROLES } from "../utils/constants.js";
+import { getOrderOverview } from "../controllers/overviewOrderController.js";
 
 const orderRouter = express.Router();
 
 orderRouter.route("/my-orders").get(isAuthenticated, getUserOrders);
+orderRouter.route("/overview").get(getOrderOverview);
 
 orderRouter
   .route("/")

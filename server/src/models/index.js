@@ -55,7 +55,7 @@ const createRandomProducts = async () => {
   }
 };
 
-const createRandomOrdersFor30Days = async (year, month) => {
+const createRandomOrdersFor60Days = async () => {
   try {
     const users = await User.findAll();
     const products = await Product.findAll();
@@ -65,7 +65,6 @@ const createRandomOrdersFor30Days = async (year, month) => {
       return;
     }
 
-    // const orderStatuses = ORDER_STATUS_VALUES_ARRAY;
     const orderStatuses = [
       "completed",
       "pending",
@@ -74,98 +73,163 @@ const createRandomOrdersFor30Days = async (year, month) => {
       "cancelled",
     ];
 
-    const daysInMonth = new Date(year, month, 0).getDate(); // month = 1-12
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1; // 1-12
+    const currentYear = now.getFullYear();
 
-    for (let day = 1; day <= daysInMonth; day++) {
-      // Generate random number of orders per day (1-5)
-      const ordersToday = Math.floor(Math.random() * 5) + 1;
+    // Calculate previous month
+    let previousMonth = currentMonth - 1;
+    let previousYear = currentYear;
 
-      for (let i = 0; i < ordersToday; i++) {
-        const user = users[Math.floor(Math.random() * users.length)];
-        const status =
-          orderStatuses[Math.floor(Math.random() * orderStatuses.length)];
-
-        const productSubset = [];
-        const numberOfProducts = Math.floor(Math.random() * 4) + 1;
-
-        while (productSubset.length < numberOfProducts) {
-          const randomProduct =
-            products[Math.floor(Math.random() * products.length)];
-          if (!productSubset.includes(randomProduct)) {
-            productSubset.push(randomProduct);
-          }
-        }
-
-        const orderItems = [];
-        let totalAmount = 0;
-
-        for (const product of productSubset) {
-          const quantity = Math.floor(Math.random() * 3) + 1;
-          const itemTotal = product.price * quantity;
-          totalAmount += itemTotal;
-
-          orderItems.push({
-            productId: product.id,
-            quantity,
-            price: product.price,
-          });
-        }
-
-        const randomHour = Math.floor(Math.random() * 24);
-        const randomMinute = Math.floor(Math.random() * 60);
-        const createdAt = new Date(
-          year,
-          month - 1,
-          day,
-          randomHour,
-          randomMinute
-        );
-        const shippedAt =
-          status === "shipped" || status === "delivered" ? createdAt : null;
-        const deliveredAt = status === "delivered" ? createdAt : null;
-        const trackingNumber =
-          status === "shipped" || status === "delivered"
-            ? `TRK-${Math.floor(100000000 + Math.random() * 900000000)}`
-            : null;
-
-        const order = await Order.create({
-          id: uuidv4(),
-          userId: user.id,
-          totalAmount: parseFloat(totalAmount.toFixed(2)),
-          shippingAddress: `Street ${Math.floor(
-            Math.random() * 100
-          )}, City ${day}`,
-          status,
-          paymentMethod: ["stripe", "paypal", "cash"][
-            Math.floor(Math.random() * 3)
-          ],
-          trackingNumber,
-          shippedAt,
-          deliveredAt,
-          createdAt,
-          updatedAt: createdAt,
-        });
-
-        await Promise.all(
-          orderItems.map((item) =>
-            OrderItem.create({
-              orderId: order.id,
-              ...item,
-            })
-          )
-        );
-
-        console.log(
-          `✅ Order ${order.id} (${status}) created for ${
-            createdAt.toISOString().split("T")[0]
-          } with ${orderItems.length} items.`
-        );
-      }
+    if (previousMonth === 0) {
+      previousMonth = 12;
+      previousYear = currentYear - 1;
     }
 
-    console.log("🎉 Random orders created for all days of the month.");
+    console.log(
+      `🚀 Creating orders for ${previousMonth}/${previousYear} and ${currentMonth}/${currentYear}`
+    );
+
+    // Generate orders for previous month
+    await generateOrdersForMonth(
+      previousYear,
+      previousMonth,
+      users,
+      products,
+      orderStatuses
+    );
+
+    // Generate orders for current month
+    await generateOrdersForMonth(
+      currentYear,
+      currentMonth,
+      users,
+      products,
+      orderStatuses
+    );
+
+    console.log(
+      "🎉 Random orders created for 60 days (current month + previous month)."
+    );
   } catch (error) {
     console.error("❌ Error creating orders:", error);
+  }
+};
+
+const generateOrdersForMonth = async (
+  year,
+  month,
+  users,
+  products,
+  orderStatuses
+) => {
+  const daysInMonth = new Date(year, month, 0).getDate(); // month = 1-12
+
+  console.log(`📅 Processing ${month}/${year} (${daysInMonth} days)`);
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    // Generate random number of orders per day (1-5)
+    const ordersToday = Math.floor(Math.random() * 5) + 1;
+
+    for (let i = 0; i < ordersToday; i++) {
+      const user = users[Math.floor(Math.random() * users.length)];
+      const status =
+        orderStatuses[Math.floor(Math.random() * orderStatuses.length)];
+
+      const productSubset = [];
+      const numberOfProducts = Math.floor(Math.random() * 4) + 1;
+
+      while (productSubset.length < numberOfProducts) {
+        const randomProduct =
+          products[Math.floor(Math.random() * products.length)];
+        if (!productSubset.includes(randomProduct)) {
+          productSubset.push(randomProduct);
+        }
+      }
+
+      const orderItems = [];
+      let totalAmount = 0;
+
+      for (const product of productSubset) {
+        const quantity = Math.floor(Math.random() * 3) + 1;
+        const itemTotal = product.price * quantity;
+        totalAmount += itemTotal;
+
+        orderItems.push({
+          productId: product.id,
+          quantity,
+          price: product.price,
+        });
+      }
+
+      const randomHour = Math.floor(Math.random() * 24);
+      const randomMinute = Math.floor(Math.random() * 60);
+      const createdAt = new Date(
+        year,
+        month - 1,
+        day,
+        randomHour,
+        randomMinute
+      );
+
+      // For shipped/delivered orders, add realistic timing
+      let shippedAt = null;
+      let deliveredAt = null;
+
+      if (status === "shipped" || status === "delivered") {
+        // Ship 1-3 days after order
+        shippedAt = new Date(
+          createdAt.getTime() +
+            (Math.floor(Math.random() * 3) + 1) * 24 * 60 * 60 * 1000
+        );
+      }
+
+      if (status === "delivered") {
+        // Deliver 2-7 days after shipping
+        deliveredAt = new Date(
+          shippedAt.getTime() +
+            (Math.floor(Math.random() * 6) + 2) * 24 * 60 * 60 * 1000
+        );
+      }
+
+      const trackingNumber =
+        status === "shipped" || status === "delivered"
+          ? `TRK-${Math.floor(100000000 + Math.random() * 900000000)}`
+          : null;
+
+      const order = await Order.create({
+        id: uuidv4(),
+        userId: user.id,
+        totalAmount: parseFloat(totalAmount.toFixed(2)),
+        shippingAddress: `Street ${Math.floor(
+          Math.random() * 100
+        )}, City ${day}`,
+        status,
+        paymentMethod: ["stripe", "paypal", "cash"][
+          Math.floor(Math.random() * 3)
+        ],
+        trackingNumber,
+        shippedAt,
+        deliveredAt,
+        createdAt,
+        updatedAt: createdAt,
+      });
+
+      await Promise.all(
+        orderItems.map((item) =>
+          OrderItem.create({
+            orderId: order.id,
+            ...item,
+          })
+        )
+      );
+
+      console.log(
+        `✅ Order ${order.id} (${status}) created for ${
+          createdAt.toISOString().split("T")[0]
+        } with ${orderItems.length} items.`
+      );
+    }
   }
 };
 
@@ -258,7 +322,7 @@ const connectDb = async () => {
     await createRandomProducts();
     await createRoles();
     await createAdminUser();
-    await createRandomOrdersFor30Days(2025, 6);
+    await createRandomOrdersFor60Days();
 
     // await createCategories();
     console.log("☑️  All models were synchronized successfully.");

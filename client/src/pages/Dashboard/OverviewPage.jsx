@@ -1,6 +1,6 @@
 import "./OverviewPage.css";
 
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Bar,
@@ -41,6 +41,8 @@ import ProductCard from "../../components/Product/ProductCard";
 import ProductRow from "../../components/Product/ProductRow";
 import CustomButton from "../../components/Buttons/CustomButton";
 import ProductHeader from "../../components/Product/ProductHeader";
+import PageTitle from "../../components/Dashboard/PageTitle";
+import { LINKS_WITH_ICONS } from "../../constants";
 
 export default function OverviewPage() {
   const dataBoxes = [
@@ -123,7 +125,11 @@ export default function OverviewPage() {
   };
 
   return (
-    <div className="overview-page">
+    <section className="overview-page">
+      <PageTitle
+        icon={React.createElement(LINKS_WITH_ICONS.overview.icon)}
+        title={LINKS_WITH_ICONS.overview.label}
+      />
       <div className="data-boxes">
         {dataBoxes.map(({ title, value, icon, change, trend }, index) => (
           <DataBox
@@ -165,7 +171,7 @@ export default function OverviewPage() {
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   );
 }
 

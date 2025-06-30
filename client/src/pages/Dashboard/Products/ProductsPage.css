@@ -1,6 +1,6 @@
 .products-page {
   /* overflow-x: scroll; */
-  margin-top: 0.75rem;
+  /* margin-top: 0.75rem; */
 }
 
 .products-page .table {
@@ -18,12 +18,7 @@
 .products-page header {
   display: flex;
   justify-content: space-between;
-}
-.products-page header h1 {
-  font-family: var(--font-5);
-  font-weight: 500;
-  font-size: var(--fs-xl);
-  text-transform: capitalize;
+  align-items: center;
 }
 
 .products-container {
