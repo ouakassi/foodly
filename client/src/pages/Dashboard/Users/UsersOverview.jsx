@@ -13,7 +13,7 @@ import { API_URL } from "../../../api/api";
 import { API_ENDPOINTS } from "../../../constants";
 import { ORDER_STATUSES, STATUS_CONFIG } from "../../../constants/orderStatus";
 
-export default function OrdersOverview() {
+export default function UsersOverview() {
   const { year, month } = getCurrentMonthYear();
 
   const { firstDay, lastDay } = getMonthRange(year, month);
@@ -55,10 +55,10 @@ export default function OrdersOverview() {
     <LoadingSpinner height={"1.2rem"} width={"1.2rem"} borderWidth={"2px"} />
   );
 
-  const orderOverviewData = [
+  const usersOverviewData = [
     {
       icon: <PiBasketFill />,
-      label: "Total Orders",
+      label: "Total Users",
       value: isLoading ? loadingSpinner : totalOrders?.toLocaleString() || "0",
       trend: orderGrowth?.toFixed(2) ?? "0.00",
 
@@ -68,7 +68,7 @@ export default function OrdersOverview() {
     },
     {
       icon: <MdOutlineAttachMoney />,
-      label: "Total Revenue",
+      label: "Total Admins",
       value: isLoading ? loadingSpinner : formatCurrency(totalRevenue, "USD"),
       trend: revenueGrowth?.toFixed(2),
 
@@ -77,7 +77,7 @@ export default function OrdersOverview() {
     },
     {
       icon: STATUS_CONFIG[ORDER_STATUSES.PENDING]?.icon,
-      label: "Orders in Progress",
+      label: "Total Moderators",
       value: isLoading ? loadingSpinner : pending?.toLocaleString() || "0",
       // trend: "+8",
 
@@ -87,7 +87,7 @@ export default function OrdersOverview() {
     },
     {
       icon: STATUS_CONFIG[ORDER_STATUSES.CANCELLED]?.icon,
-      label: "Cancelled Orders",
+      label: "Total Customers",
       value: isLoading ? loadingSpinner : cancelled?.toLocaleString() || "0",
       // trend: "-5",
 
@@ -113,7 +113,7 @@ export default function OrdersOverview() {
     );
   }
 
-  return orderOverviewData.map(
+  return usersOverviewData.map(
     ({ icon, label, value, trend, description, className }, index) => (
       <AnalyticCard
         key={index}

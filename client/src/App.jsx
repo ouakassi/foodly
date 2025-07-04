@@ -28,7 +28,7 @@ import StorePage from "./pages/Store/StorePage";
 // dashboard
 import DashboardLayout from "./pages/DashboardLayout";
 import OverviewPage from "./pages/Dashboard/OverviewPage";
-import UsersPage from "./pages/Dashboard/UsersPage";
+import UsersPage from "./pages/Dashboard/Users/UsersPage";
 import OrdersPage from "./pages/Dashboard/Orders/OrdersPage";
 import ProductsPage from "./pages/Dashboard/Products/ProductsPage";
 import ReportsPage from "./pages/Dashboard/ReportsPage";

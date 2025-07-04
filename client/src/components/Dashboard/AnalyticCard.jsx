@@ -1,3 +1,4 @@
+import "./AnalyticCard.css";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
 const AnalyticCard = ({

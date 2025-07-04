@@ -3,9 +3,9 @@ import styles from "./TableComponents.module.css";
 function Table({ children, className = "" }) {
   return <table className={`${styles.table} ${className}`}>{children}</table>;
 }
-function TableHead({ columns = [] }) {
+function TableHead({ columns = [], className }) {
   return (
-    <thead className={styles.tableHead}>
+    <thead className={`${className} ${styles.tableHead}`}>
       <tr>
         {columns.map((col, index) => (
           <th key={index}>{col}</th>
@@ -15,8 +15,10 @@ function TableHead({ columns = [] }) {
   );
 }
 
-function TableBody({ children }) {
-  return <tbody className={styles.tableBody}>{children}</tbody>;
+function TableBody({ children, className }) {
+  return (
+    <tbody className={`${className} ${styles.tableBody}`}>{children}</tbody>
+  );
 }
 function TableRow({ children }) {
   return <tr className={styles.tableRow}>{children}</tr>;

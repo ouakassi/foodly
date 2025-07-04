@@ -60,6 +60,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import {
+  RiDeleteBin6Fill,
   RiFilterFill,
   RiMoneyDollarCircleFill,
   RiProgress1Line,
@@ -106,7 +107,7 @@ const orderColumns = [
   "Status",
   "Date",
   "Total",
-  "Payment Method",
+  "Payment",
   "Actions",
 ];
 
@@ -158,10 +159,10 @@ export default function OrdersPage() {
     return ordersData || {};
   }, [ordersData]);
 
-  const handleOpen = (type) => {
+  const handleOpen = useCallback((type) => {
     setDialogType(type);
     setIsDialogOpen(true);
-  };
+  }, []);
 
   // function to handle the 'page' param and update the URL
   const updatePageParam = (newPage) => {
@@ -217,11 +218,21 @@ export default function OrdersPage() {
     }
   };
 
+  const clearParams = () => {
+    setSearchParams({});
+  };
+
+  isLoading && (
+    <div>
+      <span>loading................</span>
+    </div>
+  );
+
   return (
     <section className="orders-page">
       <PageTitle
         icon={React.createElement(LINKS_WITH_ICONS.orders.icon)}
-        title={LINKS_WITH_ICONS.orders.label}
+        title={`${LINKS_WITH_ICONS.orders.label} (${totalOrders || 0})`}
       />
       <div className="order-boxes">
         <OrdersOverview />
@@ -229,16 +240,24 @@ export default function OrdersPage() {
 
       <div className="orders-page-container">
         <header>
-          <div>
+          <div className="table-filters">
             <StatusFilterDropdown handleStatusChange={handleStatusChange} />
             {orders && <SortDropdown />}
-            <div>
-              <DatePicker
-                updatePageParam={updatePageParam}
-                startDate={startDate}
-                endDate={endDate}
-              />
-            </div>
+
+            <DatePicker
+              updatePageParam={updatePageParam}
+              startDate={startDate}
+              endDate={endDate}
+            />
+            <CustomButton
+              icon={<RiDeleteBin6Fill />}
+              style={{
+                width: "fit-content",
+                backgroundColor: "var(--color-2)",
+              }}
+              text="Reset"
+              onClick={clearParams}
+            />
           </div>
 
           <div className="table-pages-buttons">
@@ -256,170 +275,20 @@ export default function OrdersPage() {
             />
           </div>
         </header>
-        <Table className="orders-table">
-          <TableHead columns={orderColumns} />
-
-          <TableBody>
-            {isLoading && <TableSkeleton rows={10} />}
-            {!isLoading && error && (
-              <tr>
-                <td colSpan="7" className="error">
-                  <span>
-                    <p>
-                      <MdOutlineErrorOutline />
-                      Error loading orders: {error.message}
-                    </p>
-                    <CustomButton
-                      icon={<LiaSortAmountDownAltSolid />}
-                      style={{ width: "fit-content" }}
-                      text="Retry"
-                      onClick={() => {
-                        window.location.reload();
-                      }}
-                    />
-                  </span>
-                </td>
-              </tr>
-            )}
-            {!isLoading && !orders && (
-              <tr>
-                <td colSpan="7" className="no-orders">
-                  <span>
-                    <p>
-                      <MdOutlineErrorOutline />
-                      No orders found.
-                    </p>
-                    {
-                      <CustomButton
-                        icon={<LiaRedoAltSolid />}
-                        style={{ width: "fit-content" }}
-                        text="Reset Filters"
-                        onClick={() => setSearchParams({})}
-                      />
-                    }
-                  </span>
-                </td>
-              </tr>
-            )}
-            {!isLoading &&
-              !error &&
-              orders &&
-              orders.length > 0 &&
-              orders.map((order) => {
-                const status = order.status.toLowerCase();
-                const statusClass =
-                  STATUS_CONFIG[status]?.className ||
-                  STATUS_CONFIG.default.className;
-                const statusIcon =
-                  STATUS_CONFIG[status]?.icon || STATUS_CONFIG.default.icon;
-                const statusDescription =
-                  STATUS_CONFIG[status]?.text || STATUS_CONFIG.default.text;
-
-                return (
-                  <tr key={order.id} className="order-row">
-                    <td className="order-id">
-                      <TooltipProvider delayDuration={100}>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <span>
-                              {"#" +
-                                order.id.slice(
-                                  0,
-                                  APP_CONFIG.ORDER_ID_DISPLAY_LENGTH
-                                ) +
-                                ".."}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="tooltip-content">{order.id}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </td>
-                    <td className="email">
-                      <TooltipProvider delayDuration={100}>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <span>{order.user?.email}</span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="tooltip-content">
-                              {order.user?.firstName +
-                                " " +
-                                order.user?.lastName}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </td>
-                    <td className={`status ${statusClass}`}>
-                      <TooltipProvider delayDuration={100}>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <span>
-                              {statusIcon}
-                              {status}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p
-                              className={`tooltip-content ${status.className}`}
-                            >
-                              {statusIcon}
-
-                              {statusDescription}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      {/* {status} */}
-                    </td>
-                    <td className="date">{formatDate(order.createdAt)}</td>
-
-                    <td className="total">
-                      {formatCurrency(+order.totalAmount, "USD")}
-                    </td>
-                    <td className="payment">
-                      <span className={order.paymentMethod}>
-                        <PaymentIcon method={order.paymentMethod} />
-                        {order.paymentMethod}
-                      </span>
-                    </td>
-
-                    <td className="actions">
-                      <DropdownMenu modal={false}>
-                        <DropdownMenuTrigger asChild>
-                          <button className="actions-btn">
-                            <HiDotsVertical />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem
-                            onSelect={() => {
-                              handleOpen("showOrder");
-                              setSelectedOrderId(order.id);
-                            }}
-                          >
-                            <MdOutlineZoomOutMap />
-                            View Order
-                          </DropdownMenuItem>
-
-                          <DropdownMenuItem
-                            onSelect={() => handleOpen("editOrder")}
-                          >
-                            <MdEditDocument />
-                            Edit Order
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </td>
-                  </tr>
-                );
-              })}
-          </TableBody>
-        </Table>
-        <div className="table-footer">
+        <div className="table-container">
+          <OrdersTable
+            orders={orders}
+            isLoading={isLoading}
+            error={error}
+            PaymentIcon={PaymentIcon}
+            handlePreviousPage={handlePreviousPage}
+            handleNextPage={handleNextPage}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            clearParams={clearParams}
+          />
+        </div>
+        <footer className="table-footer">
           <div className="table-pages-buttons">
             <PreviousBtn
               onClick={handlePreviousPage}
@@ -433,7 +302,7 @@ export default function OrdersPage() {
               totalPages={totalPages}
             />
           </div>
-        </div>
+        </footer>
       </div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         {dialogType === "showOrder" && (
@@ -918,3 +787,173 @@ function DatePicker({ startDate, endDate }) {
     </div>
   );
 }
+
+const OrdersTable = ({
+  orders,
+  isLoading,
+  error,
+  PaymentIcon,
+  clearParams,
+}) => {
+  return (
+    <Table className="orders-table">
+      <TableHead columns={orderColumns} />
+
+      <TableBody>
+        {isLoading && <TableSkeleton rows={10} />}
+        {!isLoading && error && (
+          <tr>
+            <td colSpan="7" className="error">
+              <span>
+                <p>
+                  <MdOutlineErrorOutline />
+                  Error loading orders: {error.message}
+                </p>
+                <CustomButton
+                  icon={<LiaSortAmountDownAltSolid />}
+                  style={{ width: "fit-content" }}
+                  text="Retry"
+                  onClick={() => {
+                    window.location.reload();
+                  }}
+                />
+              </span>
+            </td>
+          </tr>
+        )}
+        {!isLoading && !orders && (
+          <tr>
+            <td colSpan="7" className="no-orders">
+              <span>
+                <p>
+                  <MdOutlineErrorOutline />
+                  No orders found.
+                </p>
+                {
+                  <CustomButton
+                    icon={<LiaRedoAltSolid />}
+                    style={{ width: "fit-content" }}
+                    text="Reset Filters"
+                    onClick={clearParams}
+                  />
+                }
+              </span>
+            </td>
+          </tr>
+        )}
+        {!isLoading &&
+          !error &&
+          orders &&
+          orders.length > 0 &&
+          orders.map((order) => {
+            const status = order.status.toLowerCase();
+            const statusClass =
+              STATUS_CONFIG[status]?.className ||
+              STATUS_CONFIG.default.className;
+            const statusIcon =
+              STATUS_CONFIG[status]?.icon || STATUS_CONFIG.default.icon;
+            const statusDescription =
+              STATUS_CONFIG[status]?.text || STATUS_CONFIG.default.text;
+
+            return (
+              <tr key={order.id} className="order-row">
+                <td className="order-id">
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <span>
+                          {"#" +
+                            order.id.slice(
+                              0,
+                              APP_CONFIG.ORDER_ID_DISPLAY_LENGTH
+                            ) +
+                            ".."}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="tooltip-content">{order.id}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </td>
+                <td className="email">
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <span>{order.user?.email}</span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="tooltip-content">
+                          {order.user?.firstName + " " + order.user?.lastName}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </td>
+                <td className={`status ${statusClass}`}>
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <span>
+                          {statusIcon}
+                          {status}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className={`tooltip-content ${status.className}`}>
+                          {statusIcon}
+
+                          {statusDescription}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  {/* {status} */}
+                </td>
+                <td className="date">{formatDate(order.createdAt)}</td>
+
+                <td className="total">
+                  {formatCurrency(+order.totalAmount, "USD")}
+                </td>
+                <td className="payment">
+                  <span className={order.paymentMethod}>
+                    <PaymentIcon method={order.paymentMethod.toLowerCase()} />
+                    {order.paymentMethod}
+                  </span>
+                </td>
+
+                <td className="actions">
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <button className="actions-btn">
+                        <HiDotsVertical />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onSelect={() => {
+                          handleOpen("showOrder");
+                          setSelectedOrderId(order.id);
+                        }}
+                      >
+                        <MdOutlineZoomOutMap />
+                        View Order
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        onSelect={() => handleOpen("editOrder")}
+                      >
+                        <MdEditDocument />
+                        Edit Order
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </td>
+              </tr>
+            );
+          })}
+      </TableBody>
+    </Table>
+  );
+};

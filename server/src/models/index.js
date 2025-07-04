@@ -264,6 +264,69 @@ const createAdminUser = async () => {
   }
 };
 
+const createNormalUser = async () => {
+  try {
+    const adminRole = await Role.findOne({ where: { name: ROLES.USER } });
+
+    if (!adminRole) {
+      console.log("Admin role not found. Please seed roles first.");
+      return;
+    }
+
+    const existingUser = await User.findOne({
+      where: { email: "ouakassi@gmail.com" },
+    });
+    if (existingUser) {
+      console.log("Admin user already exists.");
+      return;
+    }
+
+    await User.create({
+      firstName: "oussama",
+      lastName: "ouakassi",
+      email: "ouakassi@gmail.com",
+      isActive: false,
+      password: await hashPassword("ouss@@00"),
+      roleId: adminRole.id,
+    });
+
+    console.log("✅ Admin user created");
+  } catch (error) {
+    console.error("❌ Error creating admin user:", error.message);
+  }
+};
+
+const createModeratorUser = async () => {
+  try {
+    const adminRole = await Role.findOne({ where: { name: ROLES.MODERATOR } });
+
+    if (!adminRole) {
+      console.log("Admin role not found. Please seed roles first.");
+      return;
+    }
+
+    const existingUser = await User.findOne({
+      where: { email: "salim@gmail.com" },
+    });
+    if (existingUser) {
+      console.log("Admin user already exists.");
+      return;
+    }
+
+    await User.create({
+      firstName: "oussama",
+      lastName: "ouakassi",
+      email: "salim@gmail.com",
+      password: await hashPassword("ouss@@00"),
+      roleId: adminRole.id,
+    });
+
+    console.log("✅ Admin user created");
+  } catch (error) {
+    console.error("❌ Error creating admin user:", error.message);
+  }
+};
+
 // Relations
 
 // Role ↔ User
@@ -322,6 +385,9 @@ const connectDb = async () => {
     await createRandomProducts();
     await createRoles();
     await createAdminUser();
+    await createNormalUser();
+    await createModeratorUser();
+
     await createRandomOrdersFor60Days();
 
     // await createCategories();

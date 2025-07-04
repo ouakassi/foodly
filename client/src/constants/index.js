@@ -47,9 +47,9 @@ export const API_ENDPOINTS = {
   ORDER_TRACKING: (orderId) => `/api/orders/${orderId}/tracking`,
   ORDER_REFUND: (orderId) => `/api/orders/${orderId}/refund`,
 
-  // Products & Users
-  PRODUCTS: "/api/products",
+  // Users
   USERS: "/api/users",
+  USER_DETAIL: (id) => `/api/users/${id}`,
 
   // Auth
   AUTH: "/api/auth",
