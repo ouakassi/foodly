@@ -49,6 +49,7 @@ export const API_ENDPOINTS = {
 
   // Users
   USERS: "/api/users",
+  USERS_OVERVIEW: "/api/users/overview",
   USER_DETAIL: (id) => `/api/users/${id}`,
 
   // Auth

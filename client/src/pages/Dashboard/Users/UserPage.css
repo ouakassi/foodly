@@ -7,7 +7,8 @@
 }
 
 .users-page .overview-cards {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
   margin-bottom: 1rem;
 }
@@ -36,12 +37,12 @@
   gap: 0.5rem;
   text-transform: capitalize;
   border-radius: 40px;
-  box-shadow: var(--box-shadow-content-container);
   padding: 0 0.4rem;
   width: -moz-fit-content;
   width: fit-content;
   background-color: #000000;
   color: #ffffff;
+  box-shadow: var(--box-shadow-content-container);
 }
 
 .users-table__tbody .status.active {
@@ -61,7 +62,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  text-transform: capitalize;
+  text-transform: uppercase;
   background-color: #f8f6ff;
   border-radius: 5px;
   box-shadow: var(--box-shadow-content-container);
@@ -70,7 +71,8 @@
   width: fit-content;
 
   background-color: #ffffff;
-  font-weight: 600;
+  font-weight: 500;
+  font-family: var(--font-6);
 }
 
 .users-table__tbody .user-role {

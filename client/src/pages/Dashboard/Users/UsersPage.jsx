@@ -41,7 +41,11 @@ export default function UsersPage() {
           icon: <LiaUserShieldSolid />,
         };
       case "user":
-        return { role: "User", className: "user-role", icon: <RiUser4Line /> };
+        return {
+          role: "Customer",
+          className: "user-role",
+          icon: <RiUser4Line />,
+        };
 
       case "moderator":
         return {

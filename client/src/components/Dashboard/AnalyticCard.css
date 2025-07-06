@@ -1,4 +1,4 @@
-.order-box {
+.analytic-box {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,14 +11,14 @@
   background: linear-gradient(345deg, #f1f1f1, transparent);
 }
 
-.order-box div:first-child {
+.analytic-box div:first-child {
   display: flex;
   align-items: center;
   font-size: var(--fs-m);
   color: #808080;
   gap: 0.5rem;
 }
-.order-box .box-icon {
+.analytic-box .box-icon {
   background: #f7713c;
   padding: 0.3rem;
   width: 2rem;
@@ -29,57 +29,57 @@
   align-items: center;
   box-shadow: var(--box-shadow-1);
 }
-.order-box + .total-orders .box-icon {
+.analytic-box + .total-orders .box-icon {
   background-color: #000;
 }
-.order-box + .total-revenue .box-icon {
+.analytic-box + .total-revenue .box-icon {
   background-color: #0abd2d;
 }
-.order-box + .orders-progress .box-icon {
+.analytic-box + .orders-progress .box-icon {
   background-color: #ff8100;
 }
-.order-box + .orders-cancelled .box-icon {
+.analytic-box + .orders-cancelled .box-icon {
   background-color: #f34040;
 }
 
-.order-box .value {
+.analytic-box .value {
   font-family: var(--font-1);
   font-weight: 800;
   /* color: #028b35; */
 }
-.order-box div:first-child svg {
+.analytic-box div:first-child svg {
   font-size: 1.6rem;
   color: #ffffff;
 }
 
-.order-box div:last-child {
+.analytic-box div:last-child {
   display: flex;
   gap: 0.4rem;
   margin-top: -0.5rem;
   align-items: center;
   /* flex-direction: column; */
 }
-.order-box .value {
+.analytic-box .value {
   font-size: 2.2rem;
   font-weight: 500;
 }
 
-.order-box .trend {
+.analytic-box .trend {
   display: flex;
   align-items: center;
   gap: 0.4rem;
   font-size: var(--fs-sm);
 }
-.order-box .trend svg {
+.analytic-box .trend svg {
   font-size: 1rem;
 }
-.order-box .up {
+.analytic-box .up {
   color: #0bc760;
 }
-.order-box .down {
+.analytic-box .down {
   color: #c7310b;
 }
-.order-box .desc {
+.analytic-box .desc {
   color: #acacac;
   font-size: var(--fs-xs);
 }

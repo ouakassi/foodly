@@ -113,17 +113,20 @@ export default function OrdersOverview() {
     );
   }
 
-  return orderOverviewData.map(
-    ({ icon, label, value, trend, description, className }, index) => (
-      <AnalyticCard
-        key={index}
-        icon={icon}
-        label={label}
-        value={value}
-        trend={trend}
-        description={description}
-        className={className}
-      />
+  return (
+    data &&
+    orderOverviewData.map(
+      ({ icon, label, value, trend, description, className }, index) => (
+        <AnalyticCard
+          key={index}
+          icon={icon}
+          label={label}
+          value={value}
+          trend={trend}
+          description={description}
+          className={className}
+        />
+      )
     )
   );
 }

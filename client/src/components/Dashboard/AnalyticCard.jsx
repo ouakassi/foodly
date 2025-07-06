@@ -10,7 +10,7 @@ const AnalyticCard = ({
   className,
 }) => {
   return (
-    <div className={`order-box ${className}`}>
+    <div className={`analytic-box ${className}`}>
       <div>
         <span className="box-icon">{icon}</span>
         <span className="label">{label}</span>
@@ -24,7 +24,7 @@ const AnalyticCard = ({
             {trend}%
           </p>
         )}
-        <span className="desc">{description || "compared last month"}</span>
+        <span className="desc">{description}</span>
       </div>
     </div>
   );
