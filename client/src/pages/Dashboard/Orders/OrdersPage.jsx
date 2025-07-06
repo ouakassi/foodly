@@ -222,6 +222,10 @@ export default function OrdersPage() {
     setSearchParams({});
   };
 
+  const handleSelectOrderId = (id) => {
+    setSelectedOrderId(id);
+  };
+
   isLoading && (
     <div>
       <span>loading................</span>
@@ -249,28 +253,38 @@ export default function OrdersPage() {
               startDate={startDate}
               endDate={endDate}
             />
-            <CustomButton
-              icon={<RiDeleteBin6Fill />}
-              style={{
-                width: "fit-content",
-                backgroundColor: "var(--color-2)",
-              }}
-              text="Reset"
-              onClick={clearParams}
-            />
+            {(status || startDate || endDate) && (
+              <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <CustomButton
+                      icon={<RiDeleteBin6Fill />}
+                      style={{
+                        width: "fit-content",
+                        background: "linear-gradient(359deg, #b50000, #ef0303)",
+                        padding: "0.3rem 0.6rem ",
+                      }}
+                      // text="Reset"
+                      onClick={clearParams}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="tooltip-content">Clear all filters</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
-
           <div className="table-pages-buttons">
             <PreviousBtn
               onClick={handlePreviousPage}
-              page={page}
+              page={currentPage}
               totalPages={totalPages}
             />
-            <PagesCount totalPages={totalPages} page={page} />
 
             <NextBtn
               onClick={handleNextPage}
-              page={page}
+              page={currentPage}
               totalPages={totalPages}
             />
           </div>
@@ -286,19 +300,22 @@ export default function OrdersPage() {
             currentPage={currentPage}
             totalPages={totalPages}
             clearParams={clearParams}
+            handleOpen={handleOpen}
+            onSelectOrderId={handleSelectOrderId}
           />
         </div>
         <footer className="table-footer">
           <div className="table-pages-buttons">
             <PreviousBtn
               onClick={handlePreviousPage}
-              page={currentPage}
+              page={page}
               totalPages={totalPages}
             />
+            <PagesCount totalPages={totalPages} page={page} />
 
             <NextBtn
               onClick={handleNextPage}
-              page={currentPage}
+              page={page}
               totalPages={totalPages}
             />
           </div>
@@ -555,102 +572,6 @@ export function SortDropdown({
     </div>
   );
 }
-export function OrdersTotalChart({ title, desc }) {
-  const chartData = [
-    { month: "January", desktop: 18622 },
-    { month: "February", desktop: 30522 },
-    { month: "March", desktop: 23000 },
-    { month: "April", desktop: 73023 },
-    { month: "May", desktop: 20922 },
-    { month: "June", desktop: 21422 },
-  ];
-
-  const chartConfig = {
-    desktop: {
-      label: "Desktop",
-      color: "var(--color-3)",
-    },
-  };
-  return (
-    <Card
-      style={{
-        border: "none",
-        boxShadow: "var(--box-shadow-content-container)",
-      }}
-    >
-      <CardHeader>
-        <CardTitle
-          style={{ fontFamily: "var(--font-1)", textTransform: "capitalize" }}
-        >
-          {title}
-        </CardTitle>
-        {/* <CardDescription>
-          Showing total visitors for the last 6 months
-        </CardDescription> */}
-      </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
-          <AreaChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 2,
-              right: 2,
-            }}
-          >
-            <CartesianGrid vertical={false} />
-
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={4}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            {/* <YAxis
-              tickLine={false}
-              axisLine={false}
-              tickMargin={4}
-              domain={[0, "auto"]}
-              tickFormatter={(value) => {
-                if (value >= 1_000_000_000)
-                  return `${(value / 1_000_000_000).toFixed(1)}B`;
-                if (value >= 1_000_000)
-                  return `${(value / 1_000_000).toFixed(1)}M`;
-                if (value >= 1_000) return `${(value / 1_000).toFixed(1)}k`;
-                return value;
-              }}
-            /> */}
-
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
-            />
-            <Area
-              dataKey="desktop"
-              type="natural"
-              fill="var(--color-5)"
-              fillOpacity={0.2}
-              stroke="var(--color-5)"
-            />
-          </AreaChart>
-        </ChartContainer>
-      </CardContent>
-      {/* <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              January - June 2024
-            </div>
-          </div>
-        </div>
-      </CardFooter> */}
-    </Card>
-  );
-}
 
 function DatePicker({ startDate, endDate }) {
   const [startOpen, setStartOpen] = React.useState(false);
@@ -794,6 +715,8 @@ const OrdersTable = ({
   error,
   PaymentIcon,
   clearParams,
+  handleOpen,
+  onSelectOrderId,
 }) => {
   return (
     <Table className="orders-table">
@@ -934,7 +857,7 @@ const OrdersTable = ({
                       <DropdownMenuItem
                         onSelect={() => {
                           handleOpen("showOrder");
-                          setSelectedOrderId(order.id);
+                          onSelectOrderId(order.id);
                         }}
                       >
                         <MdOutlineZoomOutMap />

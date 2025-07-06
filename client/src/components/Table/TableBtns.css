@@ -1,7 +1,7 @@
 .table-pages-buttons {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 .table-pages-buttons button,
 .table-footer button {

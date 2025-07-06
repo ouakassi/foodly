@@ -10,6 +10,7 @@ import {
 import authRole from "../middlewares/authRole.js";
 import { ROLES } from "../utils/constants.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
+import { getUserOverview } from "../controllers/overviewUserController.js";
 
 const userRouter = express.Router();
 
@@ -19,6 +20,7 @@ userRouter
   .get(getAllUsers)
 
   .delete(isAuthenticated, authRole(ROLES.ADMIN), deleteAllUsers);
+userRouter.route("/overview").get(getUserOverview);
 userRouter
   .route("/:id")
   .get(isAuthenticated, getUser)
