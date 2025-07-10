@@ -86,6 +86,8 @@ export default function UsersPage() {
     setSearchParams(newSearchParams);
   };
 
+  const role = searchParams.get("role");
+
   const tabs = [
     {
       value: "all",
@@ -155,7 +157,7 @@ export default function UsersPage() {
 
       <div className="users-page-container">
         <header>
-          <Tabs defaultValue="all" className="w-[400px]">
+          <Tabs defaultValue={role ? role : "all"} className="w-[400px]">
             {usersOverviewData && (
               <FilterTabsList tabs={tabs} handleTabChange={handleTabChange} />
             )}

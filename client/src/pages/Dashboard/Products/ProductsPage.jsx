@@ -298,7 +298,10 @@ export default function ProductsPage() {
           </header>
           <div className="products-container">
             <div className="filters">
-              <Tabs defaultValue="all" className="w-[400px]">
+              <Tabs
+                defaultValue={status ? status : "all"}
+                className="w-[400px]"
+              >
                 <FilterTabsList tabs={tabs} handleTabChange={handleTabChange} />
               </Tabs>
 
