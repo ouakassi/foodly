@@ -245,6 +245,9 @@ export default function UsersPage() {
               })}
           </TableBody>
         </Table>
+        <footer className="table-footer">
+          <TableBtns showPageNumber={true} page={1} />
+        </footer>
       </div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         {dialogType === "showOrder" && <div>fsdfsdfsdf</div>}

@@ -10,6 +10,7 @@ import React, { lazy, Suspense } from "react";
 import "./styles/base.css";
 import "./styles/global.css";
 import "./styles/layout.css";
+import "./styles/shared.css";
 
 import RootLayout from "./pages/RootLayout";
 

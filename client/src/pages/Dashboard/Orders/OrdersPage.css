@@ -202,13 +202,6 @@
 .order-details-content table {
   max-height: 20rem;
 }
-.table-footer {
-  display: flex;
-  justify-content: center;
-  padding: 0.5rem;
-  /* border-top: 1px solid #f1f1f1; */
-  align-items: center;
-}
 
 .orders-table .no-orders p {
   display: flex;
