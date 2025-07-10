@@ -85,3 +85,95 @@
   font-weight: 700;
   box-shadow: var(--box-shadow-content-container);
 }
+
+.product-row .product-img {
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+.product-row td.name {
+  font-weight: bold;
+  word-break: break-all;
+}
+
+.product-row td.status span {
+  display: block;
+  font-weight: var(--fw-bold);
+  line-height: 1.2;
+  text-transform: capitalize;
+  border-radius: 40px;
+  padding: 0 0.4rem;
+  background-color: #000000;
+  color: #ffffff;
+  box-shadow: var(--box-shadow-content-container);
+  width: fit-content;
+  min-width: 4rem;
+  text-align: center;
+}
+
+.product-row .status span.active {
+  /* color: #18d48f; */
+  background-color: #00bb63;
+  /* background-color: #d5fff0; */
+}
+.product-row .status svg.active {
+}
+.product-row .status span.inactive {
+  /* color: #ff3030; */
+  background-color: #ff0000;
+  /* background-color: #ffdede; */
+}
+
+.product-row td.stock {
+}
+.product-row td.orders {
+}
+
+.product-row .price {
+  font-weight: var(--fw-bold);
+  color: #078053;
+}
+
+.product-row td.discount {
+}
+
+.product-row td.category {
+}
+
+.product-row td.rating {
+  color: #d19a00;
+}
+
+.product-row .published {
+  color: #c2c2c2;
+}
+
+.product-row td.action {
+  display: flex;
+  gap: var(--gap-2);
+}
+
+.dialog-button-cancel,
+.dialog-button-delete {
+  width: fit-content;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+}
+.dialog-button-cancel svg,
+.dialog-button-delete svg {
+  font-size: 1.3rem;
+}
+.dialog-button-delete,
+.dialog-button-delete:hover {
+  background-color: var(--color-2);
+}
+
+.dialog-button-cancel {
+  background-color: black;
+  color: white;
+  margin-right: 0.5rem;
+}
+.dialog-button-cancel:hover {
+  background-color: rgb(46, 46, 46);
+  color: white;
+}

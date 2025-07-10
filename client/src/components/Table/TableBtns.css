@@ -1,9 +1,9 @@
-.table-pages-buttons {
+.table-buttons {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
-.table-pages-buttons button,
+.table-buttons button,
 .table-footer button {
   padding: 6px 10px;
   background: rgb(255 255 255);
@@ -15,7 +15,7 @@
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }
 
-.table-pages-buttons button:hover,
+.table-buttons button:hover,
 .table-footer button:hover {
   background-color: rgb(245, 245, 245);
 }
@@ -40,4 +40,9 @@
 .total-pages {
   /* font-weight: 700;
   color: var(--color-4); */
+}
+
+.table-pages-buttons {
+  display: flex;
+  gap: 1rem;
 }

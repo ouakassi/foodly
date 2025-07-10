@@ -1,19 +1,9 @@
 import CustomButton from "@/components/Buttons/CustomButton";
-import ProductHeader from "@/components/Product/ProductHeader";
-import ProductRow from "@/components/Product/ProductRow";
-import Header from "@/components/Product/Header";
 import "./ProductsPage.css";
-import NoProductsPage from "./NoProductsPage";
 
 import { BsPlusCircleFill, BsShieldCheck, BsShieldX } from "react-icons/bs";
-import {
-  BiArchiveIn,
-  BiBasket,
-  BiPurchaseTagAlt,
-  BiCalendarEdit,
-  BiSolidErrorCircle,
-} from "react-icons/bi";
-import { CiGrid41, CiStar } from "react-icons/ci";
+import { BiSolidErrorCircle } from "react-icons/bi";
+import { CiGrid41, CiStar, CiWarning } from "react-icons/ci";
 import { HiOutlineReceiptPercent } from "react-icons/hi2";
 
 import {
@@ -22,10 +12,16 @@ import {
   TbHomeSignal,
   TbBrandProducthunt,
   TbSearch,
+  TbForbid2,
 } from "react-icons/tb";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
-import { FaAngleLeft, FaAngleRight, FaRegImage } from "react-icons/fa6";
+import {
+  FaAngleLeft,
+  FaAngleRight,
+  FaArrowTrendDown,
+  FaRegImage,
+} from "react-icons/fa6";
 import { axiosInstance, API_URL } from "../../../api/api";
 import { toast } from "sonner";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -40,55 +36,72 @@ import {
   NextBtn,
   PagesCount,
   PreviousBtn,
+  TableBtns,
 } from "../../../components/Table/TableBtns";
 import PageTitle from "../../../components/Dashboard/PageTitle";
 import { LINKS_WITH_ICONS } from "../../../constants";
+import {
+  Table,
+  TableBody,
+  TableHead,
+} from "../../../components/Table/TableComponents";
+import { GoDotFill } from "react-icons/go";
+import { formatCurrency, formatDate } from "../../../lib/helpers";
+import { MdDeleteForever, MdEditSquare } from "react-icons/md";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { AiFillDelete } from "react-icons/ai";
 
 const tableHeaders = [
-  { title: "Image", icon: <FaRegImage /> },
-  {
-    title: "Name",
-    icon: <TbBrandProducthunt />,
-    isSortable: true,
-    value: "name_asc",
-  },
-  { title: "Status", icon: <TbHomeSignal /> },
-  {
-    title: "Stock",
-    icon: <BiArchiveIn />,
-    isSortable: true,
-    value: "stock_asc",
-  },
-  {
-    title: "Price",
-    icon: <BiPurchaseTagAlt />,
-    isSortable: true,
-    value: "price_asc",
-  },
-  { title: "Category", icon: <TbCategory2 /> },
-  { title: "Discount", icon: <HiOutlineReceiptPercent /> },
-  {
-    title: "Published",
-    icon: <BiCalendarEdit />,
-    isSortable: true,
-    value: "createdAt_asc",
-  },
-  { title: "Action", icon: <TbHandClick /> },
-  // { title: "Orders", icon: <BiBasket /> },
-  // { title: "Rating", icon: <CiStar /> },
+  "Image",
+  "Name",
+  "Status",
+  "Stock",
+  "Price",
+  "Category",
+  "Discount",
+  "Published",
+  "Actions",
 ];
+
+const buttonStyle = {
+  color: "white",
+  borderRadius: "10px",
+  padding: "2px 5px",
+  maxWidth: "max-content",
+  fontSize: "var(--fs-l)",
+  boxShadow: "none",
+  cursor: "pointer",
+  backgroundColor: "white",
+};
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [productsTotal, setProductsTotal] = useState(0 || 0);
   const [limitPerPage, setLimitPerPage] = useState(10);
+
+  const [searchParams, setSearchParams] = useSearchParams();
   // const ITEMS_PER_PAGE = 10;
 
   const nextBtnRef = useRef(null);
   const prevBtnRef = useRef(null);
-
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const page = searchParams.get("page") || 1;
   const limit = searchParams.get("limit") || 10;
@@ -155,10 +168,8 @@ export default function ProductsPage() {
 
       if (e.key === "ArrowLeft") {
         prevBtnRef.current?.click();
-        console.log("Prev button clicked");
       } else if (e.key === "ArrowRight") {
         nextBtnRef.current?.click();
-        console.log("Next button clicked");
       }
       lastPressTime = now;
     };
@@ -298,46 +309,18 @@ export default function ProductsPage() {
                 />
               </InputContainer>
 
-              <div className="table-pages-buttons">
-                <PreviousBtn
-                  onClick={handlePreviousPage}
-                  page={page}
-                  totalPages={totalPages}
-                />
-
-                <NextBtn
-                  onClick={handleNextPage}
-                  page={page}
-                  totalPages={totalPages}
-                />
-              </div>
+              <TableBtns
+                handleNextPage={handleNextPage}
+                handlePreviousPage={handlePreviousPage}
+                page={page}
+                totalPages={totalPages}
+              />
             </div>
 
-            <table className="table">
-              <ProductHeader headers={tableHeaders} />
-              {isLoading ? (
-                <TableSkeleton count={limitPerPage} />
-              ) : (
-                <tbody className="table-body">
-                  {products.length > 0 ? (
-                    products.map((product) => (
-                      <ProductRow
-                        key={product.id}
-                        product={product}
-                        handleDeleteProduct={handleDeleteProduct}
-                      />
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="100%" className="text-center">
-                        <BiSolidErrorCircle style={{ color: "red" }} />
-                        No Product found!
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              )}
-            </table>
+            <ProductsTable
+              products={products}
+              handleDeleteProduct={handleDeleteProduct}
+            />
 
             <footer className="table-footer">
               <select
@@ -351,18 +334,12 @@ export default function ProductsPage() {
                 <option value="20">20</option>
                 <option value="30">30</option>
               </select>
-              <PreviousBtn
-                onClick={handlePreviousPage}
+              <TableBtns
+                showPageNumber={true}
+                handleNextPage={handleNextPage}
+                handlePreviousPage={handlePreviousPage}
                 page={page}
                 totalPages={totalPages}
-              />
-              <PagesCount page={page} totalPages={totalPages} />
-
-              <NextBtn
-                onClick={handleNextPage}
-                page={page}
-                totalPages={totalPages}
-                nextBtnRef={nextBtnRef}
               />
             </footer>
           </div>
@@ -413,3 +390,160 @@ const FilterTabsList = ({ tabs, handleTabChange }) => {
     </TabsList>
   );
 };
+
+const ProductsTable = ({ products, handleDeleteProduct }) => (
+  <Table>
+    <TableHead columns={tableHeaders} />
+    <TableBody>
+      {products.map(
+        ({
+          id,
+          imgUrl: productImg,
+          name: productName,
+          price,
+          discount,
+          category,
+          orders,
+          stock,
+          rating,
+          status,
+          createdAt: publishedDate,
+        }) => {
+          const isActive = status === true;
+          const isStockLow = stock <= 30;
+          return (
+            <tr className="product-row" key={id}>
+              <td style={!isActive ? { opacity: 0.8 } : { opacity: 1 }}>
+                <img
+                  src={productImg}
+                  alt={productName}
+                  className="product-img"
+                />
+              </td>
+              <td className="name">{productName}</td>
+              <td className="status">
+                <span className={isActive ? "active" : "inactive"}>
+                  {/* <GoDotFill /> */}
+                  {/* {isActive ? <FaRegCircleCheck /> : <FaRegCircleXmark />} */}
+                  {isActive ? "Active" : "Inactive"}
+                </span>
+              </td>
+              <td>
+                {isStockLow ? (
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        {stock}
+                        {isStockLow && (
+                          <FaArrowTrendDown color="var(--color-2)" />
+                        )}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p
+                          style={{
+                            color: "var(--color-2)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "2px",
+                          }}
+                        >
+                          <CiWarning fontSize={"1.2rem"} />
+                          Stock is low
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : (
+                  stock
+                )}
+              </td>
+              <td className="price">{formatCurrency(price)}</td>
+              <td>{category}</td>
+              <td>{`${discount}%`}</td>
+              <td className="published">{formatDate(publishedDate)}</td>
+              {handleDeleteProduct && (
+                <td className="action">
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span>
+                          <CustomButton
+                            aria-label="Edit Product"
+                            style={{
+                              ...buttonStyle,
+                              color: "var(--color-3)",
+                            }}
+                            icon={<MdEditSquare />}
+                            onClick={() => {
+                              navigate(
+                                `/dashboard/products/edit/${product.id}`
+                              );
+                            }}
+                          />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Edit Product</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  <AlertDialog>
+                    <TooltipProvider delayDuration={100}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <AlertDialogTrigger>
+                            <CustomButton
+                              aria-label="Delete Product"
+                              style={{
+                                ...buttonStyle,
+                                color: "#ef0012",
+                              }}
+                              icon={<MdDeleteForever />}
+                            />
+                          </AlertDialogTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Delete Product</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you sure you want to delete this product?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete the product from your inventory.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel asChild>
+                          <CustomButton
+                            className="dialog-button-cancel"
+                            text="Cancel"
+                            icon={<TbForbid2 />}
+                          />
+                        </AlertDialogCancel>
+                        <AlertDialogAction asChild>
+                          <CustomButton
+                            className="dialog-button-delete"
+                            text="Delete"
+                            icon={<AiFillDelete />}
+                            onClick={() => handleDeleteProduct(product)}
+                          />
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </td>
+              )}
+            </tr>
+          );
+        }
+      )}
+    </TableBody>
+  </Table>
+);

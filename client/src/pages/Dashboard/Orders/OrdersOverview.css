@@ -1,0 +1,12 @@
+.total-orders .box-icon {
+  background-color: #000;
+}
+.total-revenue .box-icon {
+  background-color: #0abd2d;
+}
+.orders-progress .box-icon {
+  background-color: #ff8100;
+}
+.orders-cancelled .box-icon {
+  background-color: #f34040;
+}

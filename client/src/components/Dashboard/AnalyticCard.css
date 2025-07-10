@@ -29,18 +29,6 @@
   align-items: center;
   box-shadow: var(--box-shadow-1);
 }
-.analytic-box + .total-orders .box-icon {
-  background-color: #000;
-}
-.analytic-box + .total-revenue .box-icon {
-  background-color: #0abd2d;
-}
-.analytic-box + .orders-progress .box-icon {
-  background-color: #ff8100;
-}
-.analytic-box + .orders-cancelled .box-icon {
-  background-color: #f34040;
-}
 
 .analytic-box .value {
   font-family: var(--font-1);
