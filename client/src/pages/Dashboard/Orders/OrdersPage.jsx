@@ -228,7 +228,8 @@ export default function OrdersPage() {
     <section className="orders-page">
       <PageTitle
         icon={React.createElement(LINKS_WITH_ICONS.orders.icon)}
-        title={`${LINKS_WITH_ICONS.orders.label} (${totalOrders || 0})`}
+        title={LINKS_WITH_ICONS.orders.label}
+        badge={totalOrders || 0}
       />
       <div className="order-boxes">
         <OrdersOverview />
@@ -276,7 +277,7 @@ export default function OrdersPage() {
         </header>
         <div className="table-container">
           <OrdersTable
-            orders={orders} 
+            orders={orders}
             isLoading={isLoading}
             error={error}
             PaymentIcon={PaymentIcon}

@@ -14,3 +14,15 @@
   font-size: var(--fs-lg);
   color: #f75c14;
 }
+
+.page-badge {
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 5px;
+  padding: 4px 8px;
+  line-height: 1;
+  margin-left: 8px;
+  font-weight: 700;
+  font-size: 1.4rem;
+  box-shadow: var(--box-shadow-content-container);
+}

@@ -56,10 +56,10 @@
 }
 
 .users-table__tbody .status.active {
-  background-color: #00bb63;
+  background-color: var(--color-active);
 }
 .users-table__tbody .status.inactive {
-  background-color: #ff0000;
+  background-color: var(--color-inactive);
 }
 
 .users-table__tbody .created-at {

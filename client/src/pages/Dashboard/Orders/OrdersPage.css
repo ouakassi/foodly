@@ -85,7 +85,7 @@
 }
 
 .orders-table .status-completed {
-  color: rgb(24, 179, 24);
+  color: var(--color-active);
   /* background-color: green; */
   width: fit-content;
 }
@@ -111,7 +111,7 @@
 }
 .orders-table .total {
   font-weight: bold;
-  color: rgb(43, 155, 56);
+  color: var(--color-money);
 }
 
 .payment-paid {

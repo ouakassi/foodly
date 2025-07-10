@@ -90,7 +90,9 @@
   --color-7: #09aa29;
   --color-price: #c10312;
   --color-3-dark: #27956b;
-
+  --color-money: rgb(43, 155, 56);
+  --color-active: #00bb63;
+  --color-inactive: #ff0000;
   /* Alerts */
   --alert-primary: #ff5733;
   --alert-secondary: #ffc300;

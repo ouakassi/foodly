@@ -20,16 +20,28 @@ const statusOptions = [
     className: "status-all",
   },
   {
-    value: "completed",
-    label: "Completed",
-    icon: <BiCheckCircle />,
-    className: "status-completed",
-  },
-  {
     value: "pending",
     label: "Pending",
     icon: <BiLoader />,
     className: "status-pending",
+  },
+  {
+    value: "processing",
+    label: "Processing",
+    icon: <BiLoader />,
+    className: "status-processing",
+  },
+  {
+    value: "shipped",
+    label: "Shipped",
+    icon: <MdOutlineLocalShipping />,
+    className: "status-shipped",
+  },
+  {
+    value: "completed",
+    label: "Completed",
+    icon: <BiCheckCircle />,
+    className: "status-completed",
   },
   {
     value: "cancelled",
@@ -42,18 +54,6 @@ const statusOptions = [
     label: "Refunded",
     icon: <BiInfoCircle />,
     className: "status-refunded",
-  },
-  {
-    value: "shipped",
-    label: "Shipped",
-    icon: <MdOutlineLocalShipping />,
-    className: "status-shipped",
-  },
-  {
-    value: "processing",
-    label: "Processing",
-    icon: <BiLoader />,
-    className: "status-processing",
   },
 ];
 
