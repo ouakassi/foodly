@@ -1,7 +1,7 @@
 .button {
   display: inline-block;
   background-color: var(--color-3);
-  background: linear-gradient(359deg, #459955, #10c781);
+  /* background: linear-gradient(359deg, #459955, #10c781); */
   font-family: var(--font-2);
   color: white;
   padding: 8px 20px;

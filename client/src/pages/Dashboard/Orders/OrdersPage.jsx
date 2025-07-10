@@ -6,7 +6,6 @@ import React, {
   useReducer,
   useState,
 } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { LiaRedoAltSolid, LiaSortAmountDownAltSolid } from "react-icons/lia";
@@ -53,17 +52,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import {
   RiDeleteBin6Fill,
   RiFilterFill,
   RiMoneyDollarCircleFill,
-  RiProgress1Line,
 } from "react-icons/ri";
 import { FaCcStripe, FaPaypal } from "react-icons/fa";
 
@@ -74,6 +66,7 @@ import {
   NextBtn,
   PagesCount,
   PreviousBtn,
+  TableBtns,
 } from "../../../components/Table/TableBtns";
 import {
   formatCurrency,
@@ -98,7 +91,6 @@ import {
   TableHead,
 } from "../../../components/Table/TableComponents";
 import PageTitle from "../../../components/Dashboard/PageTitle";
-import AnalyticCard from "../../../components/Dashboard/AnalyticCard";
 import OrdersOverview from "./OrdersOverview";
 
 const orderColumns = [
@@ -275,23 +267,16 @@ export default function OrdersPage() {
               </TooltipProvider>
             )}
           </div>
-          <div className="table-pages-buttons">
-            <PreviousBtn
-              onClick={handlePreviousPage}
-              page={currentPage}
-              totalPages={totalPages}
-            />
-
-            <NextBtn
-              onClick={handleNextPage}
-              page={currentPage}
-              totalPages={totalPages}
-            />
-          </div>
+          <TableBtns
+            handleNextPage={handleNextPage}
+            handlePreviousPage={handlePreviousPage}
+            page={page}
+            totalPages={totalPages}
+          />
         </header>
         <div className="table-container">
           <OrdersTable
-            orders={orders}
+            orders={orders} 
             isLoading={isLoading}
             error={error}
             PaymentIcon={PaymentIcon}
@@ -305,20 +290,13 @@ export default function OrdersPage() {
           />
         </div>
         <footer className="table-footer">
-          <div className="table-pages-buttons">
-            <PreviousBtn
-              onClick={handlePreviousPage}
-              page={page}
-              totalPages={totalPages}
-            />
-            <PagesCount totalPages={totalPages} page={page} />
-
-            <NextBtn
-              onClick={handleNextPage}
-              page={page}
-              totalPages={totalPages}
-            />
-          </div>
+          <TableBtns
+            showPageNumber={true}
+            handleNextPage={handleNextPage}
+            handlePreviousPage={handlePreviousPage}
+            page={page}
+            totalPages={totalPages}
+          />
         </footer>
       </div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -744,7 +722,7 @@ const OrdersTable = ({
             </td>
           </tr>
         )}
-        {!isLoading && !orders && (
+        {!isLoading && !error && (!orders || orders.length === 0) && (
           <tr>
             <td colSpan="7" className="no-orders">
               <span>
@@ -767,7 +745,6 @@ const OrdersTable = ({
         {!isLoading &&
           !error &&
           orders &&
-          orders.length > 0 &&
           orders.map((order) => {
             const status = order.status.toLowerCase();
             const statusClass =

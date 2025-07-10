@@ -38,7 +38,6 @@ import { FaUserLarge } from "react-icons/fa6";
 import { BsBagCheckFill } from "react-icons/bs";
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import ProductCard from "../../components/Product/ProductCard";
-import ProductRow from "../../components/Product/ProductRow";
 import CustomButton from "../../components/Buttons/CustomButton";
 import ProductHeader from "../../components/Product/ProductHeader";
 import PageTitle from "../../components/Dashboard/PageTitle";
@@ -162,14 +161,14 @@ export default function OverviewPage() {
             />
           </Link>
         </header>
-        <table style={{ width: "100%" }}>
+        {/* <table style={{ width: "100%" }}>
           <ProductHeader headers={tableHeaders} />
           <tbody>
             {product && <ProductRow product={product} />}
             {product && <ProductRow product={product} />}
             {product && <ProductRow product={product} />}
           </tbody>
-        </table>
+        </table> */}
       </div>
     </section>
   );
