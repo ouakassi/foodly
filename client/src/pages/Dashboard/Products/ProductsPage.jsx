@@ -82,13 +82,14 @@ const tableHeaders = [
 
 const buttonStyle = {
   color: "white",
-  borderRadius: "10px",
+  borderRadius: "5px",
   padding: "2px 5px",
   maxWidth: "max-content",
   fontSize: "var(--fs-l)",
   boxShadow: "none",
   cursor: "pointer",
   backgroundColor: "white",
+  boxShadow: "var(--box-shadow-content-container)",
 };
 
 export default function ProductsPage() {
@@ -471,7 +472,7 @@ const ProductsTable = ({ products, handleDeleteProduct }) => (
                             aria-label="Edit Product"
                             style={{
                               ...buttonStyle,
-                              color: "var(--color-3)",
+                              color: "#1131af",
                             }}
                             icon={<MdEditSquare />}
                             onClick={() => {
