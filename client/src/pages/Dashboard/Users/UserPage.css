@@ -1,3 +1,16 @@
+.users-page .overview-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.users-page-container {
+  box-shadow: var(--box-shadow-content-container);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
 .users-page header {
   display: flex;
   justify-content: space-between;
@@ -5,12 +18,9 @@
   margin-bottom: 1rem;
   gap: 1rem;
 }
-
-.users-page .overview-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+.users-page .btns {
+  display: flex;
   gap: 1rem;
-  margin-bottom: 1rem;
 }
 
 .users-table__head tr th:last-child,
@@ -69,10 +79,12 @@
   padding: 0.2rem 0.6rem;
   width: -moz-fit-content;
   width: fit-content;
-
+  color: #969696;
   background-color: #ffffff;
-  font-weight: 500;
-  font-family: var(--font-6);
+
+  font-weight: 600;
+
+  line-height: 1;
 }
 
 .users-table__tbody .user-role {
@@ -85,4 +97,5 @@
 
 .users-table__tbody .admin-role {
   color: #9c01cf;
+  color: #d1930e;
 }

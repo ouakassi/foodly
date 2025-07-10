@@ -5,17 +5,14 @@ import {
   TableHead,
 } from "../../../components/Table/TableComponents";
 import { API_ENDPOINTS, LINKS_WITH_ICONS } from "../../../constants";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import PageTitle from "../../../components/Dashboard/PageTitle";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { API_URL } from "../../../api/api";
 import { formatDate } from "../../../lib/helpers";
-import { CiMail } from "react-icons/ci";
 import { RiUser4Line, RiUserAddFill } from "react-icons/ri";
 import CustomButton from "../../../components/Buttons/CustomButton";
-import { FiUserPlus } from "react-icons/fi";
 import { LiaUserAstronautSolid, LiaUserShieldSolid } from "react-icons/lia";
-import AnalyticsCard from "../../../components/Dashboard/AnalyticCard";
 import {
   Tooltip,
   TooltipContent,
@@ -23,14 +20,99 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import UsersOverview from "./UsersOverview";
+import { HiDotsVertical } from "react-icons/hi";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { MdEditDocument, MdOutlineZoomOutMap } from "react-icons/md";
+import { LuCrown } from "react-icons/lu";
+import { IoShield } from "react-icons/io5";
+import { CiGrid41 } from "react-icons/ci";
+import { useSearchParams } from "react-router-dom";
+import {
+  NextBtn,
+  PreviousBtn,
+  TableBtns,
+} from "../../../components/Table/TableBtns";
 
 const columns = ["Name", "Status", "Joined At", "Role", "Actions"];
 export default function UsersPage() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogType, setDialogType] = useState("none");
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleOpen = useCallback((type) => {
+    setDialogType(type);
+    setIsDialogOpen(true);
+  }, []);
+
+  const params = {
+    role: searchParams.get("role"),
+  };
+
   const {
     data: usersData,
     loading,
     error,
-  } = useAxiosFetch(API_URL + API_ENDPOINTS.USERS);
+  } = useAxiosFetch(API_URL + API_ENDPOINTS.USERS, params);
+
+  const {
+    data: usersOverviewData,
+    usersOverviewLoading,
+    usersOverviewError,
+  } = useAxiosFetch(API_URL + API_ENDPOINTS.USERS_OVERVIEW);
+
+  const { usersCount, adminCount, customersCount, moderatorsCount } =
+    usersOverviewData?.data || {};
+
+  const handleTabChange = (value) => {
+    // reset the 'status' param and 'page'
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("role", value);
+    newSearchParams.set("page", 1);
+
+    setSearchParams(newSearchParams);
+  };
+
+  const tabs = [
+    {
+      value: "all",
+      label: "All",
+      icon: <CiGrid41 className="icon" />,
+      count: usersCount || 0,
+    },
+    {
+      value: "user",
+      label: "Customers",
+      icon: <RiUser4Line className="icon" />,
+      count: customersCount || 0,
+    },
+
+    {
+      value: "admin",
+      label: "Admins",
+      icon: <LuCrown className="icon" />,
+      count: adminCount || 0,
+    },
+    {
+      value: "moderator",
+      label: "Moderators",
+      icon: <IoShield className="icon" />,
+      count: moderatorsCount || 0,
+    },
+  ];
 
   const getRole = (roleName) => {
     switch (roleName) {
@@ -38,7 +120,7 @@ export default function UsersPage() {
         return {
           role: "Admin",
           className: "admin-role",
-          icon: <LiaUserShieldSolid />,
+          icon: <LuCrown />,
         };
       case "user":
         return {
@@ -51,7 +133,7 @@ export default function UsersPage() {
         return {
           role: "Moderator",
           className: "moderator-role",
-          icon: <LiaUserAstronautSolid />,
+          icon: <IoShield />,
         };
 
       default:
@@ -71,7 +153,16 @@ export default function UsersPage() {
         <UsersOverview />
       </div>
 
-      <div className="orders-page-container">
+      <div className="users-page-container">
+        <header>
+          <Tabs defaultValue="all" className="w-[400px]">
+            {usersOverviewData && (
+              <FilterTabsList tabs={tabs} handleTabChange={handleTabChange} />
+            )}
+          </Tabs>
+
+          <TableBtns />
+        </header>
         <Table className="users-table">
           <TableHead className="users-table__head" columns={columns} />
           <TableBody className="users-table__tbody">
@@ -123,9 +214,31 @@ export default function UsersPage() {
                       </span>
                     </td>
                     <td className="actions">
-                      {/* Actions can be added here, like edit or delete */}
-                      <button>Edit</button>
-                      <button>Delete</button>
+                      <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <button className="actions-btn">
+                            <HiDotsVertical />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              handleOpen("showOrder");
+                              onSelectOrderId(order.id);
+                            }}
+                          >
+                            <MdOutlineZoomOutMap />
+                            View Order
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem
+                            onSelect={() => handleOpen("editOrder")}
+                          >
+                            <MdEditDocument />
+                            Edit Order
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </td>
                   </tr>
                 );
@@ -133,6 +246,40 @@ export default function UsersPage() {
           </TableBody>
         </Table>
       </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        {dialogType === "showOrder" && <div>fsdfsdfsdf</div>}
+        {dialogType === "editOrder" && (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Order</DialogTitle>
+            </DialogHeader>
+            <p>Form to edit the order will go here.</p>
+            <input type="checkbox" />
+            <button>Submit</button>
+          </DialogContent>
+        )}
+      </Dialog>
     </section>
   );
 }
+
+const FilterTabsList = ({ tabs, handleTabChange }) => {
+  return (
+    <TabsList>
+      {tabs.map(({ value, label, icon, count }) => (
+        <TabsTrigger
+          key={value}
+          value={value}
+          onClick={() => handleTabChange(value)}
+        >
+          <div>
+            {icon} <span>{label}</span>
+            <Badge>{count}</Badge>
+          </div>
+        </TabsTrigger>
+      ))}
+    </TabsList>
+  );
+};
+
+const Badge = ({ children }) => <span className="badge">{children}</span>;
