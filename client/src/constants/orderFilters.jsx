@@ -1,16 +1,7 @@
-import {
-  BiCheckCircle,
-  BiLoader,
-  BiRotateLeft,
-  BiInfoCircle,
-} from "react-icons/bi";
-import {
-  MdOutlineLocalShipping,
-  MdOutlineDateRange,
-  MdOutlineAttachMoney,
-} from "react-icons/md";
+import { MdOutlineDateRange, MdOutlineAttachMoney } from "react-icons/md";
 import { LuGalleryVerticalEnd } from "react-icons/lu";
 import { HiArrowLongDown, HiArrowLongUp } from "react-icons/hi2";
+import { ORDER_STATUSES } from "./orderStatus";
 
 const statusOptions = [
   {
@@ -20,40 +11,52 @@ const statusOptions = [
     className: "status-all",
   },
   {
-    value: "pending",
-    label: "Pending",
-    icon: <BiLoader />,
+    value: ORDER_STATUSES.PENDING.value,
+    label: ORDER_STATUSES.PENDING.label,
+    icon: ORDER_STATUSES.PENDING.icon,
     className: "status-pending",
   },
   {
-    value: "processing",
-    label: "Processing",
-    icon: <BiLoader />,
+    value: ORDER_STATUSES.PROCESSING.value,
+    label: ORDER_STATUSES.PROCESSING.label,
+    icon: ORDER_STATUSES.PROCESSING.icon,
     className: "status-processing",
   },
   {
-    value: "shipped",
-    label: "Shipped",
-    icon: <MdOutlineLocalShipping />,
+    value: ORDER_STATUSES.SHIPPED.value,
+    label: ORDER_STATUSES.SHIPPED.label,
+    icon: ORDER_STATUSES.SHIPPED.icon,
     className: "status-shipped",
   },
   {
-    value: "completed",
-    label: "Completed",
-    icon: <BiCheckCircle />,
+    value: ORDER_STATUSES.DELIVERED.value,
+    label: ORDER_STATUSES.DELIVERED.label,
+    icon: ORDER_STATUSES.DELIVERED.icon,
+    className: "status-delivered",
+  },
+  {
+    value: ORDER_STATUSES.COMPLETED.value,
+    label: ORDER_STATUSES.COMPLETED.label,
+    icon: ORDER_STATUSES.COMPLETED.icon,
     className: "status-completed",
   },
   {
-    value: "cancelled",
-    label: "Cancelled",
-    icon: <BiRotateLeft />,
+    value: ORDER_STATUSES.CANCELLED.value,
+    label: ORDER_STATUSES.CANCELLED.label,
+    icon: ORDER_STATUSES.CANCELLED.icon,
     className: "status-cancelled",
   },
   {
-    value: "refunded",
-    label: "Refunded",
-    icon: <BiInfoCircle />,
+    value: ORDER_STATUSES.REFUNDED.value,
+    label: ORDER_STATUSES.REFUNDED.label,
+    icon: ORDER_STATUSES.REFUNDED.icon,
     className: "status-refunded",
+  },
+  {
+    value: ORDER_STATUSES.FAILED.value,
+    label: ORDER_STATUSES.FAILED.label,
+    icon: ORDER_STATUSES.FAILED.icon,
+    className: "status-failed",
   },
 ];
 

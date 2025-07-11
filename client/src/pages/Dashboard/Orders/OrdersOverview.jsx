@@ -12,7 +12,7 @@ import {
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { API_URL } from "../../../api/api";
 import { API_ENDPOINTS } from "../../../constants";
-import { ORDER_STATUSES, STATUS_CONFIG } from "../../../constants/orderStatus";
+import { ORDER_STATUSES } from "../../../constants/orderStatus";
 
 export default function OrdersOverview() {
   const { year, month } = getCurrentMonthYear();
@@ -77,7 +77,7 @@ export default function OrdersOverview() {
       className: "total-revenue",
     },
     {
-      icon: STATUS_CONFIG[ORDER_STATUSES.PENDING]?.icon,
+      icon: ORDER_STATUSES.PENDING?.icon,
       label: "Orders in Progress",
       value: isLoading ? loadingSpinner : pending?.toLocaleString() || "0",
       // trend: "+8",
@@ -87,7 +87,7 @@ export default function OrdersOverview() {
       className: "orders-progress",
     },
     {
-      icon: STATUS_CONFIG[ORDER_STATUSES.CANCELLED]?.icon,
+      icon: ORDER_STATUSES.PENDING?.icon,
       label: "Cancelled Orders",
       value: isLoading ? loadingSpinner : cancelled?.toLocaleString() || "0",
       // trend: "-5",

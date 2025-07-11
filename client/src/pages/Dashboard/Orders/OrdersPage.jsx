@@ -11,7 +11,11 @@ import { toast } from "sonner";
 import { LiaRedoAltSolid, LiaSortAmountDownAltSolid } from "react-icons/lia";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { BiSolidCalendarCheck, BiCalendarPlus } from "react-icons/bi";
+import {
+  BiSolidCalendarCheck,
+  BiCalendarPlus,
+  BiInfoCircle,
+} from "react-icons/bi";
 
 import {
   MdEditDocument,
@@ -62,12 +66,7 @@ import { FaCcStripe, FaPaypal } from "react-icons/fa";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { useSearchParams } from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
-import {
-  NextBtn,
-  PagesCount,
-  PreviousBtn,
-  TableBtns,
-} from "../../../components/Table/TableBtns";
+import { TableBtns } from "../../../components/Table/TableBtns";
 import {
   formatCurrency,
   formatDate,
@@ -77,7 +76,7 @@ import CustomButton from "../../../components/Buttons/CustomButton";
 import DialogEditOrderDetails from "./dialogs/DialogEditOrderDetails";
 import DialogShowOrderDetails from "./dialogs/DialogShowOrderDetails";
 import { sortOptions, statusOptions } from "../../../constants/orderFilters";
-import { STATUS_CONFIG } from "../../../constants/orderStatus";
+
 import {
   API_ENDPOINTS,
   APP_CONFIG,
@@ -92,6 +91,7 @@ import {
 } from "../../../components/Table/TableComponents";
 import PageTitle from "../../../components/Dashboard/PageTitle";
 import OrdersOverview from "./OrdersOverview";
+import { ORDER_STATUSES } from "../../../constants/orderStatus";
 
 const orderColumns = [
   "Order ID",
@@ -747,14 +747,23 @@ const OrdersTable = ({
           !error &&
           orders &&
           orders.map((order) => {
+            const getStatusConfig = (statusValue) => {
+              return Object.values(ORDER_STATUSES).find(
+                (status) => status.value === statusValue
+              );
+            };
+            const DEFAULT_STATUS_CONFIG = {
+              className: "status-unknown",
+              icon: <BiInfoCircle />,
+              text: "Unknown status",
+            };
             const status = order.status.toLowerCase();
-            const statusClass =
-              STATUS_CONFIG[status]?.className ||
-              STATUS_CONFIG.default.className;
-            const statusIcon =
-              STATUS_CONFIG[status]?.icon || STATUS_CONFIG.default.icon;
-            const statusDescription =
-              STATUS_CONFIG[status]?.text || STATUS_CONFIG.default.text;
+            const statusConfig =
+              getStatusConfig(status) || DEFAULT_STATUS_CONFIG;
+
+            const statusClass = statusConfig.className;
+            const statusIcon = statusConfig.icon;
+            const statusDescription = statusConfig.text;
 
             return (
               <tr key={order.id} className="order-row">

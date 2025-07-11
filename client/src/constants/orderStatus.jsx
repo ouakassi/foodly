@@ -3,84 +3,70 @@ import {
   BiInfoCircle,
   BiRotateLeft,
   BiCheckCircle,
+  BiX,
 } from "react-icons/bi";
+import { FaBoxOpen } from "react-icons/fa";
 import { MdOutlineLocalShipping } from "react-icons/md";
+import { IoRemoveCircleOutline } from "react-icons/io5";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const ORDER_STATUSES = {
-  PENDING: "pending",
-  PAID: "paid",
-  PROCESSING: "processing",
-  SHIPPED: "shipped",
-  DELIVERED: "delivered",
-  COMPLETED: "completed",
-  CANCELLED: "cancelled",
-  RETURNED: "returned",
-  REFUNDED: "refunded",
-  FAILED: "failed",
-  EXPIRED: "expired",
-};
-
-const STATUS_CONFIG = {
-  [ORDER_STATUSES.COMPLETED]: {
-    icon: <BiCheckCircle />,
-    className: "status-completed",
-    text: "Order completed successfully",
-    color: "#10b981", // green
-  },
-  [ORDER_STATUSES.PENDING]: {
+  PENDING: {
+    value: "pending",
     icon: <BiLoader />,
+    label: "Pending",
     className: "status-pending",
-    text: "Awaiting confirmation or payment",
-    color: "#f59e0b", // amber
+    text: "Awaiting payment confirmation",
   },
-  [ORDER_STATUSES.CANCELLED]: {
-    icon: <BiRotateLeft />,
-    className: "status-cancelled",
-    text: "Order was cancelled",
-    color: "#ef4444", // red
-  },
-  [ORDER_STATUSES.REFUNDED]: {
-    icon: <BiInfoCircle />,
-    className: "status-refunded",
-    text: "Customer refunded",
-    color: "#8b5cf6", // purple
-  },
-  [ORDER_STATUSES.SHIPPED]: {
-    icon: <MdOutlineLocalShipping />,
-    className: "status-shipped",
-    text: "Shipped to customer",
-    color: "#3b82f6", // blue
-  },
-  [ORDER_STATUSES.DELIVERED]: {
-    icon: <MdOutlineLocalShipping />,
-    className: "status-shipped",
-    text: "Delivered to customer",
-    color: "#10b981", // green
-  },
-  [ORDER_STATUSES.PROCESSING]: {
-    icon: <BiLoader />,
+  PROCESSING: {
+    value: "processing",
+    icon: <AiOutlineLoading3Quarters />,
+    label: "Processing",
     className: "status-processing",
-    text: "Order is being processed",
-    color: "#f59e0b", // amber
+    text: "Processing order fulfillment",
   },
-  [ORDER_STATUSES.RETURNED]: {
-    icon: <BiInfoCircle />,
-    className: "status-returned",
-    text: "Order was returned",
-    color: "#ef4444", // red (for returned status)
+  SHIPPED: {
+    value: "shipped",
+    icon: <MdOutlineLocalShipping />,
+    label: "Shipped",
+    className: "status-shipped",
+    text: "In transit to customer",
   },
-  [ORDER_STATUSES.EXPIRED]: {
-    icon: <BiInfoCircle />,
-    className: "status-expired",
-    text: "Order expired",
-    color: "#6b7280", // gray
+  DELIVERED: {
+    value: "delivered",
+    icon: <FaBoxOpen />,
+    label: "Delivered",
+    className: "status-delivered",
+    text: "Delivered to customer address",
   },
-  [ORDER_STATUSES.DEFAULT]: {
-    icon: <BiInfoCircle />,
-    className: "status-not-applicable",
-    text: "No fulfillment required",
-    color: "#6b7280", // gray
+  COMPLETED: {
+    value: "completed",
+    icon: <BiCheckCircle />,
+    label: "Completed",
+    className: "status-completed",
+    text: "Order fulfillment complete",
+  },
+  CANCELLED: {
+    value: "cancelled",
+    icon: <IoRemoveCircleOutline />,
+    label: "Cancelled",
+    className: "status-cancelled",
+    text: "Order cancelled by customer/admin",
+  },
+  REFUNDED: {
+    value: "refunded",
+    icon: <BiRotateLeft />,
+    label: "Refunded",
+    className: "status-refunded",
+    text: "Refund processed successfully",
+  },
+  FAILED: {
+    value: "failed",
+    icon: <BiX />,
+    label: "Failed",
+    className: "status-failed",
+    text: "Payment processing failed",
   },
 };
 
-export { STATUS_CONFIG, ORDER_STATUSES };
+export { ORDER_STATUSES };
