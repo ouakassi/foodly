@@ -1,26 +1,20 @@
-import {
-  BiLoader,
-  BiInfoCircle,
-  BiRotateLeft,
-  BiCheckCircle,
-  BiX,
-} from "react-icons/bi";
+import { BiLoader, BiRotateLeft, BiCheckCircle, BiX } from "react-icons/bi";
 import { FaBoxOpen } from "react-icons/fa";
-import { MdOutlineLocalShipping } from "react-icons/md";
+import { MdOutlineLocalShipping, MdPendingActions } from "react-icons/md";
 import { IoRemoveCircleOutline } from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const ORDER_STATUSES = {
   PENDING: {
     value: "pending",
-    icon: <BiLoader />,
+    icon: <MdPendingActions />,
     label: "Pending",
     className: "status-pending",
     text: "Awaiting payment confirmation",
   },
   PROCESSING: {
     value: "processing",
-    icon: <AiOutlineLoading3Quarters />,
+    icon: <BiLoader />,
     label: "Processing",
     className: "status-processing",
     text: "Processing order fulfillment",

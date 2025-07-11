@@ -4,3 +4,33 @@
   padding: 0.5rem;
   align-items: center;
 }
+
+/* ----- order statues --------*/
+
+.status-pending {
+  color: #f59e0b;
+}
+
+.status-processing {
+  color: #3b82f6;
+}
+
+.status-shipped {
+  color: #8b5cf6;
+}
+.status-delivered {
+  color: #06b6d4;
+}
+.status-completed {
+  color: #10b981;
+}
+.status-cancelled {
+  color: #ef4444;
+}
+.status-refunded {
+  color: #f97316;
+}
+
+.status-failed {
+  color: #dc2626;
+}

@@ -83,57 +83,10 @@
 .orders-table .date {
   color: rgb(146, 146, 146);
 }
-.orders-table .status-pending {
-  color: #f59e0b;
-}
-
-.orders-table .status-processing {
-  color: #3b82f6;
-}
-
-.orders-table .status-shipped {
-  color: #8b5cf6;
-}
-.orders-table .status-delivered {
-  color: #06b6d4;
-}
-.orders-table .status-completed {
-  color: #10b981;
-}
-.orders-table .status-cancelled {
-  color: #ef4444;
-}
-.orders-table .status-refunded {
-  color: #f97316;
-}
-
-.orders-table .status-failed {
-  color: #dc2626;
-}
 
 .orders-table .total {
   font-weight: bold;
   color: var(--color-money);
-}
-
-.payment-paid {
-  color: green;
-}
-
-.payment-pending {
-  color: orange;
-}
-
-.payment-failed {
-  color: red;
-}
-
-.payment-refunded {
-  color: blue;
-}
-
-.payment-authorized {
-  color: gray;
 }
 
 .orders-table .actions {
