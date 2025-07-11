@@ -6,26 +6,15 @@
 .create-header {
   display: flex;
   justify-content: space-between;
-  padding: 0.75rem;
-  margin-bottom: 0.75rem;
+  padding: 0 0.75rem;
 }
-.create-header div {
-  display: flex;
-  gap: 0.5rem;
-}
+
 .create-header button {
   max-width: fit-content;
 }
 
 .create-header .button-save {
   background-color: #717171;
-}
-
-.create-header h1 {
-  font-family: var(--font-5);
-  font-weight: var(--fw-semi);
-  font-size: var(--fs-xl);
-  text-transform: capitalize;
 }
 
 .create-product .row {
@@ -138,7 +127,7 @@ span:has(.product-image) {
   cursor: pointer;
   transition: 0.2s;
   border: 1px dashed var(--color-3);
-  color: black;
+  color: rgb(105, 105, 105);
   user-select: none;
 
   /* z-index: 10; */

@@ -14,8 +14,7 @@ const MediaUpload = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   return (
-    <div className="content-container media-form">
-      <h3>Media upload</h3>
+    <div className=" media-form">
       <span style={!selectedStatus ? { opacity: 0.4 } : null}>
         <ProductImage
           className="product-image"

@@ -31,10 +31,8 @@ const CategoryForm = ({
   editDefaultValues,
 }) => {
   return (
-    <div className="content-container category-form">
+    <>
       <header>
-        <h3>Category</h3>
-
         <Dialog
           open={openCategoryDialog}
           onOpenChange={onSetOpenCategoryDialog}
@@ -99,7 +97,7 @@ const CategoryForm = ({
             ))}
         </SelectContent>
       </Select>
-    </div>
+    </>
   );
 };
 

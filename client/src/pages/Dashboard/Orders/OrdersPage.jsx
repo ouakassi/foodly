@@ -225,7 +225,7 @@ export default function OrdersPage() {
   );
 
   return (
-    <section className="orders-page">
+    <section className="page orders-page">
       <PageTitle
         icon={React.createElement(LINKS_WITH_ICONS.orders.icon)}
         title={LINKS_WITH_ICONS.orders.label}
@@ -723,7 +723,7 @@ const OrdersTable = ({
             </td>
           </tr>
         )}
-        {!isLoading && !error && (!orders || orders.length === 0) && (
+        {!isLoading && !error && !orders && (
           <tr>
             <td colSpan="7" className="no-orders">
               <span>

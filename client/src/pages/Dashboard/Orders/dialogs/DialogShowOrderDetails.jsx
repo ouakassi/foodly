@@ -94,7 +94,7 @@ const DialogShowOrderDetails = ({
                 <span>
                   <strong>
                     <BsCreditCard2Back className="icon" />
-                    Payment Status:
+                    Order Status:
                   </strong>
                 </span>
                 <span>{order.status} </span>

@@ -3,7 +3,6 @@ import CustomButton from "@/components/Buttons/CustomButton";
 import InputContainer from "@/components/Forms/InputContainer";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 import { useEffect, useState } from "react";
-import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { motion } from "framer-motion";
@@ -25,40 +24,10 @@ import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { useNavigate } from "react-router-dom";
 import MediaUpload from "../../../components/Product/MediaUpload";
 import CategoryForm from "../../../components/Product/CategoryForm";
-
-//  validation schema
-let validationSchema = Yup.object({
-  status: Yup.boolean().default(true),
-  name: Yup.string()
-    .matches(
-      /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
-      "Name can only contain Latin letters."
-    )
-    .typeError("name must be a `string` type")
-    .required("Name is required")
-    .lowercase(),
-  stock: Yup.number()
-    .integer("Stock must be a whole number")
-    .min(1, "must be at least 1")
-    .typeError("must be a Number")
-    .required("Stock is required"),
-  price: Yup.number()
-    .positive("must be a positive number")
-    .min(1, "can't be less than 0")
-    .typeError("must be a Number")
-    .required("price is required"),
-  discount: Yup.number()
-    .min(0, "can't be less than 0%")
-    .max(100, "can't be more than 100%")
-    .typeError("must be a Number")
-    .nullable(),
-  category: Yup.string()
-    .matches(
-      /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
-      "Name can only contain Latin letters."
-    )
-    .typeError("name must be a `string` type"),
-});
+import ContentContainer from "../../../components/Dashboard/ContentContainer";
+import { createProductValidationSchema } from "../../../../utils/validation";
+import PageTitle from "../../../components/Dashboard/PageTitle";
+import { FaFileSignature } from "react-icons/fa";
 
 export default function CreateProductPage(defaultValues = {}) {
   const {
@@ -99,7 +68,7 @@ export default function CreateProductPage(defaultValues = {}) {
     setValue,
     formState: { errors, isValid },
   } = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(createProductValidationSchema),
     mode: "onChange",
     defaultValues: !isEditSession
       ? {
@@ -125,8 +94,6 @@ export default function CreateProductPage(defaultValues = {}) {
   useEffect(() => {
     setFocus("name");
   }, [setFocus]);
-
-  console.log(products);
 
   useEffect(() => {
     if (error) {
@@ -275,17 +242,10 @@ export default function CreateProductPage(defaultValues = {}) {
       <form onSubmit={handleSubmit(onSubmit)}>
         {!isEditSession ? (
           <div className="create-header">
-            <h1>create product</h1>
+            <PageTitle title="create product" icon={<FaFileCirclePlus />} />
             <div>
               <CustomButton
-                text="save as draft"
-                icon={<MdOutlineUploadFile fontSize="1.25rem" />}
-                isTypeSubmit={true}
-                className="button-save"
-                onClick={() => setIsDraft(true)}
-              />
-              <CustomButton
-                text="Create"
+                text="save product"
                 icon={<FaFileCirclePlus fontSize="1.25rem" />}
                 isTypeSubmit={true}
               />
@@ -293,23 +253,12 @@ export default function CreateProductPage(defaultValues = {}) {
           </div>
         ) : (
           <div className="create-header">
-            <h1>
-              Edit product{" "}
-              <span
-                style={{
-                  color: "var(--color-3)",
-                  // fontSize: "1.5rem",
-                  fontWeight: "bold",
-                  fontFamily: "var(--font-1)",
-                }}
-              >
-                {editDefaultValues.name}
-              </span>
-            </h1>
+            <PageTitle title="edit product" icon={<FaFileSignature />} />
+
             <div>
               <CustomButton
-                text="Edit"
-                icon={<FaFileCirclePlus fontSize="1.25rem" />}
+                text="save"
+                icon={<FaFileSignature fontSize="1.25rem" />}
                 isTypeSubmit={true}
                 disabled={isFormLoading}
               />
@@ -318,8 +267,7 @@ export default function CreateProductPage(defaultValues = {}) {
         )}
         <div className="row">
           <div>
-            <div className="content-container product-form">
-              <h3>product</h3>
+            <ContentContainer className={"product-form"} title={"product"}>
               <div className="status-toggle">
                 <div className="flex">
                   <TbHomeSignal
@@ -360,7 +308,10 @@ export default function CreateProductPage(defaultValues = {}) {
                     }}
                     style={
                       !selectedStatus
-                        ? { color: "#ffbbbb", textShadow: "1px 1px #00000099" }
+                        ? {
+                            color: "#ffbbbb",
+                            textShadow: "1px 1px #00000099",
+                          }
                         : null
                     }
                   >
@@ -445,28 +396,32 @@ export default function CreateProductPage(defaultValues = {}) {
                 </InputContainer>
                 <span>{formattedDiscount}</span>
               </div>
-            </div>
-            <CategoryForm
-              categories={categories}
-              newCategory={newCategory}
-              isAddCategoryLoading={isAddCategoryLoading}
-              handleAddNewCategory={handleAddNewCategory}
-              setNewCategory={setNewCategory}
-              setValue={setValue}
-              handleCategoryInputChange={handleCategoryInputChange}
-              onSetOpenCategoryDialog={setOpenCategoryDialog}
-              openCategoryDialog={openCategoryDialog}
-              isEditSession={isEditSession}
-              editDefaultValues={editDefaultValues}
-            />
-          </div>
+            </ContentContainer>
 
-          <MediaUpload
-            selectedStatus={selectedStatus}
-            imagePreview={imagePreview}
-            handleFileUpload={handleFileUpload}
-            handleRemoveImg={handleRemoveImg}
-          />
+            <ContentContainer className={"category-form"} title={"category"}>
+              <CategoryForm
+                categories={categories}
+                newCategory={newCategory}
+                isAddCategoryLoading={isAddCategoryLoading}
+                handleAddNewCategory={handleAddNewCategory}
+                setNewCategory={setNewCategory}
+                setValue={setValue}
+                handleCategoryInputChange={handleCategoryInputChange}
+                onSetOpenCategoryDialog={setOpenCategoryDialog}
+                openCategoryDialog={openCategoryDialog}
+                isEditSession={isEditSession}
+                editDefaultValues={editDefaultValues}
+              />
+            </ContentContainer>
+          </div>
+          <ContentContainer className={"media-form"} title={"media upload"}>
+            <MediaUpload
+              selectedStatus={selectedStatus}
+              imagePreview={imagePreview}
+              handleFileUpload={handleFileUpload}
+              handleRemoveImg={handleRemoveImg}
+            />
+          </ContentContainer>
         </div>
       </form>
       {isFormLoading && (

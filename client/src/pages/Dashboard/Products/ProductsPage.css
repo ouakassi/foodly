@@ -1,14 +1,7 @@
-.products-page {
-  /* overflow-x: scroll; */
-  /* margin-top: 0.75rem; */
-}
-
 .products-page .table {
-  margin-top: 1.25rem;
   overflow-x: auto;
   display: flex;
   flex-direction: column;
-  /* min-width: clamp(200px, 50%, 30rem); */
 }
 
 .table-body {
@@ -26,18 +19,14 @@
   background-color: white;
   box-shadow: var(--box-shadow-content-container);
   padding: 1rem;
-  margin-top: 1rem;
+  /* margin-top: 1rem; */
 }
 
 .products-page .filters {
-  margin-top: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* align-items: center; */
-  /* margin-bottom: 1rem; */
   gap: var(--gap-12);
-  /* font-family: var(--font-4); */
 }
 
 .products-page .filters .icon {

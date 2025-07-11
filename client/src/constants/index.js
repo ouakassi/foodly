@@ -78,6 +78,10 @@ export const API_ENDPOINTS = {
   ANALYTICS_DAILY_ORDERS_PER_MONTH: "/api/analytics/daily-orders", // params: { month, year }
 };
 
+export const APP_LINKS = {
+  PRODUCT_UPDATE: (id) => `/dashboard/products/edit/${id}`,
+};
+
 export const LINKS_WITH_ICONS = {
   dashboard: {
     icon: BsGrid,

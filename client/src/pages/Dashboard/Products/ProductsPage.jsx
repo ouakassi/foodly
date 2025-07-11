@@ -1,54 +1,28 @@
-import CustomButton from "@/components/Buttons/CustomButton";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
+
 import "./ProductsPage.css";
 
-import { BsPlusCircleFill, BsShieldCheck, BsShieldX } from "react-icons/bs";
-import { BiSolidErrorCircle } from "react-icons/bi";
-import { CiGrid41, CiStar, CiWarning } from "react-icons/ci";
-import { HiOutlineReceiptPercent } from "react-icons/hi2";
-
-import {
-  TbHandClick,
-  TbCategory2,
-  TbHomeSignal,
-  TbBrandProducthunt,
-  TbSearch,
-  TbForbid2,
-} from "react-icons/tb";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import useAxiosFetch from "../../../hooks/useAxiosFetch";
-import {
-  FaAngleLeft,
-  FaAngleRight,
-  FaArrowTrendDown,
-  FaRegImage,
-} from "react-icons/fa6";
-import { axiosInstance, API_URL } from "../../../api/api";
-import { toast } from "sonner";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
-import InputContainer from "../../../components/Forms/InputContainer";
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// UI Components
+import CustomButton from "@/components/Buttons/CustomButton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-
-import useDebounce from "../../../hooks/useDebounce";
+import InputContainer from "../../../components/Forms/InputContainer";
+import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
+import PageTitle from "../../../components/Dashboard/PageTitle";
+import {
+  Table,
+  TableBody,
+  TableHead,
+} from "../../../components/Table/TableComponents";
 import {
   NextBtn,
   PagesCount,
   PreviousBtn,
   TableBtns,
 } from "../../../components/Table/TableBtns";
-import PageTitle from "../../../components/Dashboard/PageTitle";
-import { LINKS_WITH_ICONS } from "../../../constants";
-import {
-  Table,
-  TableBody,
-  TableHead,
-} from "../../../components/Table/TableComponents";
-import { GoDotFill } from "react-icons/go";
-import { formatCurrency, formatDate } from "../../../lib/helpers";
-import { MdDeleteForever, MdEditSquare } from "react-icons/md";
 
+// Dialogs & Tooltips
 import {
   Tooltip,
   TooltipContent,
@@ -66,7 +40,26 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
+// Icons
+import { BsPlusCircleFill, BsShieldCheck, BsShieldX } from "react-icons/bs";
+import { CiGrid41, CiWarning } from "react-icons/ci";
+import { FaArrowTrendDown } from "react-icons/fa6";
+import { MdDeleteForever, MdEditSquare } from "react-icons/md";
 import { AiFillDelete } from "react-icons/ai";
+import { TbSearch, TbForbid2 } from "react-icons/tb";
+
+// API & Hooks
+import useAxiosFetch from "../../../hooks/useAxiosFetch";
+import useDebounce from "../../../hooks/useDebounce";
+import { axiosInstance, API_URL } from "../../../api/api";
+
+// Constants & Helpers
+import { APP_LINKS, LINKS_WITH_ICONS } from "../../../constants";
+import { formatCurrency, formatDate } from "../../../lib/helpers";
+
+// Notifications
+import { toast } from "sonner";
 
 const tableHeaders = [
   "Image",
@@ -219,16 +212,16 @@ export default function ProductsPage() {
     setSearchParams(newSearchParams);
   };
 
-  const handleDeleteProduct = async (product) => {
-    if (!product.id) {
+  const handleDeleteProduct = async (id) => {
+    if (!id) {
       toast.error("Please select a product to delete");
       return;
     }
     try {
-      await axiosInstance.put(`/api/products/${product.id}/delete/`);
+      await axiosInstance.put(`/api/products/${id}/delete/`);
       toast.success("Product Deleted Successfully");
 
-      const updatedProducts = products.filter((p) => p.id !== product.id);
+      const updatedProducts = products.filter((p) => p.id !== id);
 
       // Go to previous page if this was the last product on the current page
       if (updatedProducts.length === 0 && page > 1) {
@@ -278,78 +271,73 @@ export default function ProductsPage() {
   };
 
   return (
-    <section className="products-page">
-      {products && (
-        <>
-          <header>
-            <PageTitle
-              icon={React.createElement(LINKS_WITH_ICONS.products.icon)}
-              title={LINKS_WITH_ICONS.products.label}
+    <section className="page products-page">
+      <header>
+        <PageTitle
+          icon={React.createElement(LINKS_WITH_ICONS.products.icon)}
+          title={LINKS_WITH_ICONS.products.label}
+        />
+
+        <Link to={"create"}>
+          <CustomButton
+            className="add-product-button"
+            scaleOnHover={1}
+            text="Add Product"
+            icon={<BsPlusCircleFill />}
+          />
+        </Link>
+      </header>
+      <div className="products-container">
+        <div className="filters">
+          <Tabs defaultValue={status ? status : "all"} className="w-[400px]">
+            <FilterTabsList tabs={tabs} handleTabChange={handleTabChange} />
+          </Tabs>
+
+          <InputContainer icon={<TbSearch />} className="search-container">
+            <input
+              type="text"
+              placeholder="Search for product.."
+              onChange={handleSearchParamChange}
             />
+          </InputContainer>
 
-            <Link to={"create"}>
-              <CustomButton
-                className="add-product-button"
-                scaleOnHover={1}
-                text="Add Product"
-                icon={<BsPlusCircleFill />}
-              />
-            </Link>
-          </header>
-          <div className="products-container">
-            <div className="filters">
-              <Tabs
-                defaultValue={status ? status : "all"}
-                className="w-[400px]"
-              >
-                <FilterTabsList tabs={tabs} handleTabChange={handleTabChange} />
-              </Tabs>
+          <TableBtns
+            handleNextPage={handleNextPage}
+            handlePreviousPage={handlePreviousPage}
+            page={page}
+            totalPages={totalPages}
+          />
+        </div>
 
-              <InputContainer icon={<TbSearch />} className="search-container">
-                <input
-                  type="text"
-                  placeholder="Search for product.."
-                  onChange={handleSearchParamChange}
-                />
-              </InputContainer>
+        <div className="table-container">
+          <ProductsTable
+            isLoading={isLoading}
+            products={products}
+            handleDeleteProduct={handleDeleteProduct}
+          />
+        </div>
 
-              <TableBtns
-                handleNextPage={handleNextPage}
-                handlePreviousPage={handlePreviousPage}
-                page={page}
-                totalPages={totalPages}
-              />
-            </div>
-
-            <ProductsTable
-              products={products}
-              handleDeleteProduct={handleDeleteProduct}
-            />
-
-            <footer className="table-footer">
-              <select
-                defaultValue={limitPerPage}
-                onChange={(e) => {
-                  updatePageParam(1);
-                  setLimitPerPage(Number(e.target.value));
-                }}
-              >
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-              </select>
-              <TableBtns
-                showPageNumber={true}
-                handleNextPage={handleNextPage}
-                handlePreviousPage={handlePreviousPage}
-                page={page}
-                totalPages={totalPages}
-              />
-            </footer>
-          </div>
-        </>
-      )}
-      {/* <NoProductsPage /> */}
+        <footer className="table-footer">
+          <select
+            defaultValue={limitPerPage}
+            onChange={(e) => {
+              updatePageParam(1);
+              setLimitPerPage(Number(e.target.value));
+            }}
+          >
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+          </select>
+          <TableBtns
+            showPageNumber={true}
+            handleNextPage={handleNextPage}
+            handlePreviousPage={handlePreviousPage}
+            page={page}
+            totalPages={totalPages}
+          />
+        </footer>
+      </div>
     </section>
   );
 }
@@ -395,159 +383,165 @@ const FilterTabsList = ({ tabs, handleTabChange }) => {
   );
 };
 
-const ProductsTable = ({ products, handleDeleteProduct }) => (
-  <Table>
-    <TableHead columns={tableHeaders} />
-    <TableBody>
-      {products.map(
-        ({
-          id,
-          imgUrl: productImg,
-          name: productName,
-          price,
-          discount,
-          category,
-          orders,
-          stock,
-          rating,
-          status,
-          createdAt: publishedDate,
-        }) => {
-          const isActive = status === true;
-          const isStockLow = stock <= 30;
-          return (
-            <tr className="product-row" key={id}>
-              <td style={!isActive ? { opacity: 0.8 } : { opacity: 1 }}>
-                <img
-                  src={productImg}
-                  alt={productName}
-                  className="product-img"
-                />
-              </td>
-              <td className="name">{productName}</td>
-              <td className="status">
-                <span className={isActive ? "active" : "inactive"}>
-                  {/* <GoDotFill /> */}
-                  {/* {isActive ? <FaRegCircleCheck /> : <FaRegCircleXmark />} */}
-                  {isActive ? "Active" : "Inactive"}
-                </span>
-              </td>
-              <td>
-                {isStockLow ? (
-                  <TooltipProvider delayDuration={100}>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        {stock}
-                        {isStockLow && (
-                          <FaArrowTrendDown color="var(--color-2)" />
-                        )}
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p
-                          style={{
-                            color: "var(--color-2)",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "2px",
-                          }}
-                        >
-                          <CiWarning fontSize={"1.2rem"} />
-                          Stock is low
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ) : (
-                  stock
-                )}
-              </td>
-              <td className="price">{formatCurrency(price)}</td>
-              <td>{category}</td>
-              <td>{`${discount}%`}</td>
-              <td className="published">{formatDate(publishedDate)}</td>
-              {handleDeleteProduct && (
-                <td className="action">
-                  <TooltipProvider delayDuration={100}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span>
-                          <CustomButton
-                            aria-label="Edit Product"
-                            style={{
-                              ...buttonStyle,
-                              color: "#1131af",
-                            }}
-                            icon={<MdEditSquare />}
-                            onClick={() => {
-                              navigate(
-                                `/dashboard/products/edit/${product.id}`
-                              );
-                            }}
-                          />
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Edit Product</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+const ProductsTable = ({ isLoading, products, handleDeleteProduct }) => {
+  let navigate = useNavigate();
 
-                  <AlertDialog>
-                    <TooltipProvider delayDuration={100}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <AlertDialogTrigger>
-                            <CustomButton
-                              aria-label="Delete Product"
+  return (
+    <Table>
+      <TableHead columns={tableHeaders} />
+      {isLoading && <TableSkeleton />}
+      {!isLoading && products && (
+        <TableBody>
+          {products.map(
+            ({
+              id,
+              imgUrl: productImg,
+              name: productName,
+              price,
+              discount,
+              category,
+              orders,
+              stock,
+              rating,
+              status,
+              createdAt: publishedDate,
+            }) => {
+              const isActive = status === true;
+              const isStockLow = stock <= 30;
+              return (
+                <tr className="product-row" key={id}>
+                  <td style={!isActive ? { opacity: 0.8 } : { opacity: 1 }}>
+                    <img
+                      src={productImg}
+                      alt={productName}
+                      className="product-img"
+                    />
+                  </td>
+                  <td className="name">{productName}</td>
+                  <td className="status">
+                    <span className={isActive ? "active" : "inactive"}>
+                      {/* <GoDotFill /> */}
+                      {/* {isActive ? <FaRegCircleCheck /> : <FaRegCircleXmark />} */}
+                      {isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td>
+                    {isStockLow ? (
+                      <TooltipProvider delayDuration={100}>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            {stock}
+                            {isStockLow && (
+                              <FaArrowTrendDown color="var(--color-2)" />
+                            )}
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p
                               style={{
-                                ...buttonStyle,
-                                color: "#ef0012",
+                                color: "var(--color-2)",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "2px",
                               }}
-                              icon={<MdDeleteForever />}
-                            />
-                          </AlertDialogTrigger>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Delete Product</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                            >
+                              <CiWarning fontSize={"1.2rem"} />
+                              Stock is low
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      stock
+                    )}
+                  </td>
+                  <td className="price">{formatCurrency(price)}</td>
+                  <td>{category}</td>
+                  <td>{`${discount}%`}</td>
+                  <td className="published">{formatDate(publishedDate)}</td>
+                  {handleDeleteProduct && (
+                    <td className="action">
+                      <TooltipProvider delayDuration={100}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span>
+                              <CustomButton
+                                aria-label="Edit Product"
+                                style={{
+                                  ...buttonStyle,
+                                  color: "#1131af",
+                                }}
+                                icon={<MdEditSquare />}
+                                onClick={() => {
+                                  navigate(APP_LINKS.PRODUCT_UPDATE(id));
+                                }}
+                              />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit Product</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
 
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you sure you want to delete this product?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete the product from your inventory.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel asChild>
-                          <CustomButton
-                            className="dialog-button-cancel"
-                            text="Cancel"
-                            icon={<TbForbid2 />}
-                          />
-                        </AlertDialogCancel>
-                        <AlertDialogAction asChild>
-                          <CustomButton
-                            className="dialog-button-delete"
-                            text="Delete"
-                            icon={<AiFillDelete />}
-                            onClick={() => handleDeleteProduct(product)}
-                          />
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </td>
-              )}
-            </tr>
-          );
-        }
+                      <AlertDialog>
+                        <TooltipProvider delayDuration={100}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <AlertDialogTrigger>
+                                <CustomButton
+                                  aria-label="Delete Product"
+                                  style={{
+                                    ...buttonStyle,
+                                    color: "#ef0012",
+                                  }}
+                                  icon={<MdDeleteForever />}
+                                />
+                              </AlertDialogTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Delete Product</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you sure you want to delete this product?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete the product from your
+                              inventory.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel asChild>
+                              <CustomButton
+                                className="dialog-button-cancel"
+                                text="Cancel"
+                                icon={<TbForbid2 />}
+                              />
+                            </AlertDialogCancel>
+                            <AlertDialogAction asChild>
+                              <CustomButton
+                                className="dialog-button-delete"
+                                text="Delete"
+                                icon={<AiFillDelete />}
+                                onClick={() => handleDeleteProduct(id)}
+                              />
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </td>
+                  )}
+                </tr>
+              );
+            }
+          )}
+        </TableBody>
       )}
-    </TableBody>
-  </Table>
-);
+    </Table>
+  );
+};

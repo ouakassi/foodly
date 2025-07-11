@@ -1,3 +1,16 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ----- table --------*/
+
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+}
+
 .table-footer {
   display: flex;
   justify-content: center;
