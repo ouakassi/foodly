@@ -257,7 +257,7 @@ export default function CreateProductPage(defaultValues = {}) {
 
             <div>
               <CustomButton
-                text="save"
+                text="save edit"
                 icon={<FaFileSignature fontSize="1.25rem" />}
                 isTypeSubmit={true}
                 disabled={isFormLoading}
@@ -265,8 +265,17 @@ export default function CreateProductPage(defaultValues = {}) {
             </div>
           </div>
         )}
-        <div className="row">
-          <div>
+
+        <div>
+          <ContentContainer className={"media-form"} title={"media upload"}>
+            <MediaUpload
+              selectedStatus={selectedStatus}
+              imagePreview={imagePreview}
+              handleFileUpload={handleFileUpload}
+              handleRemoveImg={handleRemoveImg}
+            />
+          </ContentContainer>
+          <div className="sdsadsa">
             <ContentContainer className={"product-form"} title={"product"}>
               <div className="status-toggle">
                 <div className="flex">
@@ -414,14 +423,6 @@ export default function CreateProductPage(defaultValues = {}) {
               />
             </ContentContainer>
           </div>
-          <ContentContainer className={"media-form"} title={"media upload"}>
-            <MediaUpload
-              selectedStatus={selectedStatus}
-              imagePreview={imagePreview}
-              handleFileUpload={handleFileUpload}
-              handleRemoveImg={handleRemoveImg}
-            />
-          </ContentContainer>
         </div>
       </form>
       {isFormLoading && (

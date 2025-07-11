@@ -126,10 +126,12 @@ span:has(.product-image) {
   padding: 0.75rem;
   cursor: pointer;
   transition: 0.2s;
-  border: 1px dashed var(--color-3);
+  border: 2px dashed #cfcfcfab;
   color: rgb(105, 105, 105);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  border-radius: 10px;
   user-select: none;
-
   /* z-index: 10; */
 }
 .file-input + label * {
@@ -138,18 +140,12 @@ span:has(.product-image) {
 .file-input:focus + label,
 .file-input + label:hover,
 .input-on-drag {
-  border: 1px solid transparent;
-  box-shadow: -4px 4px 0px 0px var(--color-3), 0px 0px 0px 1px var(--color-3);
+  border: 2px dashed #09bb3eab;
 }
 .file-input + .selected {
   border: 1px solid transparent;
 
   box-shadow: 0px 0px 0px 1px var(--color-3);
-}
-
-.input-on-drag {
-  border: 1px solid transparent;
-  box-shadow: -4px 4px 0px 0px var(--color-1), 0px 0px 0px 1px var(--color-3);
 }
 
 .product-image {

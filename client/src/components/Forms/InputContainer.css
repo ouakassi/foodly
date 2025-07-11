@@ -21,18 +21,27 @@
   box-shadow: -4px 4px 0px 0px var(--color-3), 0px 0px 0px 1px var(--color-3);
 }
 .input:hover {
-  box-shadow: 0px 0px 0px 1px #000;
+  box-shadow: 0px 0px 0px 1px var(--color-3);
 }
 
 .input label {
   position: absolute;
   top: -13px;
-  left: 40px;
   padding: 0 0.75rem;
   background: white;
   background-size: 0 2px;
   height: 13px;
   transition: 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+  left: 0px;
+  padding: 0 0.5rem;
+
+  /* height: 13px; */
+  transition: 0.1s all;
+  line-height: 1;
+  font-family: var(--font-1);
+  font-weight: 400;
+  left: 10px;
 }
 
 .input:focus-within label,
