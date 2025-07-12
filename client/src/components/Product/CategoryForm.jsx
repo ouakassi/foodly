@@ -18,6 +18,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/Select";
+import InputContainer from "../Forms/InputContainer";
 
 const CategoryForm = ({
   categories,
@@ -51,30 +52,19 @@ const CategoryForm = ({
               Create a new category to better organize your products.
             </DialogDescription>
 
-            <input
-              className="category-form__input"
-              type="text"
-              onChange={(e) => setNewCategory(e.target.value)}
-            />
+            <InputContainer>
+              <input
+                className="category-form__input"
+                type="text"
+                onChange={(e) => setNewCategory(e.target.value)}
+              />
+            </InputContainer>
 
             <DialogFooter>
               <CustomButton
+                icon={<MdFormatListBulletedAdd fontSize={"1.4rem"} />}
+                text="add Category"
                 onClick={handleAddNewCategory}
-                text={
-                  <span
-                    style={{
-                      fontFamily: "var(--font-2)",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    <MdFormatListBulletedAdd
-                      className="icon"
-                      style={{ fontSize: "25px" }}
-                    />
-                    Create Category
-                  </span>
-                }
               />
             </DialogFooter>
           </DialogContent>

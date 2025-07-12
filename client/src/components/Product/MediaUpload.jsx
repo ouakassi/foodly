@@ -1,3 +1,5 @@
+import "./MediaUpload.css";
+
 import ProductImage from "@/components/Product/ProductImage";
 import { motion } from "framer-motion";
 import { RiImageAddLine } from "react-icons/ri";
@@ -5,6 +7,7 @@ import { MdLibraryAddCheck, MdDeleteForever } from "react-icons/md";
 import CustomButton from "@/components/Buttons/CustomButton";
 import LoadingSpinner from "@/components/Forms/LoadingSpinner";
 import { useState } from "react";
+import { IoMdCloudUpload } from "react-icons/io";
 
 const MediaUpload = ({
   selectedStatus = true,
@@ -55,7 +58,7 @@ const MediaUpload = ({
           >
             {!imagePreview ? (
               <span>
-                <RiImageAddLine className="icon" />
+                <IoMdCloudUpload className="icon" />
                 {!isDragging
                   ? "Drop image here or click to upload..."
                   : "drop it now!"}

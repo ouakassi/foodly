@@ -62,11 +62,6 @@ select:-webkit-autofill:focus {
   transition: background-color 5000s ease-in-out 0s;
 }
 
-.icon {
-  vertical-align: middle;
-  margin: 0 0.5rem;
-}
-
 /*========== SCROLL BAR ==========*/
 ::-webkit-scrollbar {
   width: 0.4rem;

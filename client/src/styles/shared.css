@@ -4,6 +4,11 @@
   gap: 1rem;
 }
 
+.icon {
+  vertical-align: middle;
+  margin: 0 0.5rem;
+}
+
 /* ----- table --------*/
 
 .table-container {
