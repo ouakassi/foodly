@@ -218,12 +218,6 @@ export default function OrdersPage() {
     setSelectedOrderId(id);
   };
 
-  isLoading && (
-    <div>
-      <span>loading................</span>
-    </div>
-  );
-
   return (
     <section className="page orders-page">
       <PageTitle
@@ -800,11 +794,11 @@ const OrdersTable = ({
                     </Tooltip>
                   </TooltipProvider>
                 </td>
-                <td className={`status ${statusClass}`}>
+                <td className={`status`}>
                   <TooltipProvider delayDuration={100}>
                     <Tooltip>
                       <TooltipTrigger>
-                        <span>
+                        <span className={statusClass}>
                           {statusIcon}
                           {status}
                         </span>

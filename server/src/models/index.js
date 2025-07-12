@@ -68,9 +68,12 @@ const createRandomOrdersFor60Days = async () => {
     const orderStatuses = [
       "completed",
       "pending",
+      "processing",
       "shipped",
       "delivered",
       "cancelled",
+      "failed",
+      "refunded",
     ];
 
     const now = new Date();

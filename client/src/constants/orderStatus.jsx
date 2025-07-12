@@ -1,7 +1,20 @@
-import { BiLoader, BiRotateLeft, BiCheckCircle, BiX } from "react-icons/bi";
-import { FaBoxOpen } from "react-icons/fa";
-import { MdOutlineLocalShipping, MdPendingActions } from "react-icons/md";
-import { IoRemoveCircleOutline } from "react-icons/io5";
+import {
+  BiLoader,
+  BiRotateLeft,
+  BiCheckCircle,
+  BiX,
+  BiSolidCheckCircle,
+} from "react-icons/bi";
+import { FaBoxOpen, FaExclamationCircle } from "react-icons/fa";
+import {
+  MdLocalShipping,
+  MdOutlineLocalShipping,
+  MdPendingActions,
+} from "react-icons/md";
+import {
+  IoCheckmarkDoneCircleSharp,
+  IoRemoveCircleOutline,
+} from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const ORDER_STATUSES = {
@@ -21,7 +34,7 @@ const ORDER_STATUSES = {
   },
   SHIPPED: {
     value: "shipped",
-    icon: <MdOutlineLocalShipping />,
+    icon: <MdLocalShipping />,
     label: "Shipped",
     className: "status-shipped",
     text: "In transit to customer",
@@ -35,14 +48,14 @@ const ORDER_STATUSES = {
   },
   COMPLETED: {
     value: "completed",
-    icon: <BiCheckCircle />,
+    icon: <BiSolidCheckCircle />,
     label: "Completed",
     className: "status-completed",
     text: "Order fulfillment complete",
   },
   CANCELLED: {
     value: "cancelled",
-    icon: <IoRemoveCircleOutline />,
+    icon: <FaExclamationCircle />,
     label: "Cancelled",
     className: "status-cancelled",
     text: "Order cancelled by customer/admin",
