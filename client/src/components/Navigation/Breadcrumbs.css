@@ -2,9 +2,13 @@
 .breadcrumbs {
   display: flex;
   align-items: baseline;
-  padding: 0.3rem 0.75rem;
-  border-radius: 10px;
+  padding: 0.5rem;
+  border-radius: 5px 25px 25px 5px;
   font-family: var(--font-1);
+  background: #f7f7f7;
+  margin: 0.5rem;
+  box-shadow: var(--box-shadow-content-container);
+  width: fit-content;
 }
 .breadcrumbs > * {
   display: inline-block;
@@ -30,7 +34,7 @@
 }
 .breadcrumbs div.crumb:not(:first-child):hover a,
 .breadcrumbs div:first-child a svg:hover {
-  color: var(--color-4);
+  color: var(--color-3);
   text-decoration-line: underline;
 }
 .breadcrumbs .crumb:last-child:after {
@@ -43,5 +47,5 @@
 .breadcrumbs .crumb a,
 .breadcrumbs,
 .breadcrumbs div:first-child a svg {
-  color: var(--color-6);
+  color: rgb(51, 50, 50);
 }
