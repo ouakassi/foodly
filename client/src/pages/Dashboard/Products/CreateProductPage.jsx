@@ -80,9 +80,9 @@ export default function CreateProductPage(defaultValues = {}) {
   });
 
   let navigate = useNavigate();
-  const formattedDiscount = getValues().discount.toLocaleString("en", {
-    style: "percent",
-  });
+  // const formattedDiscount = getValues().discount.toLocaleString("en", {
+  //   style: "percent",
+  // });
 
   const {
     data: products,
@@ -275,7 +275,7 @@ export default function CreateProductPage(defaultValues = {}) {
               handleRemoveImg={handleRemoveImg}
             />
           </ContentContainer>
-          <div className="sdsadsa">
+          <div className="row">
             <ContentContainer className={"product-form"} title={"product"}>
               <div className="status-toggle">
                 <div className="flex">
@@ -403,7 +403,7 @@ export default function CreateProductPage(defaultValues = {}) {
                     })}
                   />
                 </InputContainer>
-                <span>{formattedDiscount}</span>
+                {/* <span>{formattedDiscount}</span> */}
               </div>
             </ContentContainer>
 

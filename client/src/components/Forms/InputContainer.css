@@ -6,14 +6,13 @@
   display: flex;
   align-items: center;
   position: relative;
-  font-family: var(--font-5);
-  font-weight: var(--fw-bold);
+  font-family: var(--font-1);
   text-transform: capitalize;
-  box-shadow: 0px 0px 0px 1px rgba(124, 124, 124, 0.3);
+  box-shadow: 0px 0px 0px 1px rgb(201, 201, 201);
   border-radius: 5px;
   transition: 0.2s;
   margin-bottom: 0.5rem;
-  border-radius: 2px;
+  border-radius: 5px;
   background-color: #fff;
 }
 .input:focus-within,

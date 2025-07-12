@@ -4,8 +4,8 @@ import ErrorMsg from "../Errors/ErrorMsg";
 
 const errorMsgStyle = {
   color: "red",
-  borderRadius: "0px",
-  boxShadow: "0px 2px 0px 0px red",
+  // borderRadius: "0px",
+  boxShadow: "#ffb1b1 0px 0px 0px 1px",
 };
 
 export default function InputContainer({
