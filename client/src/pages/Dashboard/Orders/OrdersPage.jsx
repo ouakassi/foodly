@@ -675,9 +675,7 @@ const OrdersTable = ({
       <TableHead columns={orderColumns} />
 
       <TableBody>
-        {isLoading && (
-          <TableSkeleton rows={orders.length} columns={orderColumns.length} />
-        )}
+        {isLoading && <TableSkeleton rows={10} columns={orderColumns.length} />}
 
         {!isLoading && error && (
           <tr>
