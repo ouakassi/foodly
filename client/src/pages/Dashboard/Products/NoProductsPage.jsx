@@ -1,17 +1,10 @@
-import { AiOutlineAlert } from "react-icons/ai";
 import CustomButton from "../../../components/Buttons/CustomButton";
 import { IoAlertCircleOutline } from "react-icons/io5";
 import { BsPlusCircleFill } from "react-icons/bs";
 import "./NoProductsPage.css";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Link } from "react-router-dom";
+import { APP_LINKS } from "../../../constants";
 
 export default function NoProductsPage() {
   return (
@@ -25,7 +18,7 @@ export default function NoProductsPage() {
       </h1>
 
       <span>Begin your sales journey by adding a product now.</span>
-      <Link to={"create"}>
+      <Link to={APP_LINKS.PRODUCT_CREATE}>
         <CustomButton
           className="add-product-button"
           scaleOnHover={1}

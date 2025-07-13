@@ -29,6 +29,13 @@ export const APP_CONFIG = {
   },
   //   MAX_RETRIES: 3,
 };
+
+export const ROLES = {
+  ADMIN: "admin",
+  MODERATOR: "moderator",
+  USER: "user",
+};
+
 export const API_ENDPOINTS = {
   //Products
   PRODUCTS: "/api/products",
@@ -79,7 +86,69 @@ export const API_ENDPOINTS = {
 };
 
 export const APP_LINKS = {
+  // Dashboard
+  DASHBOARD: "/dashboard",
+  DASHBOARD_OVERVIEW: "/dashboard/overview",
+  DASHBOARD_ANALYTICS: "/dashboard/analytics",
+  DASHBOARD_REPORTS: "/dashboard/reports",
+  DASHBOARD_SETTINGS: "/dashboard/settings",
+
+  // Authentication
+  LOGIN: "/auth/login",
+  REGISTER: "/auth/register",
+  FORGOT_PASSWORD: "/auth/forgot-password",
+  RESET_PASSWORD: "/auth/reset-password",
+  VERIFY_EMAIL: "/auth/verify-email",
+  LOGOUT: "/auth/logout",
+
+  // Public Pages
+  HOME: "/",
+  ABOUT: "/about",
+  CONTACT: "/contact",
+  PRIVACY: "/privacy",
+  TERMS: "/terms",
+  HELP: "/help",
+  SUPPORT: "/support",
+
+  // Products
+  PRODUCTS: "/dashboard/products",
+  PRODUCT_CREATE: "/dashboard/products/create",
   PRODUCT_UPDATE: (id) => `/dashboard/products/edit/${id}`,
+  PRODUCT_VIEW: (id) => `/dashboard/products/view/${id}`,
+  PRODUCT_DELETE: (id) => `/dashboard/products/delete/${id}`,
+  PRODUCT_DUPLICATE: (id) => `/dashboard/products/duplicate/${id}`,
+  PRODUCT_BULK_ACTIONS: "/dashboard/products/bulk-actions",
+  PRODUCT_IMPORT: "/dashboard/products/import",
+  PRODUCT_EXPORT: "/dashboard/products/export",
+
+  // Orders
+  ORDERS: "/dashboard/orders",
+  ORDER_CREATE: "/dashboard/orders/create",
+  ORDER_VIEW: (id) => `/dashboard/orders/view/${id}`,
+  ORDER_UPDATE: (id) => `/dashboard/orders/edit/${id}`,
+  ORDER_INVOICE: (id) => `/dashboard/orders/${id}/invoice`,
+  ORDER_TRACKING: (id) => `/dashboard/orders/${id}/tracking`,
+  ORDER_REFUND: (id) => `/dashboard/orders/${id}/refund`,
+
+  // Users
+  USERS: "/dashboard/users",
+  USER_CREATE: "/dashboard/users/create",
+  USER_VIEW: (id) => `/dashboard/users/view/${id}`,
+  USER_UPDATE: (id) => `/dashboard/users/edit/${id}`,
+  USER_ORDERS: (id) => `/dashboard/users/${id}/orders`,
+  USER_IMPORT: "/dashboard/users/import",
+  USER_EXPORT: "/dashboard/users/export",
+
+  // Settings
+  SETTINGS: "/dashboard/settings",
+  SETTINGS_GENERAL: "/dashboard/settings/general",
+  SETTINGS_PROFILE: "/dashboard/settings/profile",
+  SETTINGS_SECURITY: "/dashboard/settings/security",
+  SETTINGS_NOTIFICATIONS: "/dashboard/settings/notifications",
+  SETTINGS_INTEGRATIONS: "/dashboard/settings/integrations",
+  SETTINGS_BILLING: "/dashboard/settings/billing",
+  SETTINGS_API: "/dashboard/settings/api",
+  SETTINGS_BACKUP: "/dashboard/settings/backup",
 };
 
 export const LINKS_WITH_ICONS = {

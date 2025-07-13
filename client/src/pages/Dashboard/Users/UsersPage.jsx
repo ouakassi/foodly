@@ -4,7 +4,7 @@ import {
   TableBody,
   TableHead,
 } from "../../../components/Table/TableComponents";
-import { API_ENDPOINTS, LINKS_WITH_ICONS } from "../../../constants";
+import { API_ENDPOINTS, APP_LINKS, LINKS_WITH_ICONS } from "../../../constants";
 import React, { useCallback, useState } from "react";
 import PageTitle from "../../../components/Dashboard/PageTitle";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
@@ -39,7 +39,7 @@ import { MdEditDocument, MdOutlineZoomOutMap } from "react-icons/md";
 import { LuCrown } from "react-icons/lu";
 import { IoShield } from "react-icons/io5";
 import { CiGrid41 } from "react-icons/ci";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   NextBtn,
   PreviousBtn,
@@ -149,7 +149,9 @@ export default function UsersPage() {
           icon={React.createElement(LINKS_WITH_ICONS.users.icon)}
           title={LINKS_WITH_ICONS.users.label}
         />
-        <CustomButton text="add user" icon={<RiUserAddFill />} />
+        <Link to={APP_LINKS.USER_CREATE}>
+          <CustomButton text="add user" icon={<RiUserAddFill />} />
+        </Link>
       </header>
       <div className="overview-cards">
         <UsersOverview />

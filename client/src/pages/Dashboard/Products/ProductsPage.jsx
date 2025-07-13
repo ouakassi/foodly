@@ -278,7 +278,7 @@ export default function ProductsPage() {
           title={LINKS_WITH_ICONS.products.label}
         />
 
-        <Link to={"create"}>
+        <Link to={APP_LINKS.PRODUCT_CREATE}>
           <CustomButton
             className="add-product-button"
             scaleOnHover={1}

@@ -34,8 +34,9 @@ import OrdersPage from "./pages/Dashboard/Orders/OrdersPage";
 import ProductsPage from "./pages/Dashboard/Products/ProductsPage";
 import ReportsPage from "./pages/Dashboard/ReportsPage";
 import CreateProductPage from "./pages/Dashboard/Products/CreateProductPage";
-import ProductsLayout from "./pages/ProductsLayout";
+import PageLayout from "./pages/PageLayout";
 import EditProductPage from "./pages/Dashboard/Products/EditProductPage";
+import CreateUserPage from "./pages/Dashboard/Users/CreateUserPage";
 
 const LazyAbout = lazy(() => import("./pages/About/AboutPage"));
 
@@ -71,12 +72,15 @@ function App() {
         <Route path="dashboard" element={<DashboardLayout />}>
           <Route index path="overview" element={<OverviewPage />} />
           <Route path="orders" element={<OrdersPage />} />
-          <Route path="users" element={<UsersPage />} />
-          <Route path="products" element={<ProductsLayout />}>
+          <Route path="products" element={<PageLayout />}>
             <Route index element={<ProductsPage />} />
             {/* <Route path=":productId" element={<ProductsPage />} /> */}
             <Route path="create" element={<CreateProductPage />} />
             <Route path="edit/:productId" element={<EditProductPage />} />
+          </Route>
+          <Route path="users" element={<PageLayout />}>
+            <Route index element={<UsersPage />} />
+            <Route path="create" element={<CreateUserPage />} />
           </Route>
           <Route path="reports" element={<ReportsPage />} />
           <Route path="settings">

@@ -7,18 +7,12 @@ import Logo from "../Navigation/Logo";
 import {
   BsClipboardData,
   BsPeople,
-  BsCollection,
-  BsArchive,
-  BsCollectionFill,
-  BsArchiveFill,
   BsClipboardDataFill,
   BsPeopleFill,
   BsClipboardCheckFill,
   BsClipboardCheck,
   BsGridFill,
   BsGrid,
-  BsFilterLeft,
-  BsFilterRight,
   BsBasket,
   BsBasketFill,
   BsPersonCircle,
@@ -26,45 +20,45 @@ import {
   BsBoxArrowInRight,
   BsPersonVcard,
 } from "react-icons/bs";
-import { HiMenuAlt2, HiMenuAlt3 } from "react-icons/hi";
 import AnimatedIcon from "../Buttons/AnimatedIcon";
 import DashboardSidebarNavItem from "./DashboardSidebarNavItem";
 import DropdownMenu from "../Navigation/DropdownMenu";
 import DropdownItem from "../Navigation/DropdownItem";
 import useCheckIfClickedOutside from "../../hooks/useCheckIfClickedOutside";
 import { LuArrowLeftFromLine, LuArrowRightFromLine } from "react-icons/lu";
+import { APP_LINKS } from "../../constants";
 
 const navItems = [
   {
     icon: <BsGrid />,
     hoverIcon: <BsGridFill />,
     name: "overview",
-    link: "overview",
+    link: APP_LINKS.DASHBOARD_OVERVIEW,
   },
   {
     icon: <BsBasket />,
     hoverIcon: <BsBasketFill />,
     name: "products",
-    link: "products",
+    link: APP_LINKS.PRODUCTS,
   },
   {
     icon: <BsClipboardCheck />,
     hoverIcon: <BsClipboardCheckFill />,
     name: "orders",
-    link: "orders",
+    link: APP_LINKS.ORDERS,
   },
   {
     icon: <BsPeople />,
     hoverIcon: <BsPeopleFill />,
 
     name: "users",
-    link: "users",
+    link: APP_LINKS.USERS,
   },
   {
     icon: <BsClipboardData />,
     hoverIcon: <BsClipboardDataFill />,
     name: "reports",
-    link: "reports",
+    link: APP_LINKS.DASHBOARD_REPORTS,
   },
 ];
 
@@ -103,7 +97,7 @@ export default function DashboardSidebar() {
       <header className="dashboard-sidebar-header">
         {!toggleSidebar && (
           <Logo
-            link="/dashboard"
+            link={APP_LINKS.DASHBOARD}
             logoName="Foodly"
             className="dashboard-sidebar-logo"
           />
