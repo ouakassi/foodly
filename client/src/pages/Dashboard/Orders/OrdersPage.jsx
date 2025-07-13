@@ -282,6 +282,7 @@ export default function OrdersPage() {
             clearParams={clearParams}
             handleOpen={handleOpen}
             onSelectOrderId={handleSelectOrderId}
+            limit={limit}
           />
         </div>
         <footer className="table-footer">
@@ -308,35 +309,13 @@ export default function OrdersPage() {
   );
 }
 
-const TableSkeleton = ({ rows = 5 }) => {
+const TableSkeleton = ({ rows = 5, columns = 1 }) => {
   return (
     <>
       {Array.from({ length: rows }).map((_, index) => (
-        <tr key={index} className="order-row p-4 gap-4">
-          <td className="order-id">
+        <tr key={index} className="order-row p-8 ">
+          <td className="order-id" colSpan={columns}>
             <Skeleton className="h-8 w-full" />
-          </td>
-
-          <td className="email">
-            <Skeleton className="h-8 w-full" />
-          </td>
-          <td className="status ">
-            <Skeleton className="h-8 w-full " />
-          </td>
-          <td className="date">
-            <Skeleton className="h-8 w-full" />
-          </td>
-          <td className="total">
-            <Skeleton className="h-8 w-full" />
-          </td>
-          <td className="payment">
-            <Skeleton className="h-8 w-full" />
-          </td>
-          <td className="actions">
-            <div className="flex items-center ">
-              <Skeleton className="h-4 w-4 rounded-full" />
-              {/* <Skeleton className="h-4 w-20" /> */}
-            </div>
           </td>
         </tr>
       ))}
@@ -696,7 +675,10 @@ const OrdersTable = ({
       <TableHead columns={orderColumns} />
 
       <TableBody>
-        {isLoading && <TableSkeleton rows={10} />}
+        {isLoading && (
+          <TableSkeleton rows={orders.length} columns={orderColumns.length} />
+        )}
+
         {!isLoading && error && (
           <tr>
             <td colSpan="7" className="error">
