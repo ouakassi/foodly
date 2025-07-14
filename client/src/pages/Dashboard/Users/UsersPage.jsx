@@ -1,18 +1,17 @@
 import "./UserPage.css";
+import React, { useCallback, useState } from "react";
 import {
   Table,
   TableBody,
   TableHead,
 } from "../../../components/Table/TableComponents";
 import { API_ENDPOINTS, APP_LINKS, LINKS_WITH_ICONS } from "../../../constants";
-import React, { useCallback, useState } from "react";
 import PageTitle from "../../../components/Dashboard/PageTitle";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import { API_URL } from "../../../api/api";
 import { formatDate } from "../../../lib/helpers";
-import { RiUser4Line, RiUserAddFill } from "react-icons/ri";
-import CustomButton from "../../../components/Buttons/CustomButton";
-import { LiaUserAstronautSolid, LiaUserShieldSolid } from "react-icons/lia";
+import { RiUser4Line } from "react-icons/ri";
+
 import {
   Tooltip,
   TooltipContent,
@@ -32,19 +31,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { MdEditDocument, MdOutlineZoomOutMap } from "react-icons/md";
 import { LuCrown } from "react-icons/lu";
 import { IoShield } from "react-icons/io5";
 import { CiGrid41 } from "react-icons/ci";
 import { Link, useSearchParams } from "react-router-dom";
-import {
-  NextBtn,
-  PreviousBtn,
-  TableBtns,
-} from "../../../components/Table/TableBtns";
+import { TableBtns } from "../../../components/Table/TableBtns";
+
+import CreateUserPage from "./CreateUserPage";
 
 const columns = ["Name", "Status", "Joined At", "Role", "Actions"];
 export default function UsersPage() {
@@ -57,16 +56,6 @@ export default function UsersPage() {
     setDialogType(type);
     setIsDialogOpen(true);
   }, []);
-
-  const params = {
-    role: searchParams.get("role"),
-  };
-
-  const {
-    data: usersData,
-    loading,
-    error,
-  } = useAxiosFetch(API_URL + API_ENDPOINTS.USERS, params);
 
   const {
     data: usersOverviewData,
@@ -116,32 +105,6 @@ export default function UsersPage() {
     },
   ];
 
-  const getRole = (roleName) => {
-    switch (roleName) {
-      case "admin":
-        return {
-          role: "Admin",
-          className: "admin-role",
-          icon: <LuCrown />,
-        };
-      case "user":
-        return {
-          role: "Customer",
-          className: "user-role",
-          icon: <RiUser4Line />,
-        };
-
-      case "moderator":
-        return {
-          role: "Moderator",
-          className: "moderator-role",
-          icon: <IoShield />,
-        };
-
-      default:
-        return { role: "User", className: "user-role", icon: <RiUser4Line /> };
-    }
-  };
   return (
     <section className="users-page">
       <header>
@@ -149,9 +112,9 @@ export default function UsersPage() {
           icon={React.createElement(LINKS_WITH_ICONS.users.icon)}
           title={LINKS_WITH_ICONS.users.label}
         />
-        <Link to={APP_LINKS.USER_CREATE}>
-          <CustomButton text="add user" icon={<RiUserAddFill />} />
-        </Link>
+        {/* <Link to={APP_LINKS.USER_CREATE}>
+        </Link> */}
+        <CreateUserPage />
       </header>
       <div className="overview-cards">
         <UsersOverview />
@@ -167,88 +130,7 @@ export default function UsersPage() {
 
           <TableBtns />
         </header>
-        <Table className="users-table">
-          <TableHead className="users-table__head" columns={columns} />
-          <TableBody className="users-table__tbody">
-            {usersData &&
-              usersData.length > 0 &&
-              usersData.map((user) => {
-                const { role, className, icon } = getRole(user.role.name);
-                console.log(user.isActive);
-                return (
-                  <tr key={user.id}>
-                    {/* <td className="id">{user.id}</td> */}
-                    <td className="user-info">
-                      <TooltipProvider delayDuration={100}>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <span>{user.email}</span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="tooltip-content">
-                              {user.firstName + " " + user.lastName}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      {/* <span>
-                        <RiUser4Line />
-                        {`${user.firstName} ${user.lastName}`}
-                      </span>
-                      <span>
-                        <CiMail />
-                        {user.email}
-                      </span>{" "} */}
-                    </td>
-                    {/* <td className=""></td> */}
-                    <td>
-                      <span
-                        className={`status ${
-                          user.isActive ? "active" : "inactive"
-                        }`}
-                      >
-                        {user.isActive ? "Active" : "Suspended"}
-                      </span>
-                    </td>
-                    <td className="created-at">{formatDate(user.createdAt)}</td>
-                    <td>
-                      <span className={`role ${className}`}>
-                        {icon}
-                        {role}
-                      </span>
-                    </td>
-                    <td className="actions">
-                      <DropdownMenu modal={false}>
-                        <DropdownMenuTrigger asChild>
-                          <button className="actions-btn">
-                            <HiDotsVertical />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem
-                            onSelect={() => {
-                              handleOpen("showOrder");
-                              onSelectOrderId(order.id);
-                            }}
-                          >
-                            <MdOutlineZoomOutMap />
-                            View Order
-                          </DropdownMenuItem>
-
-                          <DropdownMenuItem
-                            onSelect={() => handleOpen("editOrder")}
-                          >
-                            <MdEditDocument />
-                            Edit Order
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </td>
-                  </tr>
-                );
-              })}
-          </TableBody>
-        </Table>
+        <UsersTable us />
         <footer className="table-footer">
           <TableBtns showPageNumber={true} page={1} />
         </footer>
@@ -290,3 +172,118 @@ const FilterTabsList = ({ tabs, handleTabChange }) => {
 };
 
 const Badge = ({ children }) => <span className="badge">{children}</span>;
+
+const UsersTable = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const params = {
+    role: searchParams.get("role"),
+  };
+  const {
+    data: usersData,
+    loading,
+    error,
+  } = useAxiosFetch(API_URL + API_ENDPOINTS.USERS, params);
+
+  const getRole = (roleName) => {
+    switch (roleName) {
+      case "admin":
+        return {
+          role: "Admin",
+          className: "admin-role",
+          icon: <LuCrown />,
+        };
+      case "user":
+        return {
+          role: "Customer",
+          className: "user-role",
+          icon: <RiUser4Line />,
+        };
+
+      case "moderator":
+        return {
+          role: "Moderator",
+          className: "moderator-role",
+          icon: <IoShield />,
+        };
+
+      default:
+        return { role: "User", className: "user-role", icon: <RiUser4Line /> };
+    }
+  };
+
+  return (
+    <Table className="users-table">
+      <TableHead className="users-table__head" columns={columns} />
+      <TableBody className="users-table__tbody">
+        {usersData &&
+          usersData.length > 0 &&
+          usersData.map((user) => {
+            const { role, className, icon } = getRole(user.role.name);
+            console.log(user.isActive);
+            return (
+              <tr key={user.id}>
+                <td className="user-info">
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <span>{user.email}</span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="tooltip-content">
+                          {user.firstName + " " + user.lastName}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </td>
+                <td>
+                  <span
+                    className={`status ${
+                      user.isActive ? "active" : "inactive"
+                    }`}
+                  >
+                    {user.isActive ? "Active" : "Suspended"}
+                  </span>
+                </td>
+                <td className="created-at">{formatDate(user.createdAt)}</td>
+                <td>
+                  <span className={`role ${className}`}>
+                    {icon}
+                    {role}
+                  </span>
+                </td>
+                <td className="actions">
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <button className="actions-btn">
+                        <HiDotsVertical />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onSelect={() => {
+                          handleOpen("showOrder");
+                          onSelectOrderId(order.id);
+                        }}
+                      >
+                        <MdOutlineZoomOutMap />
+                        View Order
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        onSelect={() => handleOpen("editOrder")}
+                      >
+                        <MdEditDocument />
+                        Edit Order
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </td>
+              </tr>
+            );
+          })}
+      </TableBody>
+    </Table>
+  );
+};
