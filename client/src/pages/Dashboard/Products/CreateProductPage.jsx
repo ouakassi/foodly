@@ -41,18 +41,17 @@ export default function CreateProductPage(defaultValues = {}) {
   const [selectedStatus, setSelectedStatus] = useState(
     isEditSession ? editDefaultValues.status : true
   );
-
-  const [imagePreview, setImagePreview] = useState(
-    isEditSession ? editDefaultValues.imgUrl : ""
-  );
-  const [isFormLoading, setIsFormLoading] = useState(false);
-  const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [categories, setCategories] = useState([
     "oils",
     "nuts",
     "coffees",
     "herbs",
   ]);
+  const [imagePreview, setImagePreview] = useState(
+    isEditSession ? editDefaultValues.imgUrl : ""
+  );
+  const [isFormLoading, setIsFormLoading] = useState(false);
+  const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(
     isEditSession ? editDefaultValues.category : "nuts"
   );
@@ -164,7 +163,11 @@ export default function CreateProductPage(defaultValues = {}) {
     try {
       setIsAddCategoryLoading(true);
       setCategories((prevCategories) => [trimmedCategory, ...prevCategories]);
-      setNewCategory(trimmedCategory);
+      setSelectedCategory(trimmedCategory);
+      setValue("category", trimmedCategory);
+
+      // Clear input
+      setNewCategory("");
 
       toast.success("Category added successfully");
     } catch (error) {
@@ -180,6 +183,10 @@ export default function CreateProductPage(defaultValues = {}) {
     setSelectedCategory(value);
     setValue("category", value);
   };
+
+  useEffect(() => {
+    setValue("category", selectedCategory);
+  }, [selectedCategory, setValue]);
 
   const onSubmit = async (data) => {
     // Ensure image is selected
@@ -409,6 +416,7 @@ export default function CreateProductPage(defaultValues = {}) {
 
             <ContentContainer className={"category-form"} title={"category"}>
               <CategoryForm
+                selectedCategory={selectedCategory}
                 categories={categories}
                 newCategory={newCategory}
                 isAddCategoryLoading={isAddCategoryLoading}

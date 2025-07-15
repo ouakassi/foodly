@@ -72,7 +72,8 @@ const CategoryForm = ({
       </header>
 
       <Select
-        defaultValue={isEditSession ? editDefaultValues.category : ""}
+        key={selectedCategory} // Force re-render when selectedCategory changes
+        value={selectedCategory}
         onValueChange={handleCategoryInputChange}
       >
         <SelectTrigger>
