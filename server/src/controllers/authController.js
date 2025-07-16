@@ -89,17 +89,6 @@ const adminRegister = async (req, res) => {
     const roleRecord = await Role.findOne({ where: { name: requestedRole } });
     if (!roleRecord) return res.status(400).json({ message: "Invalid role" });
 
-    // Only allow admin to assign elevated ROLES
-
-    const isRequesterAdmin = req.user && req.user.roleId === roleRecord.id;
-    const isCreatingAdmin = requestedRole === ROLES.ADMIN;
-
-    if (isCreatingAdmin && !isRequesterAdmin) {
-      return res
-        .status(403)
-        .json({ message: "Only admins can assign admin role" });
-    }
-
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ message: `Email already registered` });
