@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { RiImageAddLine } from "react-icons/ri";
 import { MdLibraryAddCheck, MdDeleteForever } from "react-icons/md";
 import CustomButton from "@/components/Buttons/CustomButton";
-import LoadingSpinner from "@/components/Forms/LoadingSpinner";
 import { useState } from "react";
 import { IoMdCloudUpload } from "react-icons/io";
 

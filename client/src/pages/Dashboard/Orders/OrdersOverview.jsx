@@ -53,7 +53,9 @@ export default function OrdersOverview() {
   } = ordersByStatus;
 
   const loadingSpinner = (
-    <LoadingSpinner height={"1.2rem"} width={"1.2rem"} borderWidth={"2px"} />
+    <LoadingSpinner
+      style={{ height: "1.2rem", width: "1.2rem", borderWidth: "2px" }}
+    />
   );
 
   const orderOverviewData = [

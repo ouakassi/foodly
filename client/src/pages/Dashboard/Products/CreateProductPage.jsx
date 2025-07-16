@@ -28,6 +28,7 @@ import ContentContainer from "../../../components/Dashboard/ContentContainer";
 import { createProductValidationSchema } from "../../../../utils/validation";
 import PageTitle from "../../../components/Dashboard/PageTitle";
 import { FaFileSignature } from "react-icons/fa";
+import { API_ENDPOINTS, APP_LINKS } from "../../../constants";
 
 export default function CreateProductPage(defaultValues = {}) {
   const {
@@ -57,7 +58,6 @@ export default function CreateProductPage(defaultValues = {}) {
   );
   const [newCategory, setNewCategory] = useState("");
   const [isAddCategoryLoading, setIsAddCategoryLoading] = useState(false);
-  const [isDraft, setIsDraft] = useState(false);
 
   const {
     register,
@@ -83,34 +83,36 @@ export default function CreateProductPage(defaultValues = {}) {
   //   style: "percent",
   // });
 
-  const {
-    data: products,
-    fetchError,
-    isLoading,
-    error,
-  } = useAxiosFetch(`${API_URL}/api/products`);
-
   useEffect(() => {
     setFocus("name");
-  }, [setFocus]);
+  }, []);
 
   useEffect(() => {
-    if (error) {
-      console.error("Error fetching products:", error);
-      toast.error("Failed to fetch products. Please try again.");
-      return;
-    }
-    if (!products) {
-      console.log("no categories found");
-      return;
-    }
-    if (products.length > 0) {
-      const uniqueCategories = [
-        ...new Set(products.map((product) => product.category)),
-      ];
-      setCategories(uniqueCategories);
-    }
-  }, [error, products]);
+    setValue("category", selectedCategory);
+  }, [selectedCategory, setValue]);
+  // const {
+  //   data: products,
+  //   fetchError,
+  //   isLoading,
+  //   error,
+  // } = useAxiosFetch(API_URL + API_ENDPOINTS.PRODUCTS);
+  // useEffect(() => {
+  //   if (error) {
+  //     console.error("Error fetching products:", error);
+  //     toast.error("Failed to fetch products. Please try again.");
+  //     return;
+  //   }
+  //   if (!products) {
+  //     console.log("no categories found");
+  //     return;
+  //   }
+  //   if (products.length > 0) {
+  //     const uniqueCategories = [
+  //       ...new Set(products.map((product) => product.category)),
+  //     ];
+  //     setCategories(uniqueCategories);
+  //   }
+  // }, [error, products]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -184,10 +186,6 @@ export default function CreateProductPage(defaultValues = {}) {
     setValue("category", value);
   };
 
-  useEffect(() => {
-    setValue("category", selectedCategory);
-  }, [selectedCategory, setValue]);
-
   const onSubmit = async (data) => {
     // Ensure image is selected
     if (!imagePreview) {
@@ -208,18 +206,15 @@ export default function CreateProductPage(defaultValues = {}) {
         category: selectedCategory || "nuts", // Default to "nuts" if no category is selected
       });
 
-      console.log(imgRes);
       const uploadedImgUrl = imgRes.data.imgUrl;
 
       setValue("imgUrl", uploadedImgUrl);
-
-      console.log("uploadedImgUrlToServer", uploadedImgUrl);
 
       // Ensure that the image URL is part of the data
       data.imgUrl = uploadedImgUrl;
 
       if (isEditSession) {
-        await axiosInstance.put(`/api/products/${editId}`, {
+        await axiosInstance.put(API_ENDPOINTS.PRODUCT_UPDATE(editId), {
           ...data,
         });
         console.log("edit data", data);
@@ -228,13 +223,13 @@ export default function CreateProductPage(defaultValues = {}) {
         return;
       }
 
-      await axiosInstance.post("/api/products/", {
+      await axiosInstance.post(API_ENDPOINTS.PRODUCT_CREATE, {
         ...data,
       });
 
       console.log("create data", data);
       toast.success("Product created successfully");
-      navigate("/dashboard/products");
+      navigate(APP_LINKS.PRODUCTS);
       return;
     } catch (error) {
       console.error("Error saving the product", error);

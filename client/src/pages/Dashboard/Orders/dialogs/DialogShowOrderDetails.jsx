@@ -33,7 +33,7 @@ const DialogShowOrderDetails = ({
     <DialogContent className="w-auto max-w-full min-h-[80vh] max-h-full">
       <DialogHeader>
         {isOrderDataLoading ? (
-          <LoadingSpinner height={"1rem"} width={"1rem"} />
+          <LoadingSpinner style={{ height: "1rem", width: "1rem" }} />
         ) : (
           <DialogTitle>
             <FaRegFileAlt className="icon" />
