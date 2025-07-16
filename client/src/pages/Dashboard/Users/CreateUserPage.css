@@ -4,9 +4,6 @@ section.create-user {
 }
 
 .create-user header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .create-user .user-info {
@@ -17,6 +14,9 @@ section.create-user {
   flex-wrap: wrap;
   gap: 1rem;
   width: 100%;
+}
+.create-user .row:first-child {
+  margin-top: 1rem;
 }
 
 .create-user .row div {
@@ -50,7 +50,7 @@ section.create-user {
   color: #0573d1;
   /* border: 1px solid #0573d1; */
 }
-.choice.customer.selected {
+.choice.user.selected {
   color: #00b3a3;
   /* border: 1px solid #00b3a3; */
 }

@@ -1,5 +1,5 @@
 import "./UserPage.css";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -49,6 +49,7 @@ const columns = ["Name", "Status", "Joined At", "Role", "Actions"];
 export default function UsersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState("none");
+  const [usersTableKey, setUsersTableKey] = useState(0); // Force re-render of UsersTable
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -61,7 +62,16 @@ export default function UsersPage() {
     data: usersOverviewData,
     usersOverviewLoading,
     usersOverviewError,
+    refetch: refetchUsersOverview,
   } = useAxiosFetch(API_URL + API_ENDPOINTS.USERS_OVERVIEW);
+
+  const handleUserCreated = useCallback(() => {
+    // Refetch users overview data
+    refetchUsersOverview();
+
+    // Force UsersTable to refetch by changing its key
+    setUsersTableKey((prev) => prev + 1);
+  }, [refetchUsersOverview]);
 
   const { usersCount, adminCount, customersCount, moderatorsCount } =
     usersOverviewData?.data || {};
@@ -112,12 +122,14 @@ export default function UsersPage() {
           icon={React.createElement(LINKS_WITH_ICONS.users.icon)}
           title={LINKS_WITH_ICONS.users.label}
         />
-        {/* <Link to={APP_LINKS.USER_CREATE}>
-        </Link> */}
-        <CreateUserPage />
+        <CreateUserPage onUserCreated={handleUserCreated} />
       </header>
       <div className="overview-cards">
-        <UsersOverview />
+        <UsersOverview
+          data={usersOverviewData}
+          isLoading={usersOverviewLoading}
+          error={usersOverviewError}
+        />
       </div>
 
       <div className="users-page-container">
@@ -130,7 +142,9 @@ export default function UsersPage() {
 
           <TableBtns />
         </header>
-        <UsersTable us />
+        <UsersTable
+          key={usersTableKey} // Force re-render when key changes
+        />
         <footer className="table-footer">
           <TableBtns showPageNumber={true} page={1} />
         </footer>
@@ -183,7 +197,12 @@ const UsersTable = () => {
     data: usersData,
     loading,
     error,
+    refetch: refetchUsers,
   } = useAxiosFetch(API_URL + API_ENDPOINTS.USERS, params);
+
+  useEffect(() => {
+    refetchUsers();
+  }, [searchParams]);
 
   const getRole = (roleName) => {
     switch (roleName) {

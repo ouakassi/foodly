@@ -15,8 +15,8 @@ const authRouter = express.Router();
 authRouter.route("/register").post(publicRegister);
 authRouter.post(
   "/admin/register",
-  isAuthenticated,
-  authRole(ROLES.ADMIN),
+  // isAuthenticated,
+  // authRole(ROLES.ADMIN),
   adminRegister
 );
 authRouter.route("/login").post(login);

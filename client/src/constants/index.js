@@ -56,6 +56,7 @@ export const API_ENDPOINTS = {
 
   // Users
   USERS: "/api/users",
+  USER_CREATE: "/auth/admin/register",
   USERS_OVERVIEW: "/api/users/overview",
   USER_DETAIL: (id) => `/api/users/${id}`,
 

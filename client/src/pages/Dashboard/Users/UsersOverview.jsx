@@ -7,15 +7,7 @@ import { FaRegUser } from "react-icons/fa";
 import { RiUser4Line } from "react-icons/ri";
 import { LiaUserAstronautSolid, LiaUserShieldSolid } from "react-icons/lia";
 
-import useAxiosFetch from "../../../hooks/useAxiosFetch";
-import { API_URL } from "../../../api/api";
-import { API_ENDPOINTS } from "../../../constants";
-
-export default function UsersOverview() {
-  const { data, isLoading, error } = useAxiosFetch(
-    API_URL + API_ENDPOINTS.USERS_OVERVIEW
-  );
-
+export default function UsersOverview({ data, isLoading, error }) {
   const {
     usersCount,
     adminCount,
@@ -24,7 +16,9 @@ export default function UsersOverview() {
   } = data?.data || {};
 
   const loadingSpinner = (
-    <LoadingSpinner height={"1.2rem"} width={"1.2rem"} borderWidth={"2px"} />
+    <LoadingSpinner
+      style={{ height: "1.2rem", width: "1.2rem", borderWidth: "2px" }}
+    />
   );
 
   const usersOverviewData = [
