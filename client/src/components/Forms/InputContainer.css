@@ -8,7 +8,7 @@
   position: relative;
   font-family: var(--font-1);
   text-transform: capitalize;
-  box-shadow: 0px 0px 0px 1px rgb(201, 201, 201);
+  box-shadow: 0px 0px 0px 1px rgb(224, 224, 224);
   border-radius: 5px;
   transition: 0.2s;
   margin-bottom: 0.5rem;
@@ -17,7 +17,8 @@
 }
 .input:focus-within,
 .input:focus {
-  box-shadow: -4px 4px 0px 0px var(--color-3), 0px 0px 0px 1px var(--color-3);
+  /* box-shadow: -4px 4px 0px 0px var(--color-3), 0px 0px 0px 1px var(--color-3); */
+  box-shadow: 0px 0px 0px 2px var(--color-3), 0px 0px 0px 1px var(--color-3);
 }
 .input:hover {
   box-shadow: 0px 0px 0px 1px var(--color-3);

@@ -39,6 +39,8 @@ export default function CreateProductPage(defaultValues = {}) {
   } = defaultValues.defaultValues || {};
   const isEditSession = Boolean(editId);
 
+  const categoryNormalized = editDefaultValues?.category?.toLowerCase() || "";
+
   const [selectedStatus, setSelectedStatus] = useState(
     isEditSession ? editDefaultValues.status : true
   );
@@ -54,10 +56,18 @@ export default function CreateProductPage(defaultValues = {}) {
   const [isFormLoading, setIsFormLoading] = useState(false);
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(
-    isEditSession ? editDefaultValues.category : "nuts"
+    isEditSession ? categoryNormalized : ""
   );
-  const [newCategory, setNewCategory] = useState("");
+  const [newCategory, setNewCategory] = useState(
+    isEditSession ? categoryNormalized : ""
+  );
   const [isAddCategoryLoading, setIsAddCategoryLoading] = useState(false);
+
+  useEffect(() => {
+    if (isEditSession) {
+      setCategories((prev) => [...new Set([...prev, categoryNormalized])]);
+    }
+  }, [isEditSession, categoryNormalized]);
 
   const {
     register,
