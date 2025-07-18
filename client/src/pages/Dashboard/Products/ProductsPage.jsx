@@ -86,13 +86,9 @@ const buttonStyle = {
 };
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [productsTotal, setProductsTotal] = useState(0 || 0);
   const [limitPerPage, setLimitPerPage] = useState(10);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  // const ITEMS_PER_PAGE = 10;
 
   const nextBtnRef = useRef(null);
   const prevBtnRef = useRef(null);
@@ -118,7 +114,12 @@ export default function ProductsPage() {
     params
   );
 
+  console.log(data);
+
   const {
+    productsData,
+    totalPages = 1,
+    totalProducts = 0,
     activeProducts: activeProductsCount = 0,
     inactiveProducts: inactiveProductsCount = 0,
   } = data || {};
@@ -137,7 +138,7 @@ export default function ProductsPage() {
       value: "all",
       label: "All",
       icon: <CiGrid41 className="icon" />,
-      count: productsTotal || 0,
+      count: totalProducts || 0,
     },
     {
       value: "active",
@@ -174,27 +175,6 @@ export default function ProductsPage() {
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, [nextBtnRef, prevBtnRef]);
-
-  useEffect(() => {
-    if (!data) {
-      setProducts([]);
-      updatePageParam(1);
-      setTotalPages(1);
-      setProductsTotal(0);
-      return;
-    }
-
-    try {
-      const { productsData = [], totalPages = 1, totalProducts = 0 } = data;
-
-      setProducts(productsData);
-      setTotalPages(totalPages);
-      setProductsTotal(totalProducts);
-    } catch (error) {
-      console.error("Error processing data:", error);
-      setProducts([]); // fallback in case something goes wrong
-    }
-  }, [data]);
 
   // function to handle the 'page' param and update the URL
   const updatePageParam = (newPage) => {
@@ -237,8 +217,6 @@ export default function ProductsPage() {
   const handleSearchParamChange = (e) => {
     const value = e.target.value;
 
-    setCurrentPage(1);
-
     const newParams = new URLSearchParams(searchParams);
 
     // ✅ remove search param if empty
@@ -248,7 +226,7 @@ export default function ProductsPage() {
       newParams.set("search", value);
     }
 
-    // newParams.set("page", "1");
+    newParams.set("page", "1");
     setSearchParams(newParams);
   };
 
@@ -306,13 +284,15 @@ export default function ProductsPage() {
             handlePreviousPage={handlePreviousPage}
             page={page}
             totalPages={totalPages}
+            nextBtnRef={nextBtnRef}
+            prevBtnRef={prevBtnRef}
           />
         </div>
 
         <div className="table-container">
           <ProductsTable
             isLoading={isLoading}
-            products={products}
+            products={productsData}
             handleDeleteProduct={handleDeleteProduct}
           />
         </div>
