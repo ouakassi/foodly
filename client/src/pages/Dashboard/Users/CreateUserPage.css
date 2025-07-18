@@ -15,9 +15,6 @@ section.create-user {
   gap: 1rem;
   width: 100%;
 }
-.create-user .row:first-child {
-  margin-top: 1rem;
-}
 
 .create-user .row div {
   flex: 1;

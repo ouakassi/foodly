@@ -133,11 +133,11 @@ export default function CreateUserPage({ onUserCreated = () => {} }) {
               <ContentContainer
                 icon={<FaCircleInfo />}
                 className="user-info"
-                title={
-                  <>
-                    <FaCircleInfo /> user info
-                  </>
-                }
+                // title={
+                //   <>
+                //     <FaCircleInfo /> user info
+                //   </>
+                // }
               >
                 <div className="inputs">
                   <div className="row">
