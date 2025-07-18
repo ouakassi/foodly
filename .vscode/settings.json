@@ -1,3 +1,5 @@
 {
-  "codium.codeCompletion.enable": false
+  "github.copilot.chat.commitMessageGeneration.instructions": {
+    "text": "Concise commit message (≤50 chars) starting with an action word (Add, Update, Fix, Remove, Refactor, Change, Improve, etc). No prefixes, emojis, full stops or extra words. For components, enclose the component name in angle brackets (e.g., Add <LoginForm>)."
+  }
 }

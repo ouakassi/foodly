@@ -13,6 +13,7 @@
   border: none;
   cursor: pointer;
   /* width: 100%; */
+  
 }
 .counter-button:hover {
   filter: brightness(1.2);
