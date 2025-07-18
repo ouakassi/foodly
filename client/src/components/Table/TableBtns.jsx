@@ -31,7 +31,7 @@ const PreviousBtn = ({ onClick, page, prevBtnRef, totalPages }) => {
   );
 };
 
-const NextBtn = ({ onClick, page, totalPages }) => {
+const NextBtn = ({ onClick, page, totalPages, nextBtnRef }) => {
   const isLastPage = page >= totalPages;
   const isTotalPageEmpty = totalPages === 0 || totalPages === undefined;
 
@@ -39,7 +39,7 @@ const NextBtn = ({ onClick, page, totalPages }) => {
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="table-buttons" onClick={onClick}>
+          <span className="table-buttons" onClick={onClick} ref={nextBtnRef}>
             <CustomButton
               disabled={isLastPage || isTotalPageEmpty}
               icon={<FaAngleRight />}
@@ -75,6 +75,8 @@ const TableBtns = ({
   page,
   totalPages,
   showPageNumber = false,
+  prevBtnRef,
+  nextBtnRef,
 }) => {
   return (
     <div className="table-pages-buttons">
@@ -82,10 +84,16 @@ const TableBtns = ({
         onClick={handlePreviousPage}
         page={page}
         totalPages={totalPages}
+        prevBtnRef={prevBtnRef}
       />
       {showPageNumber && <PagesCount page={page} totalPages={totalPages} />}
 
-      <NextBtn onClick={handleNextPage} page={page} totalPages={totalPages} />
+      <NextBtn
+        onClick={handleNextPage}
+        page={page}
+        totalPages={totalPages}
+        nextBtnRef={nextBtnRef}
+      />
     </div>
   );
 };
