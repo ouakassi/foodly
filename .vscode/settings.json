@@ -1,5 +1,5 @@
 {
   "github.copilot.chat.commitMessageGeneration.instructions": {
-    "text": "Concise commit message (≤50 chars) starting with an action word (Add, Update, Fix, Remove, Refactor, Change, Improve, etc). No prefixes, emojis, full stops or extra words. For components, enclose the component name in angle brackets (e.g., Add <LoginForm>)."
+    "text": "Write a clear, concise git commit message no longer than 50 characters. Use present-tense imperative verbs (Add, Fix, Remove, etc). Do not use emojis, full stops, or quotes. Prefer semantic messages, and mention the component using angle brackets if applicable."
   }
 }
