@@ -211,10 +211,13 @@ export default function CreateProductPage(defaultValues = {}) {
     try {
       setIsFormLoading(true);
 
-      const imgRes = await axiosInstance.post("/api/upload", {
-        imgUrl: imagePreview,
-        category: selectedCategory || "nuts", // Default to "nuts" if no category is selected
-      });
+      const imgRes = await axiosInstance.post(
+        API_ENDPOINTS.PRODUCT_UPLOAD_IMAGE,
+        {
+          imgUrl: imagePreview,
+          category: selectedCategory || "nuts", // Default to "nuts" if no category is selected
+        }
+      );
 
       const uploadedImgUrl = imgRes.data.imgUrl;
 

@@ -27,6 +27,7 @@ export const APP_CONFIG = {
     startDate: "2023-01-01",
     endDate: "2023-12-31",
   },
+  STOCK_LOW_THRESHOLD: 10,
   //   MAX_RETRIES: 3,
 };
 
@@ -43,6 +44,7 @@ export const API_ENDPOINTS = {
   PRODUCT_CREATE: "/api/products/",
   PRODUCT_UPDATE: (id) => `/api/products/${id}`,
   PRODUCT_DELETE: (id) => `/api/products/${id}/delete`,
+  PRODUCT_UPLOAD_IMAGE: "/api/upload",
 
   // Orders
   ORDERS: "/api/orders",

@@ -55,7 +55,12 @@ import useDebounce from "../../../hooks/useDebounce";
 import { axiosInstance, API_URL } from "../../../api/api";
 
 // Constants & Helpers
-import { API_ENDPOINTS, APP_LINKS, LINKS_WITH_ICONS } from "../../../constants";
+import {
+  API_ENDPOINTS,
+  APP_CONFIG,
+  APP_LINKS,
+  LINKS_WITH_ICONS,
+} from "../../../constants";
 import { formatCurrency, formatDate } from "../../../lib/helpers";
 
 // Notifications
@@ -110,7 +115,7 @@ export default function ProductsPage() {
   };
 
   const { data, isLoading, fetchError, refetch } = useAxiosFetch(
-    `${API_URL}/api/products`,
+    API_URL + API_ENDPOINTS.PRODUCTS,
     params
   );
 
@@ -388,7 +393,7 @@ const ProductsTable = ({ isLoading, products, handleDeleteProduct }) => {
               createdAt: publishedDate,
             }) => {
               const isActive = status === true;
-              const isStockLow = stock <= 30;
+              const isStockLow = stock < APP_CONFIG.STOCK_LOW_THRESHOLD;
               return (
                 <tr className="product-row" key={id}>
                   <td style={!isActive ? { opacity: 0.8 } : { opacity: 1 }}>
@@ -422,10 +427,11 @@ const ProductsTable = ({ isLoading, products, handleDeleteProduct }) => {
                                 color: "var(--color-2)",
                                 display: "flex",
                                 alignItems: "center",
-                                gap: "2px",
+
+                                gap: "5px",
                               }}
                             >
-                              <CiWarning fontSize={"1.2rem"} />
+                              <CiWarning fontSize={"1rem"} />
                               Stock is low
                             </p>
                           </TooltipContent>
