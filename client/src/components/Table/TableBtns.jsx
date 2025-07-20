@@ -59,7 +59,8 @@ const PagesCount = ({ page, totalPages }) => {
   const isSinglePage = totalPages === 1 || totalPages === undefined;
   return (
     <span className="page-info">
-      <span className="page-current">{page}</span>/
+      <span className="page-current">{page}</span>
+      <span>of</span>
       {!isSinglePage ? (
         <span className="total-pages">{totalPages}</span>
       ) : (

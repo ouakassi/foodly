@@ -7,27 +7,24 @@
 
 .tableHead tr,
 .tableBody tr {
-  /* display: flex; */
-  align-items: center;
-  font-family: var(--font-1);
-  border-radius: 10px;
-  /* padding: 1rem; */
-  transition: 0.2s;
+  transition: 0.3s all;
   text-align: left;
 }
 
-.tableHead th {
-  font-weight: 400;
-  /* flex: 1; */
-  color: #8b8b8b;
+.tableBody tr {
+  font-family: var(--font-1);
 }
 
 .tableBody tr:hover {
   background-color: #dddddd34;
 }
 
+.tableHead th {
+  font-weight: 400;
+  color: #adadad;
+}
+
 .tableBody td {
-  /* flex: 1; */
   word-break: keep-all;
 }
 
