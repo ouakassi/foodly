@@ -95,16 +95,16 @@ export default function CreateUserPage({ onUserCreated = () => {} }) {
         ...data,
       });
 
-      toast.success("User created successfully");
-
       reset();
-
       setIsModalOpen(false);
 
       onUserCreated({
         newUser: response.data, // Pass the created user data
         role: data.role, // Pass the role for optimistic updates
       });
+      setTimeout(() => {
+        toast.success("User created successfully");
+      }, 500);
     } catch (error) {
       const message =
         error?.response?.data?.message ||

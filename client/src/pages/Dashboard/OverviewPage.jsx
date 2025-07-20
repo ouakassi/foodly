@@ -109,20 +109,6 @@ export default function OverviewPage() {
     // { title: "Rating", icon: <CiStar /> },
   ];
 
-  const product = {
-    id: "e3b9425b-2b6c-41cb-9b3a-312d3e52a8fe",
-    name: "Almond Oil",
-    imgUrl:
-      "https://res.cloudinary.com/djfsxp9z0/image/upload/v1742571332/products/weed/6172705011f98cfbe6f5304a764fc862.png",
-    price: 45.99,
-    status: true,
-    stock: 25,
-    discount: 15,
-    category: "Oils",
-    createdAt: "2025-04-29T08:20:00.000Z",
-    updatedAt: "2025-04-29T08:20:00.000Z",
-  };
-
   return (
     <section className="overview-page">
       <PageTitle

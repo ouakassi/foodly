@@ -6,6 +6,8 @@ import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 import { FaRegUser } from "react-icons/fa";
 import { RiUser4Line } from "react-icons/ri";
 import { LiaUserAstronautSolid, LiaUserShieldSolid } from "react-icons/lia";
+import { IoShield } from "react-icons/io5";
+import { LuCrown } from "react-icons/lu";
 
 export default function UsersOverview({ data, isLoading, error }) {
   const {
@@ -43,7 +45,7 @@ export default function UsersOverview({ data, isLoading, error }) {
       className: "total-customers",
     },
     {
-      icon: <LiaUserShieldSolid />,
+      icon: <LuCrown />,
       label: "Total Admins",
       value: isLoading ? loadingSpinner : adminCount,
 
@@ -53,7 +55,7 @@ export default function UsersOverview({ data, isLoading, error }) {
       className: "total-admins",
     },
     {
-      icon: <LiaUserAstronautSolid />,
+      icon: <IoShield />,
       label: "Total Moderators",
       value: isLoading ? loadingSpinner : customersCount,
 

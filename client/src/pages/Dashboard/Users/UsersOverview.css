@@ -1,12 +1,9 @@
-.total-users .box-icon {
-  /* background-color: red; */
-}
-.total-customers .box-icon {
+.analytic-box + .total-customers .box-icon {
   background-color: #00b3a3;
 }
-.total-admins .box-icon {
-  background-color: #9c01cf;
+.analytic-box + .total-admins .box-icon {
+  background-color: #d1930e;
 }
-.total-moderators .box-icon {
+.analytic-box + .total-moderators .box-icon {
   background-color: #0573d1;
 }

@@ -254,6 +254,7 @@ export default function ProductsPage() {
         <PageTitle
           icon={React.createElement(LINKS_WITH_ICONS.products.icon)}
           title={LINKS_WITH_ICONS.products.label}
+          badge={totalProducts}
         />
 
         <Link to={APP_LINKS.PRODUCT_CREATE}>
