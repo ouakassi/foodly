@@ -55,7 +55,7 @@ import useDebounce from "../../../hooks/useDebounce";
 import { axiosInstance, API_URL } from "../../../api/api";
 
 // Constants & Helpers
-import { APP_LINKS, LINKS_WITH_ICONS } from "../../../constants";
+import { API_ENDPOINTS, APP_LINKS, LINKS_WITH_ICONS } from "../../../constants";
 import { formatCurrency, formatDate } from "../../../lib/helpers";
 
 // Notifications
@@ -198,10 +198,10 @@ export default function ProductsPage() {
       return;
     }
     try {
-      await axiosInstance.put(`/api/products/${id}/delete/`);
+      await axiosInstance.put(API_ENDPOINTS.PRODUCT_DELETE(id));
       toast.success("Product Deleted Successfully");
 
-      const updatedProducts = products.filter((p) => p.id !== id);
+      const updatedProducts = productsData.filter((p) => p.id !== id);
 
       // Go to previous page if this was the last product on the current page
       if (updatedProducts.length === 0 && page > 1) {

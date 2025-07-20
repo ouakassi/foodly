@@ -114,7 +114,7 @@ export const APP_LINKS = {
   // Products
   PRODUCTS: "/dashboard/products",
   PRODUCT_CREATE: "/dashboard/products/create",
-  PRODUCT_UPDATE: (id) => `/dashboard/products/edit/${id}`,
+  PRODUCT_UPDATE: (id) => `/dashboard/products/${id}`,
   PRODUCT_VIEW: (id) => `/dashboard/products/view/${id}`,
   PRODUCT_DELETE: (id) => `/dashboard/products/delete/${id}`,
   PRODUCT_DUPLICATE: (id) => `/dashboard/products/duplicate/${id}`,

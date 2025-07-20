@@ -3,7 +3,6 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  Navigate,
 } from "react-router-dom";
 import React, { lazy, Suspense } from "react";
 
@@ -76,7 +75,8 @@ function App() {
             <Route index element={<ProductsPage />} />
             {/* <Route path=":productId" element={<ProductsPage />} /> */}
             <Route path="create" element={<CreateProductPage />} />
-            <Route path="edit/:productId" element={<EditProductPage />} />
+            <Route path="edit" element={<ProductsPage />} />
+            <Route path=":productId" element={<EditProductPage />} />
           </Route>
           <Route path="users" element={<PageLayout />}>
             <Route index element={<UsersPage />} />
