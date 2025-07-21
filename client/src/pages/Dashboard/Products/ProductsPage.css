@@ -56,16 +56,6 @@
   /* gap: var(--gap-4); */
 }
 
-.badge {
-  background-color: #ffffff;
-  color: #000000;
-  border-radius: 10px;
-  padding: 4px;
-  margin-left: 8px;
-  font-weight: 700;
-  box-shadow: var(--box-shadow-content-container);
-}
-
 .product-row .product-img {
   width: 2.6rem;
   height: 2.6rem;
@@ -122,6 +112,13 @@
 
 .product-row .published {
   color: #c2c2c2;
+}
+
+.product-row .stock-low {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-2);
 }
 
 .product-row td.action {

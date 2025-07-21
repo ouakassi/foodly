@@ -65,6 +65,7 @@ import { formatCurrency, formatDate } from "../../../lib/helpers";
 
 // Notifications
 import { toast } from "sonner";
+import Badge from "../../../components/Badge";
 
 const tableHeaders = [
   "Image",
@@ -328,8 +329,6 @@ export default function ProductsPage() {
   );
 }
 
-const Badge = ({ children }) => <span className="badge">{children}</span>;
-
 function TableSkeleton({ count = 10 }) {
   return Array.from({ length: count }).map((_, i) => (
     <thead key={i}>
@@ -416,10 +415,12 @@ const ProductsTable = ({ isLoading, products, handleDeleteProduct }) => {
                       <TooltipProvider delayDuration={100}>
                         <Tooltip>
                           <TooltipTrigger>
-                            {stock}
-                            {isStockLow && (
-                              <FaArrowTrendDown color="var(--color-2)" />
-                            )}
+                            <span className="stock-low">
+                              {stock}
+                              {isStockLow && (
+                                <FaArrowTrendDown color="var(--color-2)" />
+                              )}
+                            </span>
                           </TooltipTrigger>
                           <TooltipContent>
                             <p
