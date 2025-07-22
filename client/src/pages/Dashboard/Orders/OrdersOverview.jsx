@@ -27,7 +27,7 @@ export default function OrdersOverview() {
     {
       startDate: OverviewStartDate,
       endDate: OverviewEndDate,
-      endDate: "2025-07-31",
+      // endDate: "2025-07-31",
     }
   );
 
@@ -51,6 +51,8 @@ export default function OrdersOverview() {
     shipped = 0,
     delivered = 0,
   } = ordersByStatus;
+
+  console.log(ordersByStatus);
 
   const loadingSpinner = (
     <LoadingSpinner
@@ -89,9 +91,9 @@ export default function OrdersOverview() {
       className: "orders-progress",
     },
     {
-      icon: ORDER_STATUSES.PENDING?.icon,
-      label: "Cancelled Orders",
-      value: isLoading ? loadingSpinner : cancelled?.toLocaleString() || "0",
+      icon: ORDER_STATUSES.COMPLETED?.icon,
+      label: "Completed Orders",
+      value: isLoading ? loadingSpinner : completed?.toLocaleString() || "0",
       // trend: "-5",
 
       description: "In This Month",

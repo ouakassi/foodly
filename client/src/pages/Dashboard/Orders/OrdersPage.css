@@ -58,16 +58,16 @@
 
 .orders-table .status button span {
   font-weight: bold;
-  /* background-color: rgb(44, 44, 44); */
   box-shadow: var(--box-shadow-content-container);
-  border-radius: 5px;
-
-  padding: 0 0.4rem;
+  border-radius: 20px;
+  padding: 2px 12px;
   display: flex;
-  align-items: center;
   gap: 0.3rem;
   text-transform: capitalize;
   color: white;
+  /* min-width: 8rem; */
+  text-align: center;
+  align-items: center;
 }
 
 .orders-table .date {

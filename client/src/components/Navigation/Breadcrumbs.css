@@ -9,6 +9,9 @@
   margin: 0.5rem;
   box-shadow: var(--box-shadow-content-container);
   width: fit-content;
+  padding: 5px 10px;
+  border-radius: 0px 0px 20px 0px;
+  margin: 0 0.5rem;
 }
 .breadcrumbs > * {
   display: inline-block;
@@ -47,5 +50,5 @@
 .breadcrumbs .crumb a,
 .breadcrumbs,
 .breadcrumbs div:first-child a svg {
-  color: rgb(51, 50, 50);
+  color: rgb(143, 143, 143);
 }
