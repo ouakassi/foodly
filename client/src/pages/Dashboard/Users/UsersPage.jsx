@@ -1,6 +1,7 @@
 import "./UserPage.css";
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  NoDataFound,
   Table,
   TableBody,
   TableHead,
@@ -135,9 +136,7 @@ export default function UsersPage() {
       <div className="users-page-container">
         <header>
           <Tabs defaultValue={role ? role : "all"} className="w-[400px]">
-            {usersOverviewData && (
-              <FilterTabsList tabs={tabs} handleTabChange={handleTabChange} />
-            )}
+            <FilterTabsList tabs={tabs} handleTabChange={handleTabChange} />
           </Tabs>
 
           <TableBtns />
@@ -195,7 +194,7 @@ const UsersTable = () => {
   };
   const {
     data: usersData,
-    loading,
+    isLoading,
     error,
     refetch: refetchUsers,
   } = useAxiosFetch(API_URL + API_ENDPOINTS.USERS, params);
@@ -234,6 +233,18 @@ const UsersTable = () => {
   return (
     <Table className="users-table">
       <TableHead className="users-table__head" columns={columns} />
+      {!isLoading && error && (
+        <NoDataFound
+          message="Error loading orders"
+          onClick={() => window.location.reload()}
+          btnText="Retry"
+          className="error"
+          columnsCount={columns.length}
+        />
+      )}
+      {!isLoading && !error && !usersData && (
+        <NoDataFound message="no users found" columnsCount={columns.length} />
+      )}
       <TableBody className="users-table__tbody">
         {usersData &&
           usersData.length > 0 &&

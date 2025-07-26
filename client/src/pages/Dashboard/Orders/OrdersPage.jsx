@@ -85,6 +85,7 @@ import {
 
 import { Calendar } from "@/components/ui/calendar";
 import {
+  NoDataFound,
   Table,
   TableBody,
   TableHead,
@@ -674,49 +675,25 @@ const OrdersTable = ({
     <Table className="orders-table">
       <TableHead columns={orderColumns} />
 
+      {!isLoading && error && (
+        <NoDataFound
+          message="Error loading orders"
+          onClick={() => window.location.reload()}
+          btnText="Retry"
+          className="error"
+          columnsCount={orderColumns.length}
+        />
+      )}
+      {!isLoading && !error && !orders && (
+        <NoDataFound
+          onClick={clearParams}
+          message="no orders found"
+          columnsCount={orderColumns.length}
+        />
+      )}
       <TableBody>
         {isLoading && <TableSkeleton rows={10} columns={orderColumns.length} />}
 
-        {!isLoading && error && (
-          <tr>
-            <td colSpan="7" className="error">
-              <span>
-                <p>
-                  <MdOutlineErrorOutline />
-                  Error loading orders: {error.message}
-                </p>
-                <CustomButton
-                  icon={<LiaSortAmountDownAltSolid />}
-                  style={{ width: "fit-content" }}
-                  text="Retry"
-                  onClick={() => {
-                    window.location.reload();
-                  }}
-                />
-              </span>
-            </td>
-          </tr>
-        )}
-        {!isLoading && !error && !orders && (
-          <tr>
-            <td colSpan="7" className="no-orders">
-              <span>
-                <p>
-                  <MdOutlineErrorOutline />
-                  No orders found.
-                </p>
-                {
-                  <CustomButton
-                    icon={<LiaRedoAltSolid />}
-                    style={{ width: "fit-content" }}
-                    text="Reset Filters"
-                    onClick={clearParams}
-                  />
-                }
-              </span>
-            </td>
-          </tr>
-        )}
         {!isLoading &&
           !error &&
           orders &&

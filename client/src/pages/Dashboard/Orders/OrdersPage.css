@@ -147,29 +147,3 @@
 .order-details-content table {
   max-height: 20rem;
 }
-
-.orders-table .no-orders p {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 10rem;
-}
-
-.orders-table .no-orders p > svg:first-of-type {
-  font-size: 2rem;
-  color: #ff0000;
-}
-
-.no-orders span {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: center;
-  justify-content: center;
-}
-.no-orders span button {
-  display: flex;
-}

@@ -11,6 +11,7 @@ import InputContainer from "../../../components/Forms/InputContainer";
 
 import PageTitle from "../../../components/Dashboard/PageTitle";
 import {
+  NoDataFound,
   Table,
   TableBody,
   TableHead,
@@ -115,7 +116,7 @@ export default function ProductsPage() {
     sort: sort,
   };
 
-  const { data, isLoading, fetchError, refetch } = useAxiosFetch(
+  const { data, isLoading, error, refetch } = useAxiosFetch(
     API_URL + API_ENDPOINTS.PRODUCTS,
     params
   );
@@ -299,6 +300,7 @@ export default function ProductsPage() {
         <div className="table-container">
           <ProductsTable
             isLoading={isLoading}
+            error={error}
             products={productsData}
             handleDeleteProduct={handleDeleteProduct}
           />
@@ -368,13 +370,29 @@ const FilterTabsList = ({ tabs, handleTabChange }) => {
   );
 };
 
-const ProductsTable = ({ isLoading, products, handleDeleteProduct }) => {
+const ProductsTable = ({ isLoading, error, products, handleDeleteProduct }) => {
   let navigate = useNavigate();
 
   return (
     <Table>
       <TableHead columns={tableHeaders} />
       {isLoading && <TableSkeleton />}
+      {!isLoading && error && (
+        <NoDataFound
+          message="Error loading orders"
+          onClick={() => window.location.reload()}
+          btnText="Retry"
+          className="error"
+          columnsCount={tableHeaders.length}
+        />
+      )}
+      {!isLoading && !error && !products && (
+        <NoDataFound
+          columns={tableHeaders.length}
+          message="no Products found"
+          columnsCount={tableHeaders.length}
+        />
+      )}
       {!isLoading && products && (
         <TableBody>
           {products.map(
