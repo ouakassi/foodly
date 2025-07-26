@@ -3,7 +3,7 @@ import axios from "axios";
 
 const useAxiosFetch = (dataUrl, params = {}) => {
   const [data, setData] = useState(null);
-  const [fetchError, setFetchError] = useState(null);
+  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = useCallback(
@@ -15,12 +15,12 @@ const useAxiosFetch = (dataUrl, params = {}) => {
           cancelToken,
         });
         setData(response.data);
-        setFetchError(null);
+        setError(null);
       } catch (err) {
         if (axios.isCancel(err)) {
           console.log("Request canceled:", err.message);
         } else {
-          setFetchError(`Error: ${err.message}`);
+          setError(`Error: ${err.message}`);
           setData(null);
         }
       } finally {
@@ -46,7 +46,7 @@ const useAxiosFetch = (dataUrl, params = {}) => {
 
   return {
     data,
-    fetchError,
+    error,
     isLoading,
     refetch,
   };

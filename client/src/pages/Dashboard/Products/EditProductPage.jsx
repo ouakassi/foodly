@@ -10,18 +10,18 @@ export default function EditProductPage() {
 
   const {
     data: product,
-    fetchError,
+    error,
     isLoading,
   } = useAxiosFetch(API_URL + API_ENDPOINTS.PRODUCT_UPDATE(productId));
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (fetchError) {
-      console.error("Error fetching product:", fetchError);
+    if (error) {
+      console.error("Error fetching product:", error);
       // navigate("/dashboard/products");
     }
-  }, [product, fetchError, navigate]); // Include product and navigate in dependency array
+  }, [product, error, navigate]); // Include product and navigate in dependency array
 
   return (
     <div className="edit-product">
