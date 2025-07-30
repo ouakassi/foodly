@@ -1,12 +1,21 @@
 import { Op } from "sequelize";
+import sequelize from "../utils/database.js";
 import Product from "../models/productModel.js";
+import Category from "../models/categoryModel.js";
+import { generateSlug } from "../utils/model.js";
+import {
+  handleValidationError,
+  validateCreateProduct,
+} from "../utils/validator.js";
+import ProductVariant from "../models/productVariantModel.js";
+import { NO_IMAGE_URL, PRODUCT_STATUS_VALUES } from "../utils/constants.js";
 
 // Get all Products
 // GET /api/products/
 // Public
 const getAllProducts = async (req, res) => {
   try {
-    let { page, limit, search, sort, status } = req.query;
+    let { page, limit, search, sort, status, isDeleted } = req.query;
 
     const sortOptions = {
       price_asc: ["price", "ASC"],
@@ -28,7 +37,7 @@ const getAllProducts = async (req, res) => {
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
 
-    const filterConditions = { isDeleted: false };
+    const filterConditions = {};
 
     if (search) {
       filterConditions.name = { [Op.like]: `%${search}%` };
@@ -40,20 +49,34 @@ const getAllProducts = async (req, res) => {
       filterConditions.status = false;
     }
 
-    const [productsData, activeCount, inactiveCount] = await Promise.all([
-      Product.findAndCountAll({
-        where: filterConditions,
-        limit: limit,
-        offset: Number.isNaN(parseInt(page)) ? 0 : (parseInt(page) - 1) * limit,
-        order: sort ? [sortOptions[sort]] : [],
-      }),
-      Product.count({
-        where: { ...filterConditions, status: true },
-      }),
-      Product.count({
-        where: { ...filterConditions, status: false },
-      }),
-    ]);
+    const [productsData, activeCount, inactiveCount, withDeletedCount] =
+      await Promise.all([
+        Product.findAndCountAll({
+          where: filterConditions,
+          distinct: true,
+          paranoid: isDeleted && isDeleted,
+          limit: limit,
+          offset: Number.isNaN(parseInt(page))
+            ? 0
+            : (parseInt(page) - 1) * limit,
+          order: sort ? [sortOptions[sort]] : [],
+          include: [
+            { model: ProductVariant, as: "variants" },
+            { model: Category, as: "category" },
+          ],
+        }),
+        Product.count({
+          where: { ...filterConditions, status: PRODUCT_STATUS_VALUES.ACTIVE },
+        }),
+        Product.count({
+          where: {
+            ...filterConditions,
+            status: PRODUCT_STATUS_VALUES.INACTIVE,
+          },
+        }),
+
+        Product.count({ where: { ...filterConditions }, paranoid: false }),
+      ]);
 
     if (productsData.count === 0 && status === undefined) {
       return res.status(404).json({ message: "No products found" });
@@ -66,6 +89,7 @@ const getAllProducts = async (req, res) => {
       totalProducts: status ? activeCount + inactiveCount : productsData.count,
       activeProducts: activeCount,
       inactiveProducts: inactiveCount,
+      totalProductsWithDeleted: withDeletedCount,
       message: search ? "Search results" : "All products",
       searchQuery: search || null,
       filters: filterConditions,
@@ -97,30 +121,101 @@ const getProduct = async (req, res) => {
 // POST /api/products/
 // Public
 const createProduct = async (req, res) => {
+  const t = await sequelize.transaction();
   try {
-    const { name, imgUrl, price, category, stock, status, discount } = req.body;
+    const { error, value } = validateCreateProduct(req.body);
 
-    // const productCategory = await Category.findOne({
-    //   where: { name: category },
-    // });
+    if (error) {
+      return handleValidationError(error, res);
+    }
 
-    // if (!category) {
-    //   return res.status(404).json({ message: "category not found" });
-    // }
-
-    const product = await Product.create({
-      status,
+    const {
       name,
       imgUrl,
-      price,
-      stock,
-      discount,
+      basePrice,
+      status,
+      description,
       category,
+      stock,
+      slug,
+      variants,
+    } = value;
+
+    // Validate category existence
+    const categoryRecord = await Category.findOne({
+      where: { name: category },
     });
 
+    if (!categoryRecord) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Category not found" });
+    }
+
+    // Check if product already exists with the same slug
+    const existingProduct = await Product.findOne({
+      where: { slug: slug || generateSlug(name) },
+    });
+    if (existingProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product Name or Slug already exist",
+      });
+    }
+    const hasVariants = Array.isArray(variants) && variants.length > 0;
+
+    if (!hasVariants) {
+      if (!basePrice || basePrice <= 0) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Product base price is required and must be greater than 0 when no variants are provided",
+        });
+      }
+
+      if (stock === undefined || stock < 0) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Product stock is required and cannot be negative when no variants are provided",
+        });
+      }
+    }
+
+    // Create the product
+    const product = await Product.create({
+      name: name.trim(),
+      imgUrl: imgUrl ? imgUrl.trim() : NO_IMAGE_URL,
+      basePrice: hasVariants ? null : parseFloat(basePrice),
+      stock: hasVariants ? null : parseInt(stock),
+      status: status || PRODUCT_STATUS_VALUES.ACTIVE,
+      description: description ? description.trim() : null,
+      category: categoryRecord.name,
+      slug: slug || generateSlug(name),
+      categoryId: categoryRecord.id ? categoryRecord.id : null,
+    });
+
+    if (hasVariants) {
+      const productVariants = variants.map((variant) => ({
+        ...variant,
+        productId: product.id,
+      }));
+      await ProductVariant.bulkCreate(productVariants, { transaction: t });
+    }
+
+    // 4️⃣ Commit if everything passed
+    await t.commit();
+
+    const createdProduct = await Product.findOne({
+      where: { id: product.id },
+      include: [
+        { model: ProductVariant, as: "variants" },
+        { model: Category, as: "category" },
+      ],
+    });
     res
       .status(201)
-      .json({ message: `product created successfully`, data: product });
+      .json({ message: `product created successfully`, data: createdProduct });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
