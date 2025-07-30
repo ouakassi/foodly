@@ -27,6 +27,24 @@ const ORDER_SORT_OPTIONS = {
   totalAmount_desc: ["totalAmount", "DESC"],
 };
 
+const PRODUCT_STATUS_VALUES = {
+  ACTIVE: "active",
+  INACTIVE: "inactive",
+  DRAFT: "draft",
+  ARCHIVED: "archived",
+  OUT_OF_STOCK: "out_of_stock",
+};
+
+const PRODUCT_STATUS_VALUES_ARRAY = [
+  "active",
+  "inactive",
+  "draft",
+  "archived",
+  "out_of_stock",
+];
+
+const NO_IMAGE_URL = "https://example.com/no-image.png"; // Placeholder for no image
+
 // transform
 const ROLES_VALUES_ARRAY = Object.values(ROLES);
 const ORDER_STATUS_VALUES_ARRAY = Object.values(ORDER_STATUSES);
@@ -39,4 +57,7 @@ export {
   ORDER_STATUS_VALUES_ARRAY,
   ORDER_SORT_OPTIONS,
   ORDER_SORT_KEYS,
+  PRODUCT_STATUS_VALUES,
+  PRODUCT_STATUS_VALUES_ARRAY,
+  NO_IMAGE_URL,
 };
