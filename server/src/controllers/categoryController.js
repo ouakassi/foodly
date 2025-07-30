@@ -11,6 +11,7 @@ const getAllCategories = async (req, res) => {
       search,
       sortBy = "sortOrder",
       sortOrder = "ASC",
+      withDeleted = false,
     } = req.query;
 
     const offset = (page - 1) * limit;
@@ -27,6 +28,7 @@ const getAllCategories = async (req, res) => {
       where: whereClause,
       limit: parseInt(limit),
       offset: parseInt(offset),
+      paranoid: !withDeleted,
       // order: [[sortBy, sortOrder.toUpperCase()]],
       distinct: true,
     });
@@ -63,6 +65,66 @@ const getAllCategories = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching categories",
+      error: error.message,
+    });
+  }
+};
+
+const getCategoryById = async (req, res) => {
+  const { categoryId } = req.params;
+  if (!categoryId) {
+    return res.status(400).json({
+      success: false,
+      message: "Category ID is required",
+    });
+  }
+  try {
+    const category = await Category.findByPk(categoryId);
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: `No category found with ID: ${categoryId}`,
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: category,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching category",
+      error: error.message,
+    });
+  }
+};
+
+const getCategoryBySlug = async (req, res) => {
+  const { slug } = req.params;
+  if (!slug) {
+    return res.status(400).json({
+      success: false,
+      message: "Slug is required",
+    });
+  }
+  try {
+    const category = await Category.findOne({
+      where: { slug },
+    });
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: `No category found with Slug: ${slug}`,
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: category,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching category",
       error: error.message,
     });
   }
@@ -114,14 +176,114 @@ const createCategory = async (req, res) => {
   }
 };
 
+const updateCategory = async (req, res) => {
+  const { categoryId } = req.params;
+  const { name, slug, description } = req.body;
+
+  if (!categoryId) {
+    return res.status(400).json({
+      success: false,
+      message: "Category ID is required",
+    });
+  }
+
+  try {
+    const category = await Category.findByPk(categoryId);
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: `No category found with ID: ${categoryId}`,
+      });
+    }
+
+    // Check if the new name or slug already exists
+    const existingCategory = await Category.findOne({
+      where: {
+        [Op.or]: [{ name }, { slug: slug || generateSlug(name) }],
+        id: { [Op.ne]: categoryId }, // Exclude current category
+      },
+    });
+
+    if (existingCategory) {
+      return res.status(400).json({
+        success: false,
+        message: "Category with this name or slug already exists",
+      });
+    }
+
+    // Update the category
+    await category.update({
+      name,
+      slug: slug || generateSlug(name),
+      description,
+    });
+
+    res.status(200).json({
+      success: true,
+      data: category,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating category",
+      error: error.message,
+    });
+  }
+};
+
+const deleteCategory = async (req, res) => {
+  const { categoryId } = req.params;
+
+  if (!categoryId) {
+    return res.status(400).json({
+      success: false,
+      message: "Category ID is required",
+    });
+  }
+
+  try {
+    const category = await Category.findByPk(categoryId);
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: `No category found with ID: ${categoryId}`,
+      });
+    }
+
+    await category.destroy();
+
+    res.status(200).json({
+      success: true,
+      message: "Category deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error deleting category",
+      error: error.message,
+    });
+  }
+};
+
+const restoreCategory = async (req, res) => {
+  const { categoryId } = req.params;
+  try {
+    const category = await Category.findByPk(categoryId, { paranoid: false });
+    if (!category) return res.status(404).json({ message: "Not found" });
+
+    await category.restore(); // restore the record
+    res.json({ success: true, message: "Category restored" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
 export {
   getAllCategories,
   createCategory,
-  // getCategoryById,
-  // getCategoryBySlug,
-  // getCategoryTree,
-  // getCategoryPath,
-  // updateCategory,
-  // deleteCategory,
-  // reorderCategories,
+  getCategoryById,
+  getCategoryBySlug,
+  updateCategory,
+  deleteCategory,
+  restoreCategory,
 };
