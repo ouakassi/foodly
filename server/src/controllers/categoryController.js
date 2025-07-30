@@ -1,6 +1,6 @@
 import Category from "../models/categoryModel.js";
 import { Op } from "sequelize";
-import { generateSlug } from "../utils/model.js";
+import { generateSlug } from "../utils/helpers.js";
 
 // Get all categories with optional filtering and pagination
 const getAllCategories = async (req, res) => {

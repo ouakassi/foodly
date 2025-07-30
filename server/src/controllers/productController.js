@@ -2,7 +2,7 @@ import { Op } from "sequelize";
 import sequelize from "../utils/database.js";
 import Product from "../models/productModel.js";
 import Category from "../models/categoryModel.js";
-import { generateSlug } from "../utils/model.js";
+import { generateSlug } from "../utils/helpers.js";
 import {
   handleValidationError,
   validateCreateProduct,

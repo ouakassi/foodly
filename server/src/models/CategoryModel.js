@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../utils/database.js";
-import { generateSlug } from "../utils/model.js";
+import { generateSlug } from "../utils/helpers.js";
 
 const Category = sequelize.define(
   "Category",
