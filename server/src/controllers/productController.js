@@ -2,40 +2,30 @@ import { Op } from "sequelize";
 import sequelize from "../utils/database.js";
 import Product from "../models/productModel.js";
 import Category from "../models/categoryModel.js";
-import { generateSlug } from "../utils/helpers.js";
+import { generateSKU, generateSlug } from "../utils/helpers.js";
 import {
   handleValidationError,
   validateCreateProduct,
 } from "../utils/validator.js";
 import ProductVariant from "../models/productVariantModel.js";
-import { NO_IMAGE_URL, PRODUCT_STATUS_VALUES } from "../utils/constants.js";
+import {
+  NO_IMAGE_URL,
+  PRODUCT_STATUS_VALUES,
+  PRODUCT_SORT_OPTIONS,
+  PRODUCT_STATUS_VALUES_ARRAY,
+} from "../utils/constants.js";
 
 // Get all Products
 // GET /api/products/
 // Public
 const getAllProducts = async (req, res) => {
   try {
-    let { page, limit, search, sort, status, isDeleted } = req.query;
-
-    const sortOptions = {
-      price_asc: ["price", "ASC"],
-      price_desc: ["price", "DESC"],
-      name_asc: ["name", "ASC"],
-      name_desc: ["name", "DESC"],
-      stock_asc: ["stock", "ASC"],
-      stock_desc: ["stock", "DESC"],
-      discount_asc: ["discount", "ASC"],
-      discount_desc: ["discount", "DESC"],
-      category_asc: ["category", "ASC"],
-      category_desc: ["category", "DESC"],
-      createdAt_asc: ["createdAt", "ASC"],
-      createdAt_desc: ["createdAt", "DESC"],
-      updatedAt_asc: ["updatedAt", "ASC"],
-      updatedAt_desc: ["updatedAt", "DESC"],
-    };
+    let { page, limit, search, sort, status, isDeleted, minPrice, maxPrice } =
+      req.query;
 
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
+    const offset = (page - 1) * limit;
 
     const filterConditions = {};
 
@@ -43,23 +33,45 @@ const getAllProducts = async (req, res) => {
       filterConditions.name = { [Op.like]: `%${search}%` };
     }
 
-    if (status === "active") {
-      filterConditions.status = true;
-    } else if (status === "inactive") {
-      filterConditions.status = false;
+    if (status) {
+      if (PRODUCT_STATUS_VALUES_ARRAY.includes(status)) {
+        filterConditions.status = status;
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid status value. Allowed values are: ${PRODUCT_STATUS_VALUES_ARRAY.join(
+            ", "
+          )}`,
+          allowedValues: PRODUCT_STATUS_VALUES_ARRAY,
+        });
+      }
     }
 
-    const [productsData, activeCount, inactiveCount, withDeletedCount] =
+    // Price range filters
+    if (minPrice || maxPrice) {
+      const priceCondition = {};
+      if (minPrice && !isNaN(parseFloat(minPrice))) {
+        priceCondition[Op.gte] = parseFloat(minPrice);
+      }
+      if (maxPrice && !isNaN(parseFloat(maxPrice))) {
+        priceCondition[Op.lte] = parseFloat(maxPrice);
+      }
+      if (Object.keys(priceCondition).length > 0) {
+        filterConditions.basePrice = priceCondition;
+      }
+    }
+
+    const includeDeleted = isDeleted === true ? true : false;
+
+    const [productsData, activeCount, inactiveCount, draftCount] =
       await Promise.all([
         Product.findAndCountAll({
           where: filterConditions,
           distinct: true,
-          paranoid: isDeleted && isDeleted,
+          paranoid: includeDeleted,
           limit: limit,
-          offset: Number.isNaN(parseInt(page))
-            ? 0
-            : (parseInt(page) - 1) * limit,
-          order: sort ? [sortOptions[sort]] : [],
+          offset: offset,
+          order: sort ? [PRODUCT_SORT_OPTIONS[sort.toUpperCase()]] : [],
           include: [
             { model: ProductVariant, as: "variants" },
             { model: Category, as: "category" },
@@ -74,27 +86,43 @@ const getAllProducts = async (req, res) => {
             status: PRODUCT_STATUS_VALUES.INACTIVE,
           },
         }),
-
-        Product.count({ where: { ...filterConditions }, paranoid: false }),
+        Product.count({
+          where: { ...filterConditions, status: PRODUCT_STATUS_VALUES.DRAFT },
+        }),
       ]);
 
-    if (productsData.count === 0 && status === undefined) {
-      return res.status(404).json({ message: "No products found" });
+    if (productsData.count === 0) {
+      return res.status(200).json({ message: "No products found" });
     }
 
     return res.status(200).json({
-      productsData: productsData.rows,
-      totalPages: Math.ceil(productsData.count / limit),
-      currentPage: page,
-      totalProducts: status ? activeCount + inactiveCount : productsData.count,
-      activeProducts: activeCount,
-      inactiveProducts: inactiveCount,
-      totalProductsWithDeleted: withDeletedCount,
-      message: search ? "Search results" : "All products",
-      searchQuery: search || null,
-      filters: filterConditions,
+      message:
+        productsData.count === 0
+          ? "No products found matching the criteria"
+          : search
+          ? `Found ${productsData.count} products matching "${search.trim()}"`
+          : `Retrieved ${productsData.count} products`,
+      data: productsData.rows,
+      pagination: {
+        limit: limit,
+        offset: offset,
+        totalPages: Math.ceil(productsData.count / limit),
+        currentPage: page,
+      },
+
+      count: {
+        totalProducts: productsData.count,
+        activeProducts: activeCount,
+        inactiveProducts: inactiveCount,
+        draftCount: draftCount,
+      },
+      filters: {
+        searchQuery: search || null,
+        filters: filterConditions,
+      },
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -126,16 +154,17 @@ const createProduct = async (req, res) => {
     const { error, value } = validateCreateProduct(req.body);
 
     if (error) {
+      await t.rollback();
       return handleValidationError(error, res);
     }
 
     const {
       name,
       imgUrl,
-      basePrice,
       status,
       description,
       category,
+      price,
       stock,
       slug,
       variants,
@@ -144,80 +173,105 @@ const createProduct = async (req, res) => {
     // Validate category existence
     const categoryRecord = await Category.findOne({
       where: { name: category },
+      transaction: t,
     });
 
     if (!categoryRecord) {
+      t.rollback();
       return res
-        .status(404)
+        .status(400)
         .json({ success: false, message: "Category not found" });
     }
 
     // Check if product already exists with the same slug
+    const generatedSlug = slug || generateSlug(name);
     const existingProduct = await Product.findOne({
-      where: { slug: slug || generateSlug(name) },
+      where: { slug: generatedSlug },
+      transaction: t,
+      paranoid: false, // Include soft-deleted products in the check
     });
+
     if (existingProduct) {
-      return res.status(404).json({
+      await t.rollback();
+      return res.status(409).json({
         success: false,
         message: "Product Name or Slug already exist",
       });
     }
-    const hasVariants = Array.isArray(variants) && variants.length > 0;
-
-    if (!hasVariants) {
-      if (!basePrice || basePrice <= 0) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Product base price is required and must be greater than 0 when no variants are provided",
-        });
-      }
-
-      if (stock === undefined || stock < 0) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Product stock is required and cannot be negative when no variants are provided",
-        });
-      }
-    }
 
     // Create the product
-    const product = await Product.create({
-      name: name.trim(),
-      imgUrl: imgUrl ? imgUrl.trim() : NO_IMAGE_URL,
-      basePrice: hasVariants ? null : parseFloat(basePrice),
-      stock: hasVariants ? null : parseInt(stock),
-      status: status || PRODUCT_STATUS_VALUES.ACTIVE,
-      description: description ? description.trim() : null,
-      category: categoryRecord.name,
-      slug: slug || generateSlug(name),
-      categoryId: categoryRecord.id ? categoryRecord.id : null,
-    });
+    const product = await Product.create(
+      {
+        name: name.trim(),
+        imgUrl: imgUrl ? imgUrl.trim() : NO_IMAGE_URL,
+        status: status || PRODUCT_STATUS_VALUES.ACTIVE,
+        description: description ? description.trim() : null,
+        category: categoryRecord.name,
+        slug: slug || generateSlug(name),
+        categoryId: categoryRecord.id ? categoryRecord.id : null,
+      },
+      { transaction: t }
+    );
 
-    if (hasVariants) {
-      const productVariants = variants.map((variant) => ({
-        ...variant,
+    let variantsToCreate;
+
+    if (Array.isArray(variants) && variants.length > 0) {
+      // Case 1: User provided a variants array
+      variantsToCreate = variants.map((variant, index) => ({
         productId: product.id,
+        name: variant.name.trim(),
+        price: parseFloat(variant.price),
+        stock: parseInt(variant.stock),
+        isDefault:
+          variant.isDefault !== undefined ? variant.isDefault : index === 0,
+        sku: generateSKU(product.name, variant.name),
+        attributes: variant.attributes || {},
       }));
-      await ProductVariant.bulkCreate(productVariants, { transaction: t });
+    } else {
+      // Case 2: No variants array, create one default from top-level fields
+      // This validation should ideally be in the schema validation logic
+      if (!price || price <= 0 || stock === undefined || stock < 0) {
+        await t.rollback();
+        return res.status(400).json({
+          success: false,
+          message: "Price and Stock are required for a default product.",
+        });
+      }
+      variantsToCreate = [
+        {
+          productId: product.id,
+          name: "Default",
+          price: parseFloat(price),
+          stock: parseInt(stock),
+          isDefault: true,
+          sku: generateSKU(product.name, "Default"),
+          attributes: attributes || {},
+        },
+      ];
     }
 
-    // 4️⃣ Commit if everything passed
+    await ProductVariant.bulkCreate(variantsToCreate, { transaction: t });
+
+    // Commit the transaction
     await t.commit();
 
     const createdProduct = await Product.findOne({
       where: { id: product.id },
       include: [
         { model: ProductVariant, as: "variants" },
-        { model: Category, as: "category" },
+        { model: Category, as: "category", attributes: ["name"] },
       ],
     });
     res
       .status(201)
       .json({ message: `product created successfully`, data: createdProduct });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    await t.rollback();
+    console.error("Error creating product:", err);
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
 };
 
