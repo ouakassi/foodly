@@ -16,7 +16,6 @@ const ProductVariant = sequelize.define(
         notEmpty: true,
         len: [1, 100],
       },
-      unique: true,
     },
     sku: {
       type: DataTypes.STRING,
@@ -30,6 +29,10 @@ const ProductVariant = sequelize.define(
     stock: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
+    },
+    isDefault: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     attributes: {
       type: DataTypes.JSON, // e.g., { size: 'Large', color: 'Red' }
