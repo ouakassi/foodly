@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../utils/database.js";
-import { generateSlug } from "../utils/model.js";
-import { PRODUCT_STATUS_VALUES_ARRAY } from "../utils/constants.js";
+import { generateSlug } from "../utils/helpers.js";
+import { PRODUCT_STATUS_VALUES } from "../utils/constants.js";
 
 const Product = sequelize.define(
   "product",
@@ -20,23 +20,9 @@ const Product = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    basePrice: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-      validate: {
-        min: 0,
-      },
-    },
-    stock: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      validate: {
-        min: 0,
-      },
-    },
     status: {
       type: DataTypes.STRING,
-      defaultValue: PRODUCT_STATUS_VALUES_ARRAY[0], // Default to "active"
+      defaultValue: PRODUCT_STATUS_VALUES.ACTIVE, // Default to "active"
       allowNull: false,
     },
     description: {
@@ -64,18 +50,6 @@ const Product = sequelize.define(
   },
   {
     paranoid: true, // Soft deletes
-    hooks: {
-      beforeCreate: async (product) => {
-        if (!product.slug) {
-          product.slug = generateSlug(product.name);
-        }
-      },
-      beforeUpdate: async (product) => {
-        if (product.changed("name") && !product.changed("slug")) {
-          product.slug = generateSlug(product.name);
-        }
-      },
-    },
   }
 );
 
