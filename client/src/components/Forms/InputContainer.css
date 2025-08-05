@@ -29,6 +29,7 @@
   top: -13px;
   padding: 0 0.75rem;
   background: white;
+  color: rgb(116, 116, 116);
   background-size: 0 2px;
   height: 13px;
   transition: 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -74,7 +75,7 @@
   background-color: inherit;
   width: 100%;
   transition: inherit;
-  font-family: var(--font-3);
+  /* font-family: var(--font-5); */
 }
 
 .toggle-password-icon {

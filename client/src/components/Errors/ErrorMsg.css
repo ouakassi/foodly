@@ -5,6 +5,7 @@
   border-radius: 5px;
   gap: var(--gap-2);
   background: #ffe5e5;
+  background: #fff9f9;
   align-items: center;
   justify-content: flex-start;
 }
