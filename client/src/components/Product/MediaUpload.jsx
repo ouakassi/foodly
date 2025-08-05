@@ -56,12 +56,14 @@ const MediaUpload = ({
             htmlFor="file"
           >
             {!imagePreview ? (
-              <span>
+              <>
                 <IoMdCloudUpload className="icon" />
-                {!isDragging
-                  ? "Drop image here or click to upload..."
-                  : "drop it now!"}
-              </span>
+                <span>
+                  {!isDragging
+                    ? "Drop image here or click to upload..."
+                    : "drop it now!"}
+                </span>
+              </>
             ) : (
               <span>
                 <MdLibraryAddCheck
@@ -74,19 +76,13 @@ const MediaUpload = ({
           </label>
         </div>
         {imagePreview && (
-          <motion.span
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0, transition: { duration: 0.5 } }}
-          >
-            <CustomButton
-              text="Remove Image"
-              icon={<MdDeleteForever fontSize="1.25rem" />}
-              isTypeSubmit={false}
-              className="button-save"
-              onClick={handleRemoveImg}
-              style={{ backgroundColor: "#dc3545" }}
-            />
-          </motion.span>
+          <CustomButton
+            text="Remove Image"
+            icon={<MdDeleteForever fontSize="1.25rem" />}
+            isTypeSubmit={false}
+            className="remove-image-btn"
+            onClick={handleRemoveImg}
+          />
         )}
       </div>
     </div>
