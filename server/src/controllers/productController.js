@@ -6,6 +6,7 @@ import { generateSKU, generateSlug } from "../utils/helpers.js";
 import {
   handleValidationError,
   validateCreateProduct,
+  validateUpdateProduct,
 } from "../utils/validator.js";
 import ProductVariant from "../models/productVariantModel.js";
 import {
@@ -63,33 +64,39 @@ const getAllProducts = async (req, res) => {
 
     const includeDeleted = isDeleted === true ? true : false;
 
-    const [productsData, activeCount, inactiveCount, draftCount] =
-      await Promise.all([
-        Product.findAndCountAll({
-          where: filterConditions,
-          distinct: true,
-          paranoid: includeDeleted,
-          limit: limit,
-          offset: offset,
-          order: sort ? [PRODUCT_SORT_OPTIONS[sort.toUpperCase()]] : [],
-          include: [
-            { model: ProductVariant, as: "variants" },
-            { model: Category, as: "category" },
-          ],
-        }),
-        Product.count({
-          where: { ...filterConditions, status: PRODUCT_STATUS_VALUES.ACTIVE },
-        }),
-        Product.count({
-          where: {
-            ...filterConditions,
-            status: PRODUCT_STATUS_VALUES.INACTIVE,
-          },
-        }),
-        Product.count({
-          where: { ...filterConditions, status: PRODUCT_STATUS_VALUES.DRAFT },
-        }),
-      ]);
+    const [
+      productsData,
+      activeProductsCount,
+      inactiveProductsCount,
+      draftProductsCount,
+      allProductsCount,
+    ] = await Promise.all([
+      Product.findAndCountAll({
+        where: filterConditions,
+        distinct: true,
+        paranoid: includeDeleted,
+        limit: limit,
+        offset: offset,
+        order: sort ? [PRODUCT_SORT_OPTIONS[sort.toUpperCase()]] : [],
+        include: [
+          { model: ProductVariant, as: "variants" },
+          { model: Category, as: "category" },
+        ],
+      }),
+      Product.count({
+        where: { ...filterConditions, status: PRODUCT_STATUS_VALUES.ACTIVE },
+      }),
+      Product.count({
+        where: {
+          ...filterConditions,
+          status: PRODUCT_STATUS_VALUES.INACTIVE,
+        },
+      }),
+      Product.count({
+        where: { ...filterConditions, status: PRODUCT_STATUS_VALUES.DRAFT },
+      }),
+      Product.count(),
+    ]);
 
     if (productsData.count === 0) {
       return res.status(200).json({ message: "No products found" });
@@ -111,10 +118,10 @@ const getAllProducts = async (req, res) => {
       },
 
       count: {
-        totalProducts: productsData.count,
-        activeProducts: activeCount,
-        inactiveProducts: inactiveCount,
-        draftCount: draftCount,
+        activeProductsCount,
+        inactiveProductsCount,
+        draftProductsCount,
+        allProductsCount,
       },
       filters: {
         searchQuery: search || null,
@@ -133,7 +140,13 @@ const getAllProducts = async (req, res) => {
 const getProduct = async (req, res) => {
   try {
     const productId = req.params.id;
-    const product = await Product.findOne({ where: { id: productId } });
+    const product = await Product.findOne({
+      where: { id: productId },
+      include: [
+        { model: ProductVariant, as: "variants" },
+        { model: Category, as: "category", attributes: ["name"] },
+      ],
+    });
     if (!product) {
       return res
         .status(404)
@@ -279,24 +292,76 @@ const createProduct = async (req, res) => {
 // PUT /api/products/:id
 // Public
 const updateProduct = async (req, res) => {
+  const productId = req.params.id;
+  const t = await sequelize.transaction();
+
   try {
-    const productId = req.params.id;
-    const productData = req.body;
-
-    const updatedProduct = await Product.findOne({ where: { id: productId } });
-
-    if (!updatedProduct) {
-      return res.status(404).json({ message: "product not found" });
-    } else {
-      await Product.update(productData, {
-        where: { id: productId },
-      });
-
-      return res
-        .status(200)
-        .json({ message: `product with id ${productId} updated successfully` });
+    // 1. Validate the incoming data
+    const { error, value } = validateUpdateProduct(req.body);
+    if (error) {
+      await t.rollback();
+      return handleValidationError(error, res);
     }
+
+    const { variants, ...productData } = value;
+
+    // 2. Find the product to update
+    const product = await Product.findByPk(productId, { transaction: t });
+    if (!product) {
+      await t.rollback();
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // 3. Check for slug/name uniqueness if it's being changed
+    if (productData.slug && productData.slug !== product.slug) {
+      const existing = await Product.findOne({
+        where: { slug: productData.slug, id: { [Op.ne]: productId } },
+        transaction: t,
+      });
+      if (existing) {
+        await t.rollback();
+        return res.status(409).json({ message: "Slug is already in use" });
+      }
+    }
+
+    // 4. Update the main product details
+    await product.update(productData, { transaction: t });
+
+    // 5. Handle variant updates (Create, Update, Delete)
+    if (variants && Array.isArray(variants)) {
+      // This is a simplified example. A full implementation would be more complex,
+      // handling deletions of variants not present in the new array.
+      for (const variantData of variants) {
+        if (variantData.id) {
+          // If variant has an ID, update it
+          await ProductVariant.update(variantData, {
+            where: { id: variantData.id, productId: productId },
+            transaction: t,
+          });
+        } else {
+          // If no ID, create a new variant for this product
+          await ProductVariant.create(
+            { ...variantData, productId: productId },
+            { transaction: t }
+          );
+        }
+      }
+    }
+
+    // 6. Commit the transaction
+    await t.commit();
+
+    // 7. Fetch and return the fully updated product
+    const updatedProduct = await Product.findByPk(productId, {
+      include: [{ model: ProductVariant, as: "variants" }],
+    });
+
+    return res.status(200).json({
+      message: `Product updated successfully`,
+      data: updatedProduct,
+    });
   } catch (err) {
+    await t.rollback(); // Ensure rollback on any error
     res.status(500).json({ error: err.message });
   }
 };
