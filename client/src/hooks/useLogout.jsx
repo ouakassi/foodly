@@ -10,7 +10,7 @@ export const useLogout = () => {
 
   const handleLogout = async () => {
     try {
-      // Optional: Call backend logout endpoint to invalidate token
+      //  backend logout endpoint to invalidate token
       await axiosPrivate.post(API_ENDPOINTS.LOGOUT);
     } catch (error) {
       console.error("Logout error:", error);

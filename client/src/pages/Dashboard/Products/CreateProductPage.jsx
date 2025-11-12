@@ -59,7 +59,7 @@ export default function CreateProductPage(defaultValues = {}) {
     isEditSession ? editDefaultValues.status : "active"
   );
   const [selectedCategory, setSelectedCategory] = useState(
-    isEditSession ? editDefaultValues.category : ""
+    isEditSession ? editDefaultValues.category.name : ""
   );
 
   const [imagePreview, setImagePreview] = useState(
@@ -67,12 +67,6 @@ export default function CreateProductPage(defaultValues = {}) {
   );
   const [isFormLoading, setIsFormLoading] = useState(false);
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
-
-  // useEffect(() => {
-  //   if (isEditSession) {
-  //     setCategories((prev) => [...new Set([...prev, categoryNormalized])]);
-  //   }
-  // }, [isEditSession, categoryNormalized]);
 
   const {
     register,
@@ -90,15 +84,27 @@ export default function CreateProductPage(defaultValues = {}) {
       ? {
           name: "",
           slug: "",
-          category: selectedCategory || "", // Default to "nuts" if no category is selected
+          category: selectedCategory || "",
           status: selectedStatus,
           imgUrl: "",
           // images: [],
           description: "",
           variants: [defaultVariant],
         }
-      : editDefaultValues,
+      : { ...editDefaultValues, category: editDefaultValues.category.name },
   });
+
+  let navigate = useNavigate();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "variants",
+    keyName: "_id",
+  });
+
+  console.log(getValues());
+  console.log("editDefaultValues", editDefaultValues);
+  console.log(selectedCategory);
 
   const {
     data,
@@ -109,18 +115,9 @@ export default function CreateProductPage(defaultValues = {}) {
 
   const categories = data?.data.categories || [];
 
-  console.log(getValues());
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "variants",
-  });
-
   useEffect(() => {
     setFocus("name");
   }, [setFocus]);
-
-  let navigate = useNavigate();
 
   const handleOpennCategoryDialog = (e) => {
     e.preventDefault();
@@ -176,11 +173,11 @@ export default function CreateProductPage(defaultValues = {}) {
 
   const handleDeleteVariant = (e, index) => {
     e.preventDefault();
-    remove(index);
-    if (index === 0 && fields.length === 1) {
-      // Reset the first variant to default if it's the only one left
-      append({ ...defaultVariant });
+    if (fields.length === 1) {
+      toast.warning("At least one variant is required");
+      return;
     }
+    remove(index);
   };
 
   const onSubmit = async (data) => {

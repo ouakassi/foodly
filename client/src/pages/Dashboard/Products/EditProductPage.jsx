@@ -16,6 +16,8 @@ export default function EditProductPage() {
 
   const navigate = useNavigate();
 
+  console.log("product", product);
+
   useEffect(() => {
     if (error) {
       console.error("Error fetching product:", error);
