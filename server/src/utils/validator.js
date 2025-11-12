@@ -68,13 +68,19 @@ const productVariantSchema = Joi.object({
     "string.max": "Variant name cannot exceed 100 characters",
     "any.required": "Variant name is required",
   }),
-  sku: Joi.string().alphanum().min(3).max(50).required().messages({
-    "string.base": "SKU must be a string",
-    "string.alphanum": "SKU can only contain letters and numbers",
-    "string.min": "SKU must be at least 3 characters",
-    "string.max": "SKU cannot exceed 50 characters",
-    "any.required": "SKU is required for each variant",
-  }),
+  sku: Joi.string()
+    .pattern(/^[a-zA-Z0-9_-]+$/)
+    .min(3)
+    .max(50)
+    .required()
+    .messages({
+      "string.base": "SKU must be a string",
+      "string.pattern.base":
+        "SKU can only contain letters, numbers, dashes (-), or underscores (_)",
+      "string.min": "SKU must be at least 3 characters",
+      "string.max": "SKU cannot exceed 50 characters",
+      "any.required": "SKU is required for each variant",
+    }),
   price: Joi.number()
     .positive()
     .min(0.01)
@@ -112,7 +118,7 @@ const productVariantSchema = Joi.object({
       "object.base": "Attributes must be an object",
       "object.pattern.match": "Invalid attribute key or value format",
     }),
-});
+}).unknown(true);
 
 const createProductSchema = Joi.object({
   // Basic product information
@@ -210,7 +216,7 @@ const createProductSchema = Joi.object({
     .messages({
       "array.max": "You cannot add more than 50 variants per product",
     }),
-});
+}).unknown(true);
 
 // The update schema makes those same fields optional
 const updateProductSchema = Joi.object({
@@ -227,7 +233,7 @@ const updateProductSchema = Joi.object({
   variants: Joi.array()
     .items(productVariantSchema) // You'd need a separate schema for updating variants
     .optional(),
-});
+}).unknown(true);
 
 // ── Validator Function ──
 const analyticsSchema = Joi.object({
