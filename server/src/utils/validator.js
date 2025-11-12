@@ -68,19 +68,14 @@ const productVariantSchema = Joi.object({
     "string.max": "Variant name cannot exceed 100 characters",
     "any.required": "Variant name is required",
   }),
-  sku: Joi.string()
-    .pattern(/^[a-zA-Z0-9_-]+$/)
-    .min(3)
-    .max(50)
-    .required()
-    .messages({
-      "string.base": "SKU must be a string",
-      "string.pattern.base":
-        "SKU can only contain letters, numbers, dashes (-), or underscores (_)",
-      "string.min": "SKU must be at least 3 characters",
-      "string.max": "SKU cannot exceed 50 characters",
-      "any.required": "SKU is required for each variant",
-    }),
+  sku: Joi.string().pattern(skuPattern).min(3).max(50).required().messages({
+    "string.base": "SKU must be a string",
+    "string.pattern.base":
+      "SKU can only contain letters, numbers, dashes (-), or underscores (_)",
+    "string.min": "SKU must be at least 3 characters",
+    "string.max": "SKU cannot exceed 50 characters",
+    "any.required": "SKU is required for each variant",
+  }),
   price: Joi.number()
     .positive()
     .min(0.01)

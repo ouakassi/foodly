@@ -480,19 +480,19 @@ const connectDb = async () => {
     await sequelize.authenticate();
     console.log("🔗 Connection has been established successfully.");
     // await db.sync({ logging: true });
-    await sequelize.sync({ force: true, logging: true });
-    // await sequelize.sync({ force: false, logging: true });
+    // await sequelize.sync({ force: true, logging: true });
+    await sequelize.sync({ force: false, logging: true });
 
     // await createRandomProducts();
     await createRoles();
     await createAdminUser();
-    // await createNormalUser();
+    await createNormalUser();
     // await createModeratorUser();
 
     // await createRandomOrdersFor60Days();
 
     // await createCategories();
-    // await seedCategoriesAndProducts();
+    await seedCategoriesAndProducts();
     console.log("☑️  All models were synchronized successfully.");
   } catch (error) {
     console.error("❌ Unable to connect to the database:", error.original);

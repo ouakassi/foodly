@@ -9,7 +9,7 @@ import {
 import { API_ENDPOINTS, APP_LINKS, LINKS_WITH_ICONS } from "../../../constants";
 import PageTitle from "../../../components/Dashboard/PageTitle";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
-import { API_URL } from "../../../api/api";
+import { API_URL, axiosPrivate } from "../../../api/api";
 import { formatDate } from "../../../lib/helpers";
 import { RiUser4Line } from "react-icons/ri";
 
@@ -198,6 +198,29 @@ const UsersTable = () => {
     error,
     refetch: refetchUsers,
   } = useAxiosFetch(API_URL + API_ENDPOINTS.USERS, params);
+
+  const getUsers = async () => {
+    const response = await axiosPrivate.get(API_ENDPOINTS.USERS);
+    return response.data; // I return only the data
+  };
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const users = await getUsers();
+        console.log("Fetched users:", users);
+      } catch (err) {
+        console.error(
+          "Error fetching users:",
+          err.response?.data || err.message
+        );
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  console.log("getUsers", getUsers);
 
   useEffect(() => {
     refetchUsers();

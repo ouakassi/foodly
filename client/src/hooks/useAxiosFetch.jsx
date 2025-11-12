@@ -1,16 +1,20 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { axiosPrivate } from "../api/api";
 
-const useAxiosFetch = (dataUrl, params = {}) => {
+const useAxiosFetch = (dataUrl, params = {}, usePrivate = true) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Choose between private (authenticated) or public axios instance
+  const axiosInstance = usePrivate ? axiosPrivate : axios;
 
   const fetchData = useCallback(
     async (cancelToken) => {
       setIsLoading(true);
       try {
-        const response = await axios.get(dataUrl, {
+        const response = await axiosInstance.get(dataUrl, {
           params,
           cancelToken,
         });
@@ -20,14 +24,17 @@ const useAxiosFetch = (dataUrl, params = {}) => {
         if (axios.isCancel(err)) {
           console.log("Request canceled:", err.message);
         } else {
-          setError(`Error: ${err.message}`);
+          // Better error handling
+          const errorMessage =
+            err.response?.data?.message || err.message || "An error occurred";
+          setError(`Error: ${errorMessage}`);
           setData(null);
         }
       } finally {
         setIsLoading(false);
       }
     },
-    [dataUrl, JSON.stringify(params)] // Make sure it's stable
+    [dataUrl, JSON.stringify(params), axiosInstance]
   );
 
   useEffect(() => {
