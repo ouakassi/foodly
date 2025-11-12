@@ -3,6 +3,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Changa:wght@300&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Palanquin+Dark:wght@400;600;700&display=swap");
 
+@font-face {
+  font-family: "waking";
+  src: url("/fonts/waking.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Custom styles here */
 
 @tailwind base;
@@ -126,9 +134,9 @@
   /* Font and typography */
   --font-1: "Changa", sans-serif;
   --font-2: "Poppins", sans-serif;
-  --font-3: "Lato", sans-serif;
-  --font-4: "Palanquin Dark", sans-serif;
-  --font-5: "Cairo", sans-serif;
+  --font-3: "waking", sans-serif;
+  /* --font-4: "Palanquin Dark", sans-serif; */
+  /* --font-5: "Cairo", sans-serif; */
 
   --fs-6xl: 6.25rem;
   --fs-5xl: 3.125rem;

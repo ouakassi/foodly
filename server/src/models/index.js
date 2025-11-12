@@ -7,6 +7,9 @@ import { v4 as uuidv4 } from "uuid";
 import sequelize from "../utils/database.js";
 import { ORDER_STATUS_VALUES_ARRAY, ROLES } from "../utils/constants.js";
 import { hashPassword } from "../utils/auth.js";
+import Category from "./categoryModel.js";
+import ProductVariant from "./productVariantModel.js";
+import { generateSKU, generateSlug } from "../utils/helpers.js";
 // import Inventory from './inventoryModel';
 
 //insert roles to database
@@ -330,6 +333,100 @@ const createModeratorUser = async () => {
   }
 };
 
+const seedCategoriesAndProducts = async (req, res) => {
+  try {
+    // 1) Create categories
+    const categoryNames = ["Herbs", "Oils", "Spices", "Supplements"];
+    const categories = [];
+    for (const name of categoryNames) {
+      let category = await Category.findOne({ where: { name } });
+      if (!category) {
+        category = await Category.create({
+          name,
+          slug: generateSlug(name),
+          description: `All about ${name}`,
+        });
+      }
+      categories.push(category);
+    }
+
+    // 2) Create products
+    const sampleProductNames = [
+      "Rosemary",
+      "Chamomile",
+      "Peppermint",
+      "Basil",
+      "Thyme",
+      "Olive Oil",
+      "Almond Oil",
+      "Argan Oil",
+      "Sesame Oil",
+      "Coconut Oil",
+      "Turmeric Powder",
+      "Paprika",
+      "Black Pepper",
+      "Cumin",
+      "Cinnamon",
+      "Multivitamin",
+      "Vitamin C",
+      "Omega 3",
+      "Probiotic",
+      "Magnesium",
+    ];
+
+    const statuses = ["draft", "active", "inactive"];
+
+    for (let i = 0; i < 20; i++) {
+      const name = sampleProductNames[i];
+      const randomCategory =
+        categories[Math.floor(Math.random() * categories.length)];
+
+      const product = await Product.create({
+        name,
+        slug: generateSlug(name),
+        description: `This is a sample description for ${name}.`,
+        imgUrl:
+          "https://res.cloudinary.com/djfsxp9z0/image/upload/v1742571332/products/weed/6172705011f98cfbe6f5304a764fc862.png",
+        status: statuses[Math.floor(Math.random() * statuses.length)],
+        categoryId: randomCategory.id,
+      });
+
+      // 3) Create two example variants for each product
+      const variants = [
+        {
+          name: "100g",
+          price: 9.99,
+          stock: 50,
+          sku: generateSKU(name, "100g"),
+          attributes: { weight: "100g" },
+        },
+        {
+          name: "1kg",
+          price: 49.99,
+          stock: 30,
+          sku: generateSKU(name, "1kg"),
+          attributes: { weight: "1kg" },
+        },
+      ];
+
+      await ProductVariant.bulkCreate(
+        variants.map((v) => ({
+          ...v,
+          productId: product.id,
+        }))
+      );
+    }
+
+    return res.json({
+      success: true,
+      message: "Seeded categories, products, and variants",
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 // Relations
 
 // Role ↔ User
@@ -352,30 +449,29 @@ OrderItem.belongsTo(Order, { foreignKey: "orderId" });
 OrderItem.belongsTo(Product, { as: "product", foreignKey: "productId" });
 Product.hasMany(OrderItem, { as: "orderItems", foreignKey: "productId" });
 
-// Product ↔ Inventory
-// Product.hasOne(Inventory, { foreignKey: "productId", as: "inventory" });
-// Inventory.belongsTo(Product, { foreignKey: "productId" });
+// Category has many Products
+Category.hasMany(Product, {
+  as: "products",
+  foreignKey: "categoryId",
+});
 
-// (Optional) Order ↔ Address (if using an address table for shipping address)
-// Order.belongsTo(Address, {
-//   foreignKey: "shippingAddressId",
-//   as: "shippingAddress",
-// });
+// Product belongs to Category
+Product.belongsTo(Category, {
+  as: "category",
+  foreignKey: "categoryId",
+});
 
-// (Optional) Category ↔ Product
-// Category.hasMany(Product, { foreignKey: "categoryId" });
-// Product.belongsTo(Category, { foreignKey: "categoryId" });
+// Product has many Variants
+Product.hasMany(ProductVariant, {
+  as: "variants",
+  foreignKey: "productId",
+});
 
-// (Optional) User ↔ Review ↔ Product (if implementing reviews later)
-// User.hasMany(Review, { foreignKey: "userId" });
-// Review.belongsTo(User, { foreignKey: "userId" });
-
-// Product.hasMany(Review, { foreignKey: "productId" });
-// Review.belongsTo(Product, { foreignKey: "productId" });
-
-// (Optional) Order ↔ Payment
-// Order.hasOne(Payment, { foreignKey: "orderId", as: "payment" });
-// Payment.belongsTo(Order, { foreignKey: "orderId" });
+// Variant belongs to Product
+ProductVariant.belongsTo(Product, {
+  as: "product",
+  foreignKey: "productId",
+});
 
 const connectDb = async () => {
   console.log("Testing the database connection..");
@@ -385,15 +481,18 @@ const connectDb = async () => {
     console.log("🔗 Connection has been established successfully.");
     // await db.sync({ logging: true });
     await sequelize.sync({ force: true, logging: true });
-    await createRandomProducts();
+    // await sequelize.sync({ force: false, logging: true });
+
+    // await createRandomProducts();
     await createRoles();
     await createAdminUser();
-    await createNormalUser();
-    await createModeratorUser();
+    // await createNormalUser();
+    // await createModeratorUser();
 
-    await createRandomOrdersFor60Days();
+    // await createRandomOrdersFor60Days();
 
     // await createCategories();
+    // await seedCategoriesAndProducts();
     console.log("☑️  All models were synchronized successfully.");
   } catch (error) {
     console.error("❌ Unable to connect to the database:", error.original);

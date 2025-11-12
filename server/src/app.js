@@ -18,6 +18,7 @@ import userRouter from "./routes/userRouter.js";
 import addressRouter from "./routes/addressRouter.js";
 import uploadImageRouter from "./routes/uploadImageRouter.js";
 import orderRouter from "./routes/orderRouter.js";
+import categoryRouter from "./routes/categoryRouter.js";
 // import stripeRouter from "./routes/stripeRouter.js";
 import analyticRouter from "./routes/analyticRouter.js";
 
@@ -52,10 +53,11 @@ connectDb();
 
 // ❱❱  Routes
 app.use("/auth", authRouter);
+app.use("/api/categories", categoryRouter);
 app.use("/api/products", productRouter);
 app.use("/api/orders", orderRouter);
-app.use("/api/users", userRouter, addressRouter);
 app.use("/api/upload", uploadImageRouter);
+app.use("/api/users", userRouter, addressRouter);
 app.use("/api/analytics", analyticRouter);
 
 // ❱❱  404 handler

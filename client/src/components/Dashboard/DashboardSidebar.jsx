@@ -27,6 +27,7 @@ import DropdownItem from "../Navigation/DropdownItem";
 import useCheckIfClickedOutside from "../../hooks/useCheckIfClickedOutside";
 import { LuArrowLeftFromLine, LuArrowRightFromLine } from "react-icons/lu";
 import { APP_LINKS } from "../../constants";
+import { useLogout } from "../../hooks/useLogout";
 
 const navItems = [
   {
@@ -68,6 +69,8 @@ export default function DashboardSidebar() {
 
   const adminPopupRef = useRef();
   const sidebarRef = useRef();
+
+  const logout = useLogout();
 
   useEffect(() => {
     const spanElements = document.querySelectorAll(".dashboard-sidebar-text");
@@ -185,7 +188,7 @@ export default function DashboardSidebar() {
                     <span className="dashboard-admin-popup-name">profile</span>
                   </DropdownItem>
                 </Link>
-                <Link className="dashboard-admin-popup-link">
+                <Link onClick={logout} className="dashboard-admin-popup-link">
                   <DropdownItem icon={<BsBoxArrowInRight />}>
                     <span className="dashboard-admin-popup-name">logout</span>
                   </DropdownItem>

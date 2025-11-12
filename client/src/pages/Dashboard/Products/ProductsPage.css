@@ -89,6 +89,9 @@
 .product-row .status span.inactive {
   background-color: var(--color-inactive);
 }
+.product-row .status span.draft {
+  background-color: rgb(148, 148, 148);
+}
 
 .product-row td.stock {
 }

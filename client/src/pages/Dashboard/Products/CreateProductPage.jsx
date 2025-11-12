@@ -1,34 +1,50 @@
 import "./CreateProductPage.css";
+import { useEffect, useState } from "react";
+import { useForm, useFieldArray, get } from "react-hook-form";
+import { motion } from "framer-motion";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+
 import CustomButton from "@/components/Buttons/CustomButton";
 import InputContainer from "@/components/Forms/InputContainer";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { motion } from "framer-motion";
+import MediaUpload from "../../../components/Product/MediaUpload";
+import CategoryForm from "../../../components/Product/CategoryForm";
+import ContentContainer from "../../../components/Dashboard/ContentContainer";
+import PageTitle from "../../../components/Dashboard/PageTitle";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/Select";
 
-import { MdOutlineUploadFile } from "react-icons/md";
-
+import { MdDelete, MdOutlineDownloading } from "react-icons/md";
 import {
   FaFileCirclePlus,
   FaRegCircleCheck,
   FaRegCircleXmark,
 } from "react-icons/fa6";
-import { TbHomeSignal, TbBrandProducthunt } from "react-icons/tb";
-import { BiArchiveIn } from "react-icons/bi";
-import { AiOutlineDollar, AiOutlinePercentage } from "react-icons/ai";
+import { FaFileSignature } from "react-icons/fa";
+import { BiCheck, BiPlus } from "react-icons/bi";
 
 import { axiosInstance, API_URL } from "@/api/api";
-import { toast } from "sonner";
-import useAxiosFetch from "../../../hooks/useAxiosFetch";
-import { useNavigate } from "react-router-dom";
-import MediaUpload from "../../../components/Product/MediaUpload";
-import CategoryForm from "../../../components/Product/CategoryForm";
-import ContentContainer from "../../../components/Dashboard/ContentContainer";
 import { createProductValidationSchema } from "../../../../utils/validation";
-import PageTitle from "../../../components/Dashboard/PageTitle";
-import { FaFileSignature } from "react-icons/fa";
 import { API_ENDPOINTS, APP_LINKS } from "../../../constants";
+import { RiAddCircleLine, RiDraftLine } from "react-icons/ri";
+import useAxiosFetch from "../../../hooks/useAxiosFetch";
+import ErrorMsg from "../../../components/Errors/ErrorMsg";
+import { generateSlug } from "../../../lib/helpers";
+
+const statuses = [
+  { value: "active", icon: <FaRegCircleCheck /> },
+  { value: "draft", icon: <RiDraftLine /> },
+  { value: "inactive", icon: <FaRegCircleXmark /> },
+];
+
+const defaultVariant = { name: "", sku: "", price: "", stock: "" };
 
 export default function CreateProductPage(defaultValues = {}) {
   const {
@@ -39,35 +55,24 @@ export default function CreateProductPage(defaultValues = {}) {
   } = defaultValues.defaultValues || {};
   const isEditSession = Boolean(editId);
 
-  const categoryNormalized = editDefaultValues?.category?.toLowerCase() || "";
-
   const [selectedStatus, setSelectedStatus] = useState(
-    isEditSession ? editDefaultValues.status : true
+    isEditSession ? editDefaultValues.status : "active"
   );
-  const [categories, setCategories] = useState([
-    "oils",
-    "nuts",
-    "coffees",
-    "herbs",
-  ]);
+  const [selectedCategory, setSelectedCategory] = useState(
+    isEditSession ? editDefaultValues.category : ""
+  );
+
   const [imagePreview, setImagePreview] = useState(
     isEditSession ? editDefaultValues.imgUrl : ""
   );
   const [isFormLoading, setIsFormLoading] = useState(false);
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(
-    isEditSession ? categoryNormalized : ""
-  );
-  const [newCategory, setNewCategory] = useState(
-    isEditSession ? categoryNormalized : ""
-  );
-  const [isAddCategoryLoading, setIsAddCategoryLoading] = useState(false);
 
-  useEffect(() => {
-    if (isEditSession) {
-      setCategories((prev) => [...new Set([...prev, categoryNormalized])]);
-    }
-  }, [isEditSession, categoryNormalized]);
+  // useEffect(() => {
+  //   if (isEditSession) {
+  //     setCategories((prev) => [...new Set([...prev, categoryNormalized])]);
+  //   }
+  // }, [isEditSession, categoryNormalized]);
 
   const {
     register,
@@ -75,54 +80,52 @@ export default function CreateProductPage(defaultValues = {}) {
     setFocus,
     getValues,
     setValue,
+    watch,
+    control,
     formState: { errors, isValid },
   } = useForm({
     resolver: yupResolver(createProductValidationSchema),
     mode: "onChange",
     defaultValues: !isEditSession
       ? {
-          stock: 1,
-          discount: 0,
-          category: "nuts",
+          name: "",
+          slug: "",
+          category: selectedCategory || "", // Default to "nuts" if no category is selected
+          status: selectedStatus,
+          imgUrl: "",
+          // images: [],
+          description: "",
+          variants: [defaultVariant],
         }
       : editDefaultValues,
   });
 
-  let navigate = useNavigate();
-  // const formattedDiscount = getValues().discount.toLocaleString("en", {
-  //   style: "percent",
-  // });
+  const {
+    data,
+    isLoading: isCategoriesLoading,
+    error: categoriesError,
+    refetch: refetchCategories,
+  } = useAxiosFetch(`${API_URL}${API_ENDPOINTS.CATEGORIES}`);
+
+  const categories = data?.data.categories || [];
+
+  console.log(getValues());
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "variants",
+  });
 
   useEffect(() => {
     setFocus("name");
-  }, []);
+  }, [setFocus]);
 
-  useEffect(() => {
-    setValue("category", selectedCategory);
-  }, [selectedCategory, setValue]);
-  // const {
-  //   data: products,
-  //   fetchError,
-  //   isLoading,
-  //   error,
-  // } = useAxiosFetch(API_URL + API_ENDPOINTS.PRODUCTS);
-  // useEffect(() => {
-  //   if (error) {
-  //     console.error("Error fetching products:", error);
-  //     toast.error("Failed to fetch products. Please try again.");
-  //     return;
-  //   }
-  //   if (!products) {
-  //     console.log("no categories found");
-  //     return;
-  //   }
-  //   if (products.length > 0) {
-  //     const uniqueCategories = [
-  //       ...new Set(products.map((product) => product.category)),
-  //     ];
-  //     setCategories(uniqueCategories);
-  //   }
-  // }, [error, products]);
+  let navigate = useNavigate();
+
+  const handleOpennCategoryDialog = (e) => {
+    e.preventDefault();
+    setOpenCategoryDialog(true);
+  };
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -150,53 +153,38 @@ export default function CreateProductPage(defaultValues = {}) {
     // setProductImageUrl(null);
   };
 
-  const handleAddNewCategory = (e) => {
+  const handleCategoryInputChange = (value) => {
+    refetchCategories();
+    setValue("category", value);
+    setSelectedCategory(value);
+
+    // setValue("category", value);
+  };
+
+  const handleProductSlugGeneration = (e) => {
     e.preventDefault();
 
-    const trimmedCategory = newCategory.trim().toLowerCase();
-
-    if (/[A-Z0-9]/.test(newCategory)) {
-      toast.error("Cannot contain uppercase letters or numbers.");
-      return;
-    }
-
-    if (!trimmedCategory) {
-      toast.error("Category cannot be empty");
-      return;
-    }
-    if (categories.some((category) => category === trimmedCategory)) {
-      toast.error("Same category exists");
-      return;
-    }
-    if (trimmedCategory.length <= 2) {
-      toast.error("Can't be less than 2 letters");
-      return;
-    }
-    try {
-      setIsAddCategoryLoading(true);
-      setCategories((prevCategories) => [trimmedCategory, ...prevCategories]);
-      setSelectedCategory(trimmedCategory);
-      setValue("category", trimmedCategory);
-
-      // Clear input
-      setNewCategory("");
-
-      toast.success("Category added successfully");
-    } catch (error) {
-      console.error("Error adding category:", error);
-      toast.error("Failed to add category. Please try again.");
-    } finally {
-      setOpenCategoryDialog(false);
-      setIsAddCategoryLoading(false);
+    const name = getValues("name");
+    if (name) {
+      const slug = generateSlug(name);
+      setValue("slug", slug);
+      toast.success(`Slug generated: ${slug}`);
+    } else {
+      toast.error("Please enter a product name first");
     }
   };
 
-  const handleCategoryInputChange = (value) => {
-    setSelectedCategory(value);
-    setValue("category", value);
+  const handleDeleteVariant = (e, index) => {
+    e.preventDefault();
+    remove(index);
+    if (index === 0 && fields.length === 1) {
+      // Reset the first variant to default if it's the only one left
+      append({ ...defaultVariant });
+    }
   };
 
   const onSubmit = async (data) => {
+    console.log(data);
     // Ensure image is selected
     if (!imagePreview) {
       toast.warning("Select an image, please!");
@@ -280,8 +268,113 @@ export default function CreateProductPage(defaultValues = {}) {
             </div>
           </div>
         )}
+        <section className="create-product-section">
+          <div>
+            <ContentContainer className={"product-form"} title={"product data"}>
+              <div className="status-buttons-container">
+                <motion.span
+                  className={`active-button ${selectedStatus}`}
+                  layout
+                  transition={{ duration: 0.25 }}
+                />
+                {statuses.map((status, i) => (
+                  <button
+                    key={status.value}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedStatus(status.value);
+                      setValue("status", status.value);
+                    }}
+                    className={
+                      selectedStatus === status.value ? "is-active" : ""
+                    }
+                  >
+                    {status.icon} {status.value}
+                  </button>
+                ))}
+                <input
+                  type="hidden"
+                  {...register("status")}
+                  value={selectedStatus}
+                />
+              </div>
+              <InputContainer
+                isFieldRequired={true}
+                labelText="name"
+                // icon={<TbBrandProducthunt />}
+                errorMsg={errors?.name?.message}
+              >
+                <input
+                  type="text"
+                  {...register("name", { required: true, maxLength: 25 })}
+                />
+              </InputContainer>
+              <InputContainer labelText="slug" errorMsg={errors?.slug?.message}>
+                <input
+                  type="text"
+                  {...register("slug", { required: false, maxLength: 25 })}
+                />
+                <CustomButton
+                  className="btn slug-btn"
+                  text="generate slug"
+                  icon={<MdOutlineDownloading fontSize={"1.4rem"} />}
+                  onClick={handleProductSlugGeneration}
+                />
+              </InputContainer>
+            </ContentContainer>
+            <ContentContainer className={"category-form"} title={"category"}>
+              <button
+                className="category-form__trigger-btn"
+                onClick={(e) => {
+                  handleOpennCategoryDialog(e);
+                }}
+              >
+                <RiAddCircleLine /> Add Category
+              </button>
+              <Select
+                key={selectedCategory} // reset when value changes
+                value={selectedCategory}
+                onValueChange={handleCategoryInputChange}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
 
-        <div>
+                <SelectContent>
+                  {isCategoriesLoading && (
+                    <SelectItem disabled value="loading">
+                      Loading...
+                    </SelectItem>
+                  )}
+
+                  {!isCategoriesLoading && categoriesError && (
+                    <SelectItem disabled value="error">
+                      Failed to load categories
+                    </SelectItem>
+                  )}
+
+                  {!isCategoriesLoading &&
+                    !categoriesError &&
+                    categories.length === 0 && (
+                      <SelectItem disabled value="no-data">
+                        No categories available
+                      </SelectItem>
+                    )}
+
+                  {!isCategoriesLoading &&
+                    !categoriesError &&
+                    categories.length > 0 &&
+                    categories.map((category) => (
+                      <SelectItem key={category.id} value={category.name}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+
+                <ErrorMsg errorMsg={errors?.category?.message} />
+              </Select>
+            </ContentContainer>
+          </div>
           <ContentContainer className={"media-form"} title={"media upload"}>
             <MediaUpload
               selectedStatus={selectedStatus}
@@ -290,162 +383,134 @@ export default function CreateProductPage(defaultValues = {}) {
               handleRemoveImg={handleRemoveImg}
             />
           </ContentContainer>
-          <div className="row">
-            <ContentContainer className={"product-form"} title={"product"}>
-              <div className="status-toggle">
-                <div className="flex">
-                  <TbHomeSignal
-                    style={{ marginRight: "0.5rem", fontSize: "1.25rem" }}
-                  />
-                  <label htmlFor="#status">Status:</label>
-                </div>
-                <div className="status-buttons-container">
-                  <motion.span
-                    layout
-                    className={`active-button ${
-                      selectedStatus ? "active" : "inactive"
-                    }`}
-                    style={selectedStatus ? { left: 0 } : { left: "50%" }}
-                  ></motion.span>
+        </section>
+        <ContentContainer className="product-variants" title="product variants">
+          {fields.map((field, index) => (
+            <ProductVariant
+              key={field.id}
+              field={field}
+              index={index}
+              onDeleteVariant={handleDeleteVariant}
+              register={register}
+              errors={errors}
+            />
+          ))}
 
-                  <button
-                    id="#status"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectedStatus(true);
-                      setValue("status", true);
-                    }}
-                    style={
-                      selectedStatus
-                        ? { color: "#fff", textShadow: "1px 1px #00000099" }
-                        : null
-                    }
-                  >
-                    <FaRegCircleCheck />
-                    Active
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectedStatus(false);
-                      setValue("status", false);
-                    }}
-                    style={
-                      !selectedStatus
-                        ? {
-                            color: "#ffbbbb",
-                            textShadow: "1px 1px #00000099",
-                          }
-                        : null
-                    }
-                  >
-                    <FaRegCircleXmark />
-                    Inactive
-                  </button>
-                </div>
-                <input
-                  type="hidden"
-                  {...register("status")} // Register 'status' field
-                  value={selectedStatus}
-                />
-              </div>
-              <InputContainer
-                labelText="name"
-                icon={<TbBrandProducthunt />}
-                errorMsg={errors?.name?.message}
-              >
-                <input
-                  type="text"
-                  {...register("name", { required: true, maxLength: 25 })}
-                />
-              </InputContainer>
-              <div className="row">
-                <InputContainer
-                  labelText="Stock"
-                  icon={<BiArchiveIn />}
-                  errorMsg={errors?.stock?.message}
-                >
-                  <input
-                    type="number"
-                    {...register("stock", {
-                      required: "Stock is required",
-                      valueAsNumber: true,
-                      min: {
-                        value: 1,
-                        message: "Stock must be at least 1",
-                      },
-                    })}
-                  />
-                </InputContainer>
-
-                <InputContainer
-                  errorMsg={errors?.price?.message}
-                  labelText="Price"
-                  icon={<AiOutlineDollar />}
-                >
-                  <input
-                    type="number"
-                    step="0.01"
-                    {...register("price", {
-                      required: "Price is required",
-                      valueAsNumber: true,
-                      min: {
-                        value: 0,
-                        message: "Price cannot be negative",
-                      },
-                    })}
-                  />
-                </InputContainer>
-
-                <InputContainer
-                  errorMsg={errors?.discount?.message}
-                  labelText="Discount"
-                  icon={<AiOutlinePercentage />}
-                >
-                  <input
-                    type="number"
-                    {...register("discount", {
-                      required: "Discount is required",
-                      valueAsNumber: true,
-                      min: {
-                        value: 0,
-                        message: "Discount cannot be negative",
-                      },
-                      max: {
-                        value: 100,
-                        message: "Discount cannot exceed 100%",
-                      },
-                    })}
-                  />
-                </InputContainer>
-                {/* <span>{formattedDiscount}</span> */}
-              </div>
-            </ContentContainer>
-
-            <ContentContainer className={"category-form"} title={"category"}>
-              <CategoryForm
-                selectedCategory={selectedCategory}
-                categories={categories}
-                newCategory={newCategory}
-                isAddCategoryLoading={isAddCategoryLoading}
-                handleAddNewCategory={handleAddNewCategory}
-                setNewCategory={setNewCategory}
-                setValue={setValue}
-                handleCategoryInputChange={handleCategoryInputChange}
-                onSetOpenCategoryDialog={setOpenCategoryDialog}
-                openCategoryDialog={openCategoryDialog}
-                isEditSession={isEditSession}
-                editDefaultValues={editDefaultValues}
-              />
-            </ContentContainer>
-          </div>
-        </div>
+          {/* Global “add new variant” button */}
+          <CustomButton
+            className="btn new-variant-btn"
+            text="new product variant"
+            icon={<BiPlus fontSize="1.25rem" />}
+            onClick={(e) => {
+              e.preventDefault();
+              append(defaultVariant);
+            }}
+          />
+        </ContentContainer>
       </form>
+
+      <CategoryForm
+        openCategoryDialog={openCategoryDialog}
+        onSetOpenCategoryDialog={setOpenCategoryDialog}
+        handleCategoryInputChange={handleCategoryInputChange}
+      />
+
       {isFormLoading && (
         <div className="loader-container">
-          <LoadingSpinner />
+          <div className="form-loader">
+            <LoadingSpinner style={{ width: "2rem", height: "2rem" }} />
+            Creating product...
+          </div>
         </div>
       )}
     </div>
   );
 }
+
+const ProductVariant = ({ index, onDeleteVariant, register, errors }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.2 }}
+      layout
+      className="row"
+    >
+      <div className="product-variant-inputs">
+        <InputContainer
+          labelText="variant name"
+          errorMsg={errors?.variants?.[index]?.name?.message}
+        >
+          <input
+            type="text"
+            {...register(`variants.${index}.name`, {
+              required: "Variant name is required",
+              maxLength: 25,
+            })}
+          />
+        </InputContainer>
+
+        <InputContainer
+          labelText="SKU"
+          errorMsg={errors?.variants?.[index]?.sku?.message}
+        >
+          <input
+            type="text"
+            {...register(`variants.${index}.sku`, {
+              required: "SKU is required",
+              maxLength: 25,
+            })}
+          />
+        </InputContainer>
+
+        <InputContainer
+          labelText="Price"
+          errorMsg={errors?.variants?.[index]?.price?.message}
+        >
+          <input
+            type="number"
+            step="0.01"
+            {...register(`variants.${index}.price`, {
+              required: "Price is required",
+              valueAsNumber: true,
+              min: { value: 0, message: "Price cannot be negative" },
+            })}
+          />
+        </InputContainer>
+
+        <InputContainer
+          labelText="Stock"
+          errorMsg={errors?.variants?.[index]?.stock?.message}
+        >
+          <input
+            type="number"
+            {...register(`variants.${index}.stock`, {
+              required: "Stock is required",
+              valueAsNumber: true,
+              min: { value: 1, message: "Min stock = 1" },
+            })}
+          />
+        </InputContainer>
+      </div>
+
+      <div className="product-variant-btns">
+        {/* You can turn this into a save/update action if needed */}
+        {/* <CustomButton
+          className="btn add-variant-btn"
+          icon={<BiCheck fontSize="1.25rem" />}
+          onClick={(e) => {
+            e.preventDefault();
+            toast.success("Variant saved successfully");
+          }}
+        /> */}
+
+        <CustomButton
+          className="btn remove-variant-btn"
+          icon={<MdDelete fontSize="1.25rem" />}
+          onClick={(e) => onDeleteVariant(e, index)}
+        />
+      </div>
+    </motion.div>
+  );
+};

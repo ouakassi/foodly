@@ -75,7 +75,6 @@ const tableHeaders = [
   "Stock",
   "Price",
   "Category",
-  "Discount",
   "Published",
   "Actions",
 ];
@@ -91,6 +90,13 @@ const buttonStyle = {
   backgroundColor: "white",
   boxShadow: "var(--box-shadow-content-container)",
 };
+
+const statusOptions = [
+  { value: "all", label: "All", className: "all" },
+  { value: "active", label: "Active", className: "active" },
+  { value: "inactive", label: "Inactive", className: "inactive" },
+  { value: "draft", label: "Draft", className: "draft" },
+];
 
 export default function ProductsPage() {
   const [limitPerPage, setLimitPerPage] = useState(10);
@@ -123,13 +129,18 @@ export default function ProductsPage() {
 
   console.log(data);
 
+  const { data: productsData, count, pagination } = data || {};
+
   const {
-    productsData,
-    totalPages = 1,
-    totalProducts = 0,
-    activeProducts: activeProductsCount = 0,
-    inactiveProducts: inactiveProductsCount = 0,
-  } = data || {};
+    draftProductsCount = 0,
+    allProductsCount = 0,
+    activeProductsCount = 0,
+    inactiveProductsCount = 0,
+  } = count || {};
+
+  const { totalPages = 1, currentPage = 1 } = pagination || {};
+
+  console.log(productsData);
 
   let throttleTimer;
   const throttle = (func, limit) => {
@@ -145,7 +156,7 @@ export default function ProductsPage() {
       value: "all",
       label: "All",
       icon: <CiGrid41 className="icon" />,
-      count: totalProducts || 0,
+      count: allProductsCount || 0,
     },
     {
       value: "active",
@@ -158,6 +169,19 @@ export default function ProductsPage() {
       label: "Inactive",
       icon: <BsShieldX className="icon" />,
       count: inactiveProductsCount,
+    },
+    // {
+    //   value: "low-stock",
+    //   label: "Low Stock",
+    //   icon: <CiWarning className="icon" />,
+    //   count: lowStockProductsCount,
+    // },
+
+    {
+      value: "draft",
+      label: "Draft",
+      icon: <CiGrid41 className="icon" />,
+      count: draftProductsCount,
     },
   ];
   useEffect(() => {
@@ -261,7 +285,7 @@ export default function ProductsPage() {
         <PageTitle
           icon={React.createElement(LINKS_WITH_ICONS.products.icon)}
           title={LINKS_WITH_ICONS.products.label}
-          badge={totalProducts}
+          badge={allProductsCount}
         />
 
         <Link to={APP_LINKS.PRODUCT_CREATE}>
@@ -395,25 +419,25 @@ const ProductsTable = ({ isLoading, error, products, handleDeleteProduct }) => {
       )}
       {!isLoading && products && (
         <TableBody>
-          {products.map(
+          {products?.map(
             ({
               id,
               imgUrl: productImg,
               name: productName,
-              price,
-              discount,
-              category,
-              orders,
-              stock,
-              rating,
               status,
               createdAt: publishedDate,
+              category,
+              variants,
             }) => {
-              const isActive = status === true;
+              const { stock, price } = variants[0] || {};
+              const categoryName = category?.name || "Uncategorized";
               const isStockLow = stock < APP_CONFIG.STOCK_LOW_THRESHOLD;
+              const newStatus = statusOptions.find(
+                (option) => option.value === status
+              );
               return (
                 <tr className="product-row" key={id}>
-                  <td style={!isActive ? { opacity: 0.8 } : { opacity: 1 }}>
+                  <td>
                     <img
                       src={productImg}
                       alt={productName}
@@ -422,10 +446,10 @@ const ProductsTable = ({ isLoading, error, products, handleDeleteProduct }) => {
                   </td>
                   <td className="name">{productName}</td>
                   <td className="status">
-                    <span className={isActive ? "active" : "inactive"}>
+                    <span className={newStatus?.className}>
                       {/* <GoDotFill /> */}
                       {/* {isActive ? <FaRegCircleCheck /> : <FaRegCircleXmark />} */}
-                      {isActive ? "Active" : "Inactive"}
+                      {newStatus?.label}
                     </span>
                   </td>
                   <td>
@@ -461,8 +485,7 @@ const ProductsTable = ({ isLoading, error, products, handleDeleteProduct }) => {
                     )}
                   </td>
                   <td className="price">{formatCurrency(price)}</td>
-                  <td>{category}</td>
-                  <td>{`${discount}%`}</td>
+                  <td>{categoryName}</td>
                   <td className="published">{formatDate(publishedDate)}</td>
                   {handleDeleteProduct && (
                     <td className="action">

@@ -46,6 +46,11 @@ export const API_ENDPOINTS = {
   PRODUCT_DELETE: (id) => `/api/products/${id}/delete`,
   PRODUCT_UPLOAD_IMAGE: "/api/upload",
 
+  // Categories
+  CATEGORIES: "/api/categories",
+  CATEGORY_CREATE: "/api/categories",
+  CATEGORY_UPDATE: (id) => `/api/categories/${id}`,
+
   // Orders
   ORDERS: "/api/orders",
   ORDERS_OVERVIEW: "/api/orders/overview",
@@ -63,7 +68,10 @@ export const API_ENDPOINTS = {
   USER_DETAIL: (id) => `/api/users/${id}`,
 
   // Auth
-  AUTH: "/api/auth",
+  LOGIN: "/auth/login",
+  LOGOUT: "/auth/logout",
+  LOGGEDIN: "/auth//auth/loggedin",
+  CURRENT_USER: "/auth//auth/me",
 
   // Analytics - Totals
   ANALYTICS_TOTAL_ORDERS: "/api/analytics/total-orders", // params: { month, year }

@@ -7,6 +7,7 @@ import {
   login,
   logout,
   loggedIn,
+  getCurrentUser,
 } from "../controllers/authController.js";
 import { ROLES } from "../utils/constants.js";
 
@@ -15,10 +16,11 @@ const authRouter = express.Router();
 authRouter.route("/register").post(publicRegister);
 authRouter.post(
   "/admin/register",
-  // isAuthenticated,
-  // authRole(ROLES.ADMIN),
+  isAuthenticated,
+  authRole(ROLES.ADMIN),
   adminRegister
 );
+authRouter.get("/me", isAuthenticated, getCurrentUser);
 authRouter.route("/login").post(login);
 authRouter.route("/logout").get(logout);
 authRouter.route("/loggedin").get(loggedIn);

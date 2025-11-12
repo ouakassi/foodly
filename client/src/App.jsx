@@ -3,6 +3,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
+  Navigate,
 } from "react-router-dom";
 import React, { lazy, Suspense } from "react";
 
@@ -36,6 +37,7 @@ import CreateProductPage from "./pages/Dashboard/Products/CreateProductPage";
 import PageLayout from "./pages/PageLayout";
 import EditProductPage from "./pages/Dashboard/Products/EditProductPage";
 import CreateUserPage from "./pages/Dashboard/Users/CreateUserPage";
+import ProtectedRoute from "./pages/ProtectedRoute";
 
 const LazyAbout = lazy(() => import("./pages/About/AboutPage"));
 
@@ -68,23 +70,45 @@ function App() {
           <Route path="recipes" element={<div>recipes</div>} />
           <Route path="*" element={<div>sorry no page here</div>} />
         </Route>
-        <Route path="dashboard" element={<DashboardLayout />}>
-          <Route index path="overview" element={<OverviewPage />} />
+
+        {/* Protected dashboard routes */}
+
+        <Route
+          path="dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="overview" replace />} />
+          <Route path="overview" element={<OverviewPage />} />
           <Route path="orders" element={<OrdersPage />} />
+
           <Route path="products" element={<PageLayout />}>
             <Route index element={<ProductsPage />} />
-            {/* <Route path=":productId" element={<ProductsPage />} /> */}
             <Route path="create" element={<CreateProductPage />} />
             <Route path="edit" element={<ProductsPage />} />
             <Route path=":productId" element={<EditProductPage />} />
           </Route>
+
           <Route path="users" element={<PageLayout />}>
             <Route index element={<UsersPage />} />
-            <Route path="create" element={<CreateUserPage />} />
+            <Route
+              path="create"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <CreateUserPage />
+                </ProtectedRoute>
+              }
+            />
           </Route>
+
           <Route path="reports" element={<ReportsPage />} />
+
           <Route path="settings">
-            <Route index path="profile" element={<div>profile</div>} />
+            <Route index element={<Navigate to="profile" replace />} />
+            <Route path="profile" element={<div>profile</div>} />
           </Route>
         </Route>
         <Route path="auth">

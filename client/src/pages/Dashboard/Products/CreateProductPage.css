@@ -8,9 +8,25 @@
   justify-content: space-between;
 }
 
+.create-product-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
 .create-product .row {
   display: flex;
   gap: 1rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.product-variant-inputs {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+.create-product .row .product-variant-inputs .input-container {
+  flex: 1;
 }
 
 .category-form header button {
@@ -19,73 +35,86 @@
   font-family: var(--font-2);
 }
 
-.status-toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--gap-5);
+.status-buttons-container {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background-color: var(--white-color);
+  border-radius: 5px;
+  box-shadow: var(--box-shadow-content-container);
+  overflow: hidden;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-.status-buttons-container {
-  display: flex;
-  box-shadow: var(--box-shadow-content-container);
-  background-color: var(--white-color);
-  border-radius: 20px;
-  position: relative;
-}
 .status-buttons-container button {
+  padding: 0.5rem 1rem;
   border: 0;
-  padding: 0.5rem 2.5rem;
-  cursor: pointer;
-  border-radius: 20px;
-  background-color: transparent;
+  background: none;
+  font-family: var(--font-1);
   font-weight: var(--fw-bold);
   font-size: var(--fs-s);
-  font-family: var(--font-1);
   letter-spacing: 1px;
+  cursor: pointer;
   z-index: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: var(--gap-1);
   text-transform: capitalize;
-  transition: 0.2s;
+  user-select: none;
+  /* transition: color 0.25s; */
+  transition: all 0.1s;
 }
 
+/* Highlighted indicator */
 .status-buttons-container .active-button {
-  content: "";
-  z-index: 1;
-  width: 50%;
+  position: absolute;
+  top: 0;
+  width: calc(100% / 3);
   height: 100%;
   border-radius: inherit;
-  position: absolute;
+  transition: left 0.25s;
+  z-index: 0;
 }
 
-/* Active Styles */
 .status-buttons-container .active {
-  background-color: #13c93d;
+  left: calc(0% / 3);
   background: linear-gradient(
     3deg,
     rgb(2, 0, 36) 0%,
     var(--color-3) 0%,
     rgb(0, 255, 129) 100%
   );
-  box-shadow: rgba(0, 255, 89, 0.09) 0px 2px 1px,
-    rgba(0, 255, 89, 0.09) 0px 4px 2px, rgba(0, 255, 89, 0.09) 0px 8px 4px;
-  left: 0;
+  box-shadow: rgba(0, 255, 89, 0.12) 0px 4px 8px;
 }
 
-/* Inactive Styles */
+.status-buttons-container .draft {
+  left: calc(100% / 3);
+  background: linear-gradient(
+    3deg,
+    rgb(36, 23, 0) 0%,
+    rgb(233, 159, 0) 0%,
+    rgb(255, 193, 7) 100%
+  );
+  box-shadow: rgba(255, 193, 7, 0.2) 0px 4px 8px;
+}
+
 .status-buttons-container .inactive {
-  background-color: #dc3545;
+  left: calc(200% / 3);
   background: linear-gradient(
     3deg,
     rgb(36, 0, 2) 0%,
     rgb(201, 19, 19) 0%,
     rgb(255, 0, 0) 100%
   );
-  box-shadow: rgba(255, 0, 0, 0.09) 0px 2px 1px,
-    rgba(255, 0, 0, 0.09) 0px 4px 2px, rgba(255, 0, 0, 0.09) 0px 8px 4px;
-  left: 50%;
+  box-shadow: rgba(255, 0, 0, 0.2) 0px 4px 8px;
+}
+
+/* Optional: button color when "active" */
+.status-buttons-container button.is-active {
+  color: #fff;
+  text-shadow: 1px 1px 4px #0008;
 }
 
 /* .input-container:has(input[type="text"]) {
@@ -97,14 +126,57 @@
 
 .loader-container {
   position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   left: 0;
   top: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.5);
+  /* backdrop-filter: blur(10px); */
   z-index: var(--z-fixed);
+}
+.form-loader {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+  margin: auto auto;
+  padding: 1rem;
+  /* background-color: white; */
+  color: var(--color-3);
+  font-size: 1.2rem;
+  border-radius: 5px;
+  /* box-shadow: var(--box-shadow-content-container); */
+  align-items: center;
+  gap: 1rem;
+}
+.btn {
+  background-color: #ffffff;
+  flex: 1;
+  max-width: 20rem;
+  align-self: center;
+  color: var(--color-3);
+  box-shadow: var(--box-shadow-content-container);
+  border-radius: 5px;
+}
+.btn:hover {
+  background-color: var(--color-3);
+  color: var(--white-color);
+}
+
+.remove-variant-btn {
+  color: red;
+}
+
+.remove-variant-btn:hover {
+  background-color: red;
+  color: white;
+}
+
+.product-variant-btns {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }

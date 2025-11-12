@@ -19,6 +19,8 @@
   display: flex;
   gap: var(--gap-5);
   align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 .dashboard-sidebar-button-toggle {
   font-size: 1.4rem;
@@ -30,8 +32,7 @@
 }
 
 .dashboard-sidebar-main {
-  display: flex;
-  flex-direction: column;
+  width: 100%;
 }
 h3 {
   align-self: baseline;

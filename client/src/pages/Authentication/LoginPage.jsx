@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link, redirect, useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,7 +13,10 @@ import FormContainer from "../../components/Forms/FormContainer";
 import InputContainer from "../../components/Forms/InputContainer";
 import Form from "../../components/Forms/Form";
 import ErrorMsg from "../../components/Errors/ErrorMsg";
-import { axiosInstance } from "../../api/api";
+import { axiosInstance, axiosPrivate } from "../../api/api";
+import { useDispatch, useSelector } from "react-redux";
+import { API_ENDPOINTS, APP_LINKS } from "../../constants";
+import { setCredentials } from "../../features/authSlice";
 
 //  validation schema
 let validationSchema = Yup.object({
@@ -26,6 +29,7 @@ let validationSchema = Yup.object({
 export default function LoginPage() {
   const [togglePassword, setTogglePassword] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const {
     register,
@@ -39,6 +43,19 @@ export default function LoginPage() {
   });
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  // Get the page user was trying to access
+  const from = location.state?.from?.pathname || APP_LINKS.DASHBOARD;
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, from]);
 
   // focus in email input while loading the page
   useEffect(() => {
@@ -47,19 +64,23 @@ export default function LoginPage() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axiosInstance.post("/auth/login", data, {
-        withCredentials: true,
-      });
-      navigate("/");
-      console.log(response);
+      setLoading(true);
+      setErrorMsg("");
+      const response = await axiosPrivate.post(API_ENDPOINTS.LOGIN, data);
+      console.log(response.data);
+      dispatch(
+        setCredentials({
+          user: response.data.user,
+          token: response.data.token,
+        })
+      );
+      navigate(from, { replace: true });
     } catch (err) {
-      if (err.response) {
-        console.log(err.response.data);
-      } else if (err.request) {
-        console.log(err.request);
-      } else {
-        console.log("nothing");
-      }
+      const message =
+        err.response?.data?.message || "Login failed. Please try again.";
+      setErrorMsg(message);
+    } finally {
+      setLoading(false);
     }
   };
 

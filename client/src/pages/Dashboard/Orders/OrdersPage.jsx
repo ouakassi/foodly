@@ -675,7 +675,7 @@ const OrdersTable = ({
     <Table className="orders-table">
       <TableHead columns={orderColumns} />
 
-      {!isLoading && error && (
+      {/* {!isLoading && error && !orders && (
         <NoDataFound
           message="Error loading orders"
           onClick={() => window.location.reload()}
@@ -683,8 +683,8 @@ const OrdersTable = ({
           className="error"
           columnsCount={orderColumns.length}
         />
-      )}
-      {!isLoading && !error && !orders && (
+      )} */}
+      {!isLoading && error && !orders && (
         <NoDataFound
           onClick={clearParams}
           message="no orders found"

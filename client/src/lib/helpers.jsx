@@ -47,3 +47,15 @@ export function getCurrentMonthYear() {
     month: now.getMonth(), // 0-indexed: 0 = Jan, 11 = Dec
   };
 }
+
+export const generateSlug = (source) => {
+  if (source) {
+    const slug = source
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+    return slug;
+  }
+};

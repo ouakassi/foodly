@@ -26,7 +26,6 @@
 .breadcrumbs .crumb:after {
   content: ">";
   margin-left: 0.75rem;
-  font-family: var(--font-4);
   font-size: var(--fs-m);
 }
 .breadcrumbs div:last-child a {

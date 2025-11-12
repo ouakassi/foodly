@@ -16,7 +16,7 @@ const userRouter = express.Router();
 
 userRouter
   .route("/")
-  // .get(isAuthenticated, authRole(ROLES.ADMIN), getAllUsers)
+  .get(isAuthenticated, authRole(ROLES.ADMIN), getAllUsers)
   .get(getAllUsers)
 
   .delete(isAuthenticated, authRole(ROLES.ADMIN), deleteAllUsers);
