@@ -71,7 +71,7 @@ export const API_ENDPOINTS = {
   LOGIN: "/auth/login",
   LOGOUT: "/auth/logout",
   LOGGEDIN: "/auth//auth/loggedin",
-  CURRENT_USER: "/auth//auth/me",
+  CURRENT_USER: "/auth/me",
 
   // Analytics - Totals
   ANALYTICS_TOTAL_ORDERS: "/api/analytics/total-orders", // params: { month, year }

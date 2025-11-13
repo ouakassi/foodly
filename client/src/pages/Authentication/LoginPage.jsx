@@ -17,6 +17,7 @@ import { axiosInstance, axiosPrivate } from "../../api/api";
 import { useDispatch, useSelector } from "react-redux";
 import { API_ENDPOINTS, APP_LINKS } from "../../constants";
 import { setCredentials } from "../../features/authSlice";
+import LoadingSpinner from "../../components/Forms/LoadingSpinner";
 
 //  validation schema
 let validationSchema = Yup.object({
@@ -29,7 +30,7 @@ let validationSchema = Yup.object({
 export default function LoginPage() {
   const [togglePassword, setTogglePassword] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const {
     register,
@@ -64,14 +65,14 @@ export default function LoginPage() {
 
   const onSubmit = async (data) => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       setErrorMsg("");
+
       const response = await axiosPrivate.post(API_ENDPOINTS.LOGIN, data);
-      console.log(response.data);
+      const { token } = response.data;
       dispatch(
         setCredentials({
-          user: response.data.user,
-          token: response.data.token,
+          token,
         })
       );
       navigate(from, { replace: true });
@@ -80,7 +81,7 @@ export default function LoginPage() {
         err.response?.data?.message || "Login failed. Please try again.";
       setErrorMsg(message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -93,7 +94,7 @@ export default function LoginPage() {
         footer={
           <>
             don't have an account ?&nbsp;
-            <Link style={{ color: "var(--color-4)" }} to="/auth/register">
+            <Link style={{ color: "var(--color-4)" }} to={APP_LINKS.REGISTER}>
               Register
             </Link>
           </>
@@ -128,23 +129,27 @@ export default function LoginPage() {
               style={{ color: "var(--color-4)" }}
               to="/auth/forgot-password"
             >
-              forgot password ?{" "}
+              forgot password ?
             </Link>
-            {/* <div className="form-remember">
-              <input
-                type="checkbox"
-                id="rememberInput"
-                {...register("rememberMe")}
-              />
-              <label htmlFor="rememberInput">remember me</label>
-            </div> */}
           </div>
           <CustomButton
-            isTypeSubmit={true}
+            // isTypeSubmit={true}
             disabled={!isValid}
             style={{ fontSize: "var(--fs-m)" }}
-            text="login"
+            icon={
+              isLoading ? (
+                <LoadingSpinner
+                  style={{
+                    height: "1rem",
+                    width: "1rem",
+                    borderBottomColor: "white",
+                  }}
+                />
+              ) : null
+            }
+            text={isLoading ? "login in..." : "login"}
           />
+          <br />
           {errorMsg && (
             <ErrorMsg style={{ textAlign: "center" }} errorMsg={errorMsg} />
           )}

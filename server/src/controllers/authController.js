@@ -134,7 +134,7 @@ const login = async (req, res) => {
     // Find user in database
     const user = await User.findOne({
       where: { email },
-      include: { model: Role, as: "role" }, // so you have access to role.name or role.id
+      include: { model: Role, as: "role" },
     });
 
     if (!user) {
@@ -152,11 +152,9 @@ const login = async (req, res) => {
     const token = createJWT(user);
 
     const cookieOptions = {
-      expires: new Date(
-        Date.now() + process.env.JWT_COOKIE_LIFETIME * 24 * 60 * 60 * 1000
-      ),
       httpOnly: true,
       secure: process.env.NODE_ENV === "production" ? true : false,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     };
 
     res.cookie("token", token, cookieOptions);
@@ -164,8 +162,8 @@ const login = async (req, res) => {
     // Return success message and user ID
     res.status(200).json({
       message: "Logged in successfully!",
-      // userId: user.id,
-      user,
+      userId: user.id,
+      userRole: user.role.name,
       token,
     });
     log("http", "info", "User logged in", { userId: user.id });

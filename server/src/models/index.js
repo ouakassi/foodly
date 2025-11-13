@@ -492,7 +492,7 @@ const connectDb = async () => {
     // await createRandomOrdersFor60Days();
 
     // await createCategories();
-    await seedCategoriesAndProducts();
+    // await seedCategoriesAndProducts();
     console.log("☑️  All models were synchronized successfully.");
   } catch (error) {
     console.error("❌ Unable to connect to the database:", error.original);

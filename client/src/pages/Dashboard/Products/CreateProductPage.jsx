@@ -37,6 +37,7 @@ import { RiAddCircleLine, RiDraftLine } from "react-icons/ri";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import ErrorMsg from "../../../components/Errors/ErrorMsg";
 import { generateSlug } from "../../../lib/helpers";
+import { axiosPrivate } from "../../../api/api";
 
 const statuses = [
   { value: "active", icon: <FaRegCircleCheck /> },
@@ -221,7 +222,7 @@ export default function CreateProductPage(defaultValues = {}) {
         return;
       }
 
-      await axiosInstance.post(API_ENDPOINTS.PRODUCT_CREATE, {
+      await axiosPrivate.post(API_ENDPOINTS.PRODUCT_CREATE, {
         ...data,
       });
 
@@ -416,7 +417,7 @@ export default function CreateProductPage(defaultValues = {}) {
         <div className="loader-container">
           <div className="form-loader">
             <LoadingSpinner style={{ width: "2rem", height: "2rem" }} />
-            Creating product...
+            {isEditSession ? "Editing product..." : "Creating product..."}
           </div>
         </div>
       )}

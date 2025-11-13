@@ -38,6 +38,7 @@ import PageLayout from "./pages/PageLayout";
 import EditProductPage from "./pages/Dashboard/Products/EditProductPage";
 import CreateUserPage from "./pages/Dashboard/Users/CreateUserPage";
 import ProtectedRoute from "./pages/ProtectedRoute";
+import { ROLES } from "./constants";
 
 const LazyAbout = lazy(() => import("./pages/About/AboutPage"));
 
@@ -76,7 +77,7 @@ function App() {
         <Route
           path="dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MODERATOR]}>
               <DashboardLayout />
             </ProtectedRoute>
           }
