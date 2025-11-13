@@ -27,7 +27,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { API_ENDPOINTS, APP_LINKS } from "../../../constants";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { axiosInstance } from "../../../api/api";
+import { axiosInstance, axiosPrivate } from "../../../api/api";
 import LoadingSpinner from "../../../components/Forms/LoadingSpinner";
 import { color } from "framer-motion";
 const roles = [
@@ -91,7 +91,7 @@ export default function CreateUserPage({ onUserCreated = () => {} }) {
   const onSubmit = async (data) => {
     try {
       setIsFormLoading(true);
-      const response = await axiosInstance.post(API_ENDPOINTS.USER_CREATE, {
+      const response = await axiosPrivate.post(API_ENDPOINTS.USER_CREATE, {
         ...data,
       });
 
