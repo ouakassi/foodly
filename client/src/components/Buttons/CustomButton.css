@@ -1,5 +1,7 @@
 .button {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: var(--color-3);
   /* background: linear-gradient(359deg, #459955, #10c781); */
   font-family: var(--font-2);
@@ -8,10 +10,8 @@
   border-radius: 25px;
   text-transform: capitalize;
   min-width: max-content;
-  /* font-size: var(--fs-m); */
   border: none;
   cursor: pointer;
-  /* width: 100%; */
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }
 
@@ -26,4 +26,5 @@
 
 .button span svg {
   vertical-align: middle;
+  font-size: 1.3em;
 }
