@@ -213,7 +213,7 @@ export default function CreateProductPage(defaultValues = {}) {
       data.imgUrl = uploadedImgUrl;
 
       if (isEditSession) {
-        await axiosInstance.put(API_ENDPOINTS.PRODUCT_UPDATE(editId), {
+        await axiosPrivate.put(API_ENDPOINTS.PRODUCT_UPDATE(editId), {
           ...data,
         });
         console.log("edit data", data);
@@ -225,6 +225,8 @@ export default function CreateProductPage(defaultValues = {}) {
       await axiosPrivate.post(API_ENDPOINTS.PRODUCT_CREATE, {
         ...data,
       });
+
+      console.log(data);
 
       console.log("create data", data);
       toast.success("Product created successfully");

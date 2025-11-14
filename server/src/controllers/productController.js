@@ -296,7 +296,7 @@ const updateProduct = async (req, res) => {
   const t = await sequelize.transaction();
 
   try {
-    // 1. Validate the incoming data
+    /** 1. Validate incoming data */
     const { error, value } = validateUpdateProduct(req.body);
     if (error) {
       await t.rollback();
@@ -305,63 +305,101 @@ const updateProduct = async (req, res) => {
 
     const { variants, ...productData } = value;
 
-    // 2. Find the product to update
+    /** 2. Find product */
     const product = await Product.findByPk(productId, { transaction: t });
     if (!product) {
       await t.rollback();
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // 3. Check for slug/name uniqueness if it's being changed
+    /** 3. Check slug uniqueness if updated */
     if (productData.slug && productData.slug !== product.slug) {
       const existing = await Product.findOne({
         where: { slug: productData.slug, id: { [Op.ne]: productId } },
         transaction: t,
       });
+
       if (existing) {
         await t.rollback();
-        return res.status(409).json({ message: "Slug is already in use" });
+        return res.status(409).json({ message: "Slug already exists" });
       }
     }
 
-    // 4. Update the main product details
+    /** 4. Validate Category */
+    if (productData.category) {
+      const category = await Category.findOne({
+        where: { name: productData.category },
+        transaction: t,
+      });
+
+      if (!category) {
+        await t.rollback();
+        return res.status(404).json({ error: "Category not found" });
+      }
+
+      productData.categoryId = category.id; // attach FK
+    }
+
+    /** 5. Update product */
     await product.update(productData, { transaction: t });
 
-    // 5. Handle variant updates (Create, Update, Delete)
-    if (variants && Array.isArray(variants)) {
-      // This is a simplified example. A full implementation would be more complex,
-      // handling deletions of variants not present in the new array.
-      for (const variantData of variants) {
-        if (variantData.id) {
-          // If variant has an ID, update it
-          await ProductVariant.update(variantData, {
-            where: { id: variantData.id, productId: productId },
+    /** 6. Handle variants (Create, Update, Delete) */
+
+    if (Array.isArray(variants)) {
+      // Get existing variants for deletion check
+      const existingVariants = await ProductVariant.findAll({
+        where: { productId },
+        transaction: t,
+      });
+
+      const sentVariantIds = variants.filter((v) => v.id).map((v) => v.id);
+
+      // DELETE removed variants
+      const toDelete = existingVariants.filter(
+        (v) => !sentVariantIds.includes(v.id)
+      );
+
+      for (const v of toDelete) {
+        await v.destroy({ transaction: t });
+      }
+
+      // CREATE or UPDATE variants
+      for (const variant of variants) {
+        // Generate unique SKU if missing
+        if (!variant.sku) {
+          variant.sku = await generateUniqueSku();
+        }
+
+        if (variant.id) {
+          // Update
+          await ProductVariant.update(variant, {
+            where: { id: variant.id, productId },
             transaction: t,
           });
         } else {
-          // If no ID, create a new variant for this product
+          // Create
           await ProductVariant.create(
-            { ...variantData, productId: productId },
+            { ...variant, productId },
             { transaction: t }
           );
         }
       }
     }
 
-    // 6. Commit the transaction
+    /** 7. Commit transaction */
     await t.commit();
 
-    // 7. Fetch and return the fully updated product
+    /** 8. Return updated product */
     const updatedProduct = await Product.findByPk(productId, {
       include: [{ model: ProductVariant, as: "variants" }],
     });
 
     return res.status(200).json({
-      message: `Product updated successfully`,
+      message: "Product updated successfully",
       data: updatedProduct,
     });
   } catch (err) {
-    await t.rollback(); // Ensure rollback on any error
+    await t.rollback();
     res.status(500).json({ error: err.message });
   }
 };

@@ -53,7 +53,7 @@ import { TbSearch, TbForbid2 } from "react-icons/tb";
 // API & Hooks
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import useDebounce from "../../../hooks/useDebounce";
-import { axiosInstance, API_URL } from "../../../api/api";
+import { axiosInstance, API_URL, axiosPrivate } from "../../../api/api";
 
 // Constants & Helpers
 import {
@@ -229,7 +229,7 @@ export default function ProductsPage() {
       return;
     }
     try {
-      await axiosInstance.put(API_ENDPOINTS.PRODUCT_DELETE(id));
+      await axiosPrivate.put(API_ENDPOINTS.PRODUCT_DELETE(id));
       toast.success("Product Deleted Successfully");
 
       const updatedProducts = productsData.filter((p) => p.id !== id);

@@ -22,6 +22,8 @@ productRouter
   .get(getProduct)
   .put(isAuthenticated, authRole(ROLES.ADMIN), updateProduct);
 
-productRouter.route("/:id/delete").put(deleteProduct);
+productRouter
+  .route("/:id/delete")
+  .put(isAuthenticated, authRole(ROLES.ADMIN), deleteProduct);
 
 export default productRouter;
