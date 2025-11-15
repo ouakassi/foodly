@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 import { axiosPrivate } from "../api/api";
 import { API_ENDPOINTS, APP_LINKS, ROLES } from "../constants";
-import LoadingSpinner from "../components/Forms/LoadingSpinner";
 import { logout } from "../features/authSlice";
+import PageLoader from "../components/Dashboard/PageLoader";
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const { token } = useSelector((state) => state.auth);
@@ -35,7 +35,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   }, [token, dispatch]);
 
   if (loading) {
-    return <LoadingSpinner style={{ width: "2rem", height: "2rem" }} />;
+    return <PageLoader />;
   }
 
   // Not logged in → redirect to login

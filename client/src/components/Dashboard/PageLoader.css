@@ -1,0 +1,10 @@
+.page-loader {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  background: rgb(255, 255, 255);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
