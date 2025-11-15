@@ -346,43 +346,57 @@ const updateProduct = async (req, res) => {
     /** 6. Handle variants (Create, Update, Delete) */
 
     if (Array.isArray(variants)) {
-      // Get existing variants for deletion check
       const existingVariants = await ProductVariant.findAll({
         where: { productId },
         transaction: t,
       });
 
-      const sentVariantIds = variants.filter((v) => v.id).map((v) => v.id);
+      const existingIds = existingVariants.map((v) => v.id);
+      const incomingIds = variants.filter((v) => v.id).map((v) => v.id);
 
-      // DELETE removed variants
-      const toDelete = existingVariants.filter(
-        (v) => !sentVariantIds.includes(v.id)
-      );
-
-      for (const v of toDelete) {
-        await v.destroy({ transaction: t });
-      }
-
-      // CREATE or UPDATE variants
+      // A. Update or Create
       for (const variant of variants) {
-        // Generate unique SKU if missing
-        if (!variant.sku) {
-          variant.sku = await generateUniqueSku();
-        }
-
         if (variant.id) {
-          // Update
-          await ProductVariant.update(variant, {
-            where: { id: variant.id, productId },
-            transaction: t,
-          });
+          // Update existing
+          await ProductVariant.update(
+            {
+              name: variant.name.trim(),
+              price: parseFloat(variant.price),
+              stock: parseInt(variant.stock),
+              isDefault: !!variant.isDefault,
+              sku: generateSKU(product.name, variant.name),
+              attributes: variant.attributes || {},
+            },
+            {
+              where: { id: variant.id, productId },
+              transaction: t,
+            }
+          );
         } else {
-          // Create
+          // Create new
           await ProductVariant.create(
-            { ...variant, productId },
+            {
+              productId,
+              name: variant.name.trim(),
+              price: parseFloat(variant.price),
+              stock: parseInt(variant.stock),
+              isDefault: !!variant.isDefault,
+              sku: generateSKU(product.name, variant.name),
+              attributes: variant.attributes || {},
+            },
             { transaction: t }
           );
         }
+      }
+
+      // B. Delete removed variants
+      const toDelete = existingIds.filter((id) => !incomingIds.includes(id));
+
+      if (toDelete.length > 0) {
+        await ProductVariant.destroy({
+          where: { id: toDelete },
+          transaction: t,
+        });
       }
     }
 
