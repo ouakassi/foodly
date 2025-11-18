@@ -109,7 +109,7 @@ export default function ProductsPage() {
   const page = searchParams.get("page") || 1;
   const limit = searchParams.get("limit") || 10;
   const search = searchParams.get("search");
-  const sort = searchParams.get("sort") || "name_asc";
+  const sort = searchParams.get("sort") || "updatedAt_desc";
   const status = searchParams.get("status");
 
   const debouncedSearch = useDebounce(search, 500); // 500ms delay
@@ -120,6 +120,7 @@ export default function ProductsPage() {
     page: page,
     ...(status !== "all" && { status: status }),
     sort: sort,
+    isDeleted: false,
   };
 
   const { data, isLoading, error, refetch } = useAxiosFetch(

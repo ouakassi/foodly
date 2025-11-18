@@ -21,8 +21,16 @@ import {
 // Public
 const getAllProducts = async (req, res) => {
   try {
-    let { page, limit, search, sort, status, isDeleted, minPrice, maxPrice } =
-      req.query;
+    let {
+      page,
+      limit,
+      search,
+      sort,
+      status,
+      isDeleted = false,
+      minPrice,
+      maxPrice,
+    } = req.query;
 
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
@@ -62,8 +70,6 @@ const getAllProducts = async (req, res) => {
       }
     }
 
-    const includeDeleted = isDeleted === true ? true : false;
-
     const [
       productsData,
       activeProductsCount,
@@ -74,7 +80,7 @@ const getAllProducts = async (req, res) => {
       Product.findAndCountAll({
         where: filterConditions,
         distinct: true,
-        paranoid: includeDeleted,
+        paranoid: isDeleted,
         limit: limit,
         offset: offset,
         order: sort ? [PRODUCT_SORT_OPTIONS[sort.toUpperCase()]] : [],
@@ -123,6 +129,7 @@ const getAllProducts = async (req, res) => {
         draftProductsCount,
         allProductsCount,
       },
+      includeDeleted: isDeleted,
       filters: {
         searchQuery: search || null,
         filters: filterConditions,
@@ -180,6 +187,7 @@ const createProduct = async (req, res) => {
       price,
       stock,
       slug,
+      sku,
       variants,
     } = value;
 
@@ -237,7 +245,9 @@ const createProduct = async (req, res) => {
         stock: parseInt(variant.stock),
         isDefault:
           variant.isDefault !== undefined ? variant.isDefault : index === 0,
-        sku: generateSKU(product.name, variant.name),
+        sku: variant.sku
+          ? variant.sku
+          : generateSKU(product.name, variant.name),
         attributes: variant.attributes || {},
       }));
     } else {
@@ -257,7 +267,7 @@ const createProduct = async (req, res) => {
           price: parseFloat(price),
           stock: parseInt(stock),
           isDefault: true,
-          sku: generateSKU(product.name, "Default"),
+          sku: sku ? sku : generateSKU(product.name, "Default"),
           attributes: attributes || {},
         },
       ];
@@ -364,7 +374,9 @@ const updateProduct = async (req, res) => {
               price: parseFloat(variant.price),
               stock: parseInt(variant.stock),
               isDefault: !!variant.isDefault,
-              sku: generateSKU(product.name, variant.name),
+              sku: variant.sku
+                ? variant.sku
+                : generateSKU(product.name, variant.name),
               attributes: variant.attributes || {},
             },
             {
@@ -381,7 +393,9 @@ const updateProduct = async (req, res) => {
               price: parseFloat(variant.price),
               stock: parseInt(variant.stock),
               isDefault: !!variant.isDefault,
-              sku: generateSKU(product.name, variant.name),
+              sku: variant.sku
+                ? variant.sku
+                : generateSKU(product.name, variant.name),
               attributes: variant.attributes || {},
             },
             { transaction: t }
@@ -422,32 +436,48 @@ const updateProduct = async (req, res) => {
 // DELETE /api/products/:id
 // Public
 const deleteProduct = async (req, res) => {
+  const t = await sequelize.transaction();
+
   try {
     const productId = req.params.id;
 
-    // Use unscoped query to find even deleted products (optional)
-    const product = await Product.scope(null).findOne({
+    // retrieve even deleted ones
+    const product = await Product.findOne({
       where: { id: productId },
+      paranoid: false,
+      transaction: t,
     });
 
     if (!product) {
+      await t.rollback();
       return res.status(404).json({
         message: `Product with id ${productId} not found.`,
       });
     }
 
-    if (product.isDeleted) {
+    if (product.deletedAt) {
+      await t.rollback();
       return res.status(400).json({
         message: `Product with id ${productId} is already deleted.`,
       });
     }
 
-    await product.update({ isDeleted: true });
+    // Soft delete product
+    await product.destroy({ transaction: t });
+
+    // Soft delete related variants
+    await ProductVariant.destroy({
+      where: { productId },
+      transaction: t,
+    });
+
+    await t.commit();
 
     return res.status(200).json({
       message: `Product with id ${productId} deleted successfully.`,
     });
   } catch (err) {
+    await t.rollback();
     console.error(err);
     res.status(500).json({ error: err.message });
   }

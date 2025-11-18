@@ -59,3 +59,16 @@ export const generateSlug = (source) => {
     return slug;
   }
 };
+
+export const generateSKU = (productName, variantName) => {
+  const cleanProduct = productName?.trim() || "";
+  const cleanVariant = variantName?.trim() || "";
+
+  const productCode = cleanProduct.substring(0, 3).toUpperCase();
+  const variantCode = cleanVariant.substring(0, 3).toUpperCase();
+
+  // I generate a random unique ID from browser crypto
+  const uniqueId = crypto.randomUUID().substring(0, 8).toUpperCase();
+
+  return `${productCode}-${variantCode}-${uniqueId}`;
+};

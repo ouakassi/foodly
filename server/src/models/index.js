@@ -40,7 +40,7 @@ const createRandomProducts = async () => {
       const randomProducts = Array.from({ length: 100 }).map(() => ({
         name: `Product ${Math.random().toString(36).substring(7)}`,
         imgUrl:
-          "https://res.cloudinary.com/djfsxp9z0/image/upload/v1742571332/products/weed/6172705011f98cfbe6f5304a764fc862.png", // Default placeholder image
+          "http://res.cloudinary.com/djfsxp9z0/image/upload/v1763120964/products/dddddddd/54e336f3c39a63234ee2d8f4ec507fd0.png", // Default placeholder image
         price: (Math.random() * 100).toFixed(2),
         stock: Math.floor(Math.random() * 50) + 1,
         discount: Math.floor(Math.random() * 30), // Random discount between 0-30%
@@ -386,7 +386,7 @@ const seedCategoriesAndProducts = async (req, res) => {
         slug: generateSlug(name),
         description: `This is a sample description for ${name}.`,
         imgUrl:
-          "https://res.cloudinary.com/djfsxp9z0/image/upload/v1742571332/products/weed/6172705011f98cfbe6f5304a764fc862.png",
+          "https://res.cloudinary.com/djfsxp9z0/image/upload/v1763120953/products/Oils/54e336f3c39a63234ee2d8f4ec507fd0.png",
         status: statuses[Math.floor(Math.random() * statuses.length)],
         categoryId: randomCategory.id,
       });
@@ -487,12 +487,12 @@ const connectDb = async () => {
     await createRoles();
     await createAdminUser();
     await createNormalUser();
-    // await createModeratorUser();
+    await createModeratorUser();
 
     // await createRandomOrdersFor60Days();
 
     // await createCategories();
-    // await seedCategoriesAndProducts();
+    await seedCategoriesAndProducts();
     console.log("☑️  All models were synchronized successfully.");
   } catch (error) {
     console.error("❌ Unable to connect to the database:", error.original);

@@ -36,7 +36,7 @@ import { API_ENDPOINTS, APP_LINKS } from "../../../constants";
 import { RiAddCircleLine, RiDraftLine } from "react-icons/ri";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import ErrorMsg from "../../../components/Errors/ErrorMsg";
-import { generateSlug } from "../../../lib/helpers";
+import { generateSKU, generateSlug } from "../../../lib/helpers";
 import { axiosPrivate } from "../../../api/api";
 
 const statuses = [
@@ -179,6 +179,23 @@ export default function CreateProductPage(defaultValues = {}) {
       return;
     }
     remove(index);
+  };
+
+  const handleGenerateSKU = (e, { index }) => {
+    e.preventDefault();
+    const name = getValues("name");
+    const variantName = getValues(`variants.${index}.name`);
+    if (!name) {
+      toast.error("Please enter a product name first");
+      return;
+    }
+    if (!variantName) {
+      toast.error("Please enter a variant name first");
+      return;
+    }
+    const sku = generateSKU(name, variantName);
+    setValue(`variants.${index}.sku`, sku);
+    toast.success(`SKU generated: ${sku}`);
   };
 
   const onSubmit = async (data) => {
@@ -391,6 +408,7 @@ export default function CreateProductPage(defaultValues = {}) {
               field={field}
               index={index}
               onDeleteVariant={handleDeleteVariant}
+              onGenerateSKU={(e) => handleGenerateSKU(e, { index })}
               register={register}
               errors={errors}
             />
@@ -427,7 +445,13 @@ export default function CreateProductPage(defaultValues = {}) {
   );
 }
 
-const ProductVariant = ({ index, onDeleteVariant, register, errors }) => {
+const ProductVariant = ({
+  index,
+  onDeleteVariant,
+  register,
+  errors,
+  onGenerateSKU,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -461,6 +485,12 @@ const ProductVariant = ({ index, onDeleteVariant, register, errors }) => {
               required: "SKU is required",
               maxLength: 25,
             })}
+          />
+          <CustomButton
+            className="btn slug-btn"
+            text="generate"
+            icon={<MdOutlineDownloading fontSize={"1.4rem"} />}
+            onClick={onGenerateSKU}
           />
         </InputContainer>
 
