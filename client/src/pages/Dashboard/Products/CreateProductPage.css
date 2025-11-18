@@ -180,3 +180,7 @@
   gap: 0.5rem;
   align-items: center;
 }
+
+.product-variants .sku-btn {
+  padding: 10px;
+}

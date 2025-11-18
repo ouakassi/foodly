@@ -251,7 +251,10 @@ export default function CreateProductPage(defaultValues = {}) {
       return;
     } catch (error) {
       console.error("Error saving the product", error);
-      toast.error("Failed to save product");
+      toast.error(
+        "Failed to save product : " + error?.response?.data?.message ||
+          error.message
+      );
     } finally {
       setIsFormLoading(false);
     }
@@ -487,7 +490,7 @@ const ProductVariant = ({
             })}
           />
           <CustomButton
-            className="btn slug-btn"
+            className="btn sku-btn"
             text="generate"
             icon={<MdOutlineDownloading fontSize={"1.4rem"} />}
             onClick={onGenerateSKU}
