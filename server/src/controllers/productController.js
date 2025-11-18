@@ -178,18 +178,8 @@ const createProduct = async (req, res) => {
       return handleValidationError(error, res);
     }
 
-    const {
-      name,
-      imgUrl,
-      status,
-      description,
-      category,
-      price,
-      stock,
-      slug,
-      sku,
-      variants,
-    } = value;
+    const { name, imgUrl, status, description, category, slug, variants } =
+      value;
 
     // Validate category existence
     const categoryRecord = await Category.findOne({
@@ -198,7 +188,7 @@ const createProduct = async (req, res) => {
     });
 
     if (!categoryRecord) {
-      t.rollback();
+      await t.rollback();
       return res
         .status(400)
         .json({ success: false, message: "Category not found" });
@@ -227,55 +217,37 @@ const createProduct = async (req, res) => {
         imgUrl: imgUrl ? imgUrl.trim() : NO_IMAGE_URL,
         status: status || PRODUCT_STATUS_VALUES.ACTIVE,
         description: description ? description.trim() : null,
-        category: categoryRecord.name,
-        slug: slug || generateSlug(name),
-        categoryId: categoryRecord.id ? categoryRecord.id : null,
+        slug: generatedSlug,
+        categoryId: categoryRecord.id,
       },
       { transaction: t }
     );
 
-    let variantsToCreate;
+    // Prepare variants
+    let variantsToCreate = [];
+
+    if (variants === null || variants === undefined || variants.length === 0) {
+      await t.rollback();
+      return res.status(400).json({
+        success: false,
+        message: "At least one product variant is required",
+      });
+    }
 
     if (Array.isArray(variants) && variants.length > 0) {
-      // Case 1: User provided a variants array
       variantsToCreate = variants.map((variant, index) => ({
         productId: product.id,
         name: variant.name.trim(),
         price: parseFloat(variant.price),
         stock: parseInt(variant.stock),
-        isDefault:
-          variant.isDefault !== undefined ? variant.isDefault : index === 0,
-        sku: variant.sku
-          ? variant.sku
-          : generateSKU(product.name, variant.name),
+        isDefault: variant.isDefault ?? index === 0,
+        sku: variant.sku ?? generateSKU(product.name, variant.name),
         attributes: variant.attributes || {},
       }));
-    } else {
-      // Case 2: No variants array, create one default from top-level fields
-      // This validation should ideally be in the schema validation logic
-      if (!price || price <= 0 || stock === undefined || stock < 0) {
-        await t.rollback();
-        return res.status(400).json({
-          success: false,
-          message: "Price and Stock are required for a default product.",
-        });
-      }
-      variantsToCreate = [
-        {
-          productId: product.id,
-          name: "Default",
-          price: parseFloat(price),
-          stock: parseInt(stock),
-          isDefault: true,
-          sku: sku ? sku : generateSKU(product.name, "Default"),
-          attributes: attributes || {},
-        },
-      ];
     }
 
     await ProductVariant.bulkCreate(variantsToCreate, { transaction: t });
 
-    // Commit the transaction
     await t.commit();
 
     const createdProduct = await Product.findOne({
@@ -285,16 +257,15 @@ const createProduct = async (req, res) => {
         { model: Category, as: "category", attributes: ["name"] },
       ],
     });
-    res
-      .status(201)
-      .json({ message: `product created successfully`, data: createdProduct });
+
+    res.status(201).json({
+      message: "Product created successfully",
+      data: createdProduct,
+    });
   } catch (err) {
     await t.rollback();
     console.error("Error creating product:", err);
-    res.status(500).json({
-      success: false,
-      error: err.message,
-    });
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 

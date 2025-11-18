@@ -171,41 +171,9 @@ const createProductSchema = Joi.object({
     "string.uri": "Primary image must be a valid URL",
     "string.max": "Image URL cannot exceed 500 characters",
   }),
-
-  // Pricing and inventory (conditional based on variants)
-  price: Joi.when("variants", {
-    is: Joi.array().length(0).allow(null),
-    then: Joi.number()
-      .positive()
-      .min(0.01)
-      .max(999999.99)
-      .precision(2)
-      .required()
-      .messages({
-        "number.positive": "Base price must be positive",
-        "number.min": "Base price must be at least 0.01",
-        "number.max": "Base price cannot exceed 999,999.99",
-        "any.required": "Base price is required when no variants are provided",
-      }),
-    otherwise: Joi.number()
-      .positive()
-      .min(0.01)
-      .max(999999.99)
-      .precision(2)
-      .allow(null),
-  }),
-  stock: Joi.when("variants", {
-    is: Joi.array().length(0).allow(null),
-    then: Joi.number().integer().min(0).max(999999).required().messages({
-      "number.integer": "Stock must be a whole number",
-      "number.min": "Stock cannot be negative",
-      "number.max": "Stock cannot exceed 999,999",
-      "any.required": "Stock is required when no variants are provided",
-    }),
-    otherwise: Joi.number().integer().min(0).max(999999).allow(null),
-  }),
   variants: Joi.array()
     .items(productVariantSchema)
+    .min(1)
     .max(50)
     .allow(null)
     .messages({
