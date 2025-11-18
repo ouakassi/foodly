@@ -61,10 +61,13 @@ const createRandomProducts = async () => {
 const createRandomOrdersFor60Days = async () => {
   try {
     const users = await User.findAll();
-    const products = await Product.findAll();
+    const variants = await ProductVariant.findAll({
+      where: { isDeleted: false },
+      include: ["product"],
+    });
 
-    if (users.length === 0 || products.length === 0) {
-      console.log("❌ Not enough users or products to create orders.");
+    if (users.length === 0 || variants.length === 0) {
+      console.log("❌ Not enough users or variants to create orders.");
       return;
     }
 
@@ -80,10 +83,9 @@ const createRandomOrdersFor60Days = async () => {
     ];
 
     const now = new Date();
-    const currentMonth = now.getMonth() + 1; // 1-12
+    const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
 
-    // Calculate previous month
     let previousMonth = currentMonth - 1;
     let previousYear = currentYear;
 
@@ -92,33 +94,28 @@ const createRandomOrdersFor60Days = async () => {
       previousYear = currentYear - 1;
     }
 
-    console.log(
-      `🚀 Creating orders for ${previousMonth}/${previousYear} and ${currentMonth}/${currentYear}`
-    );
+    console.log(`🚀 Creating random orders for: 
+      → ${previousMonth}/${previousYear}
+      → ${currentMonth}/${currentYear}`);
 
-    // Generate orders for previous month
     await generateOrdersForMonth(
       previousYear,
       previousMonth,
       users,
-      products,
+      variants,
       orderStatuses
     );
-
-    // Generate orders for current month
     await generateOrdersForMonth(
       currentYear,
       currentMonth,
       users,
-      products,
+      variants,
       orderStatuses
     );
 
-    console.log(
-      "🎉 Random orders created for 60 days (current month + previous month)."
-    );
+    console.log("🎉 Orders generated successfully for 60 days.");
   } catch (error) {
-    console.error("❌ Error creating orders:", error);
+    console.error("❌ Error generating orders:", error);
   }
 };
 
@@ -126,50 +123,55 @@ const generateOrdersForMonth = async (
   year,
   month,
   users,
-  products,
+  variants,
   orderStatuses
 ) => {
-  const daysInMonth = new Date(year, month, 0).getDate(); // month = 1-12
-
-  console.log(`📅 Processing ${month}/${year} (${daysInMonth} days)`);
+  const daysInMonth = new Date(year, month, 0).getDate();
+  console.log(
+    `📅 Generating orders for ${month}/${year} (${daysInMonth} days)`
+  );
 
   for (let day = 1; day <= daysInMonth; day++) {
-    // Generate random number of orders per day (1-5)
-    const ordersToday = Math.floor(Math.random() * 5) + 1;
+    const ordersToday = Math.floor(Math.random() * 6) + 1; // 1–6 orders per day
 
     for (let i = 0; i < ordersToday; i++) {
       const user = users[Math.floor(Math.random() * users.length)];
       const status =
         orderStatuses[Math.floor(Math.random() * orderStatuses.length)];
 
-      const productSubset = [];
-      const numberOfProducts = Math.floor(Math.random() * 4) + 1;
+      // Pick 1–4 random variants
+      const countVariants = Math.floor(Math.random() * 4) + 1;
+      const pickedVariants = [];
 
-      while (productSubset.length < numberOfProducts) {
-        const randomProduct =
-          products[Math.floor(Math.random() * products.length)];
-        if (!productSubset.includes(randomProduct)) {
-          productSubset.push(randomProduct);
+      while (pickedVariants.length < countVariants) {
+        const randomVariant =
+          variants[Math.floor(Math.random() * variants.length)];
+
+        if (!pickedVariants.includes(randomVariant)) {
+          pickedVariants.push(randomVariant);
         }
       }
 
       const orderItems = [];
       let totalAmount = 0;
 
-      for (const product of productSubset) {
-        const quantity = Math.floor(Math.random() * 3) + 1;
-        const itemTotal = product.price * quantity;
+      for (const variant of pickedVariants) {
+        const qty = Math.floor(Math.random() * 3) + 1;
+        const itemTotal = variant.price * qty;
+
         totalAmount += itemTotal;
 
         orderItems.push({
-          productId: product.id,
-          quantity,
-          price: product.price,
+          productId: variant.productId,
+          variantId: variant.id,
+          quantity: qty,
+          price: variant.price,
         });
       }
 
       const randomHour = Math.floor(Math.random() * 24);
       const randomMinute = Math.floor(Math.random() * 60);
+
       const createdAt = new Date(
         year,
         month - 1,
@@ -178,12 +180,11 @@ const generateOrdersForMonth = async (
         randomMinute
       );
 
-      // For shipped/delivered orders, add realistic timing
+      // Shipping → delivered timing
       let shippedAt = null;
       let deliveredAt = null;
 
       if (status === "shipped" || status === "delivered") {
-        // Ship 1-3 days after order
         shippedAt = new Date(
           createdAt.getTime() +
             (Math.floor(Math.random() * 3) + 1) * 24 * 60 * 60 * 1000
@@ -191,7 +192,6 @@ const generateOrdersForMonth = async (
       }
 
       if (status === "delivered") {
-        // Deliver 2-7 days after shipping
         deliveredAt = new Date(
           shippedAt.getTime() +
             (Math.floor(Math.random() * 6) + 2) * 24 * 60 * 60 * 1000
@@ -203,13 +203,12 @@ const generateOrdersForMonth = async (
           ? `TRK-${Math.floor(100000000 + Math.random() * 900000000)}`
           : null;
 
+      // Create order
       const order = await Order.create({
         id: uuidv4(),
         userId: user.id,
-        totalAmount: parseFloat(totalAmount.toFixed(2)),
-        shippingAddress: `Street ${Math.floor(
-          Math.random() * 100
-        )}, City ${day}`,
+        totalAmount: totalAmount.toFixed(2),
+        shippingAddress: `Street ${Math.floor(Math.random() * 100)}, Test City`,
         status,
         paymentMethod: ["stripe", "paypal", "cash"][
           Math.floor(Math.random() * 3)
@@ -231,9 +230,7 @@ const generateOrdersForMonth = async (
       );
 
       console.log(
-        `✅ Order ${order.id} (${status}) created for ${
-          createdAt.toISOString().split("T")[0]
-        } with ${orderItems.length} items.`
+        `✔ Order ${order.id} (${status}) created on ${createdAt.toISOString()}`
       );
     }
   }
@@ -437,41 +434,50 @@ Role.hasMany(User, { foreignKey: "roleId" });
 // User.hasMany(Address, { foreignKey: "userId" });
 // Address.belongsTo(User, { foreignKey: "userId" });
 
+// ==========================
 // User ↔ Order
+// ==========================
 User.hasMany(Order, { foreignKey: "userId" });
 Order.belongsTo(User, { foreignKey: "userId" });
 
+// ==========================
 // Order ↔ OrderItem
+// ==========================
 Order.hasMany(OrderItem, { as: "items", foreignKey: "orderId" });
 OrderItem.belongsTo(Order, { foreignKey: "orderId" });
 
+// ==========================
 // Product ↔ OrderItem
-OrderItem.belongsTo(Product, { as: "product", foreignKey: "productId" });
+// ==========================
+// A product can appear in many order items
 Product.hasMany(OrderItem, { as: "orderItems", foreignKey: "productId" });
 
-// Category has many Products
-Category.hasMany(Product, {
-  as: "products",
-  foreignKey: "categoryId",
+// An order item references a product
+OrderItem.belongsTo(Product, { as: "product", foreignKey: "productId" });
+
+// ==========================
+// Variant ↔ OrderItem   (🔥 REQUIRED FIX)
+// ==========================
+// A variant can appear in many order items
+ProductVariant.hasMany(OrderItem, {
+  as: "orderItems",
+  foreignKey: "variantId",
 });
 
-// Product belongs to Category
-Product.belongsTo(Category, {
-  as: "category",
-  foreignKey: "categoryId",
-});
+// An order item may reference a variant
+OrderItem.belongsTo(ProductVariant, { as: "variant", foreignKey: "variantId" });
 
-// Product has many Variants
-Product.hasMany(ProductVariant, {
-  as: "variants",
-  foreignKey: "productId",
-});
+// ==========================
+// Category ↔ Product
+// ==========================
+Category.hasMany(Product, { as: "products", foreignKey: "categoryId" });
+Product.belongsTo(Category, { as: "category", foreignKey: "categoryId" });
 
-// Variant belongs to Product
-ProductVariant.belongsTo(Product, {
-  as: "product",
-  foreignKey: "productId",
-});
+// ==========================
+// Product ↔ Variant
+// ==========================
+Product.hasMany(ProductVariant, { as: "variants", foreignKey: "productId" });
+ProductVariant.belongsTo(Product, { as: "product", foreignKey: "productId" });
 
 const connectDb = async () => {
   console.log("Testing the database connection..");
@@ -480,8 +486,8 @@ const connectDb = async () => {
     await sequelize.authenticate();
     console.log("🔗 Connection has been established successfully.");
     // await db.sync({ logging: true });
-    // await sequelize.sync({ force: true, logging: true });
-    await sequelize.sync({ force: false, logging: true });
+    await sequelize.sync({ force: true, logging: true });
+    // await sequelize.sync({ force: false, logging: true });
 
     // await createRandomProducts();
     await createRoles();
@@ -489,7 +495,7 @@ const connectDb = async () => {
     await createNormalUser();
     await createModeratorUser();
 
-    // await createRandomOrdersFor60Days();
+    await createRandomOrdersFor60Days();
 
     // await createCategories();
     await seedCategoriesAndProducts();

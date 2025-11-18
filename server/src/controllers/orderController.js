@@ -18,6 +18,7 @@ import {
   validateOrderQuery,
 } from "../utils/validator.js";
 import emailQueue from "../utils/emailQueue.js";
+import ProductVariant from "../models/productVariantModel.js";
 
 const getAllOrders = async (req, res) => {
   try {
@@ -193,7 +194,6 @@ const getUserOrders = async (req, res) => {
 
 const createOrder = async (req, res) => {
   const { items, shippingAddress, paymentMethod } = req.body;
-
   const userId = req.user.id;
 
   if (!items || items.length === 0) {
@@ -201,29 +201,36 @@ const createOrder = async (req, res) => {
   }
 
   try {
+    // I start a database transaction because I want every step to succeed or fail together
     const result = await sequelize.transaction(async (t) => {
       let totalAmount = 0;
 
-      // Validate products and calculate total
+      // I validate each variant, check stock, and calculate the total amount
       for (const item of items) {
-        const product = await Product.findByPk(item.productId, {
+        const variant = await ProductVariant.findOne({
+          where: { id: item.variantId },
+          include: [{ model: Product, as: "product" }],
           transaction: t,
         });
 
-        if (!product || product.stock < item.quantity) {
+        if (!variant) {
+          throw new Error(`Variant ${item.variantId} not found.`);
+        }
+
+        if (variant.stock < item.quantity) {
           throw new Error(
-            `Product ${item.productId} not available or not enough stock.`
+            `Not enough stock for variant ${variant.name} of product ${variant.product.name}.`
           );
         }
 
-        totalAmount += product.price * item.quantity;
+        totalAmount += variant.price * item.quantity;
       }
 
-      // Create Order
+      // I create the order after validating everything
       const order = await Order.create(
         {
           userId,
-          totalAmount,
+          totalAmount: parseFloat(totalAmount.toFixed(2)),
           status: ORDER_STATUSES.PENDING,
           shippingAddress,
           paymentMethod,
@@ -231,36 +238,39 @@ const createOrder = async (req, res) => {
         { transaction: t }
       );
 
-      // Create OrderItems and update stock
+      // I loop again to create the order items with product + variant info
       for (const item of items) {
-        const product = await Product.findByPk(item.productId, {
+        const variant = await ProductVariant.findOne({
+          where: { id: item.variantId },
+          include: [{ model: Product, as: "product" }],
           transaction: t,
         });
 
         await OrderItem.create(
           {
             orderId: order.id,
-            productId: item.productId,
+            productId: variant.productId,
+            variantId: variant.id,
             quantity: item.quantity,
-            price: product.price,
+            price: variant.price,
           },
           { transaction: t }
         );
 
-        // Update stock
-        product.stock -= item.quantity;
-        await product.save({ transaction: t });
+        // I reduce variant stock after creating the order item
+        variant.stock -= item.quantity;
+        await variant.save({ transaction: t });
       }
 
       return order;
     });
 
+    // I fetch the order again to include all associations
     const fullOrder = await Order.findByPk(result.id, {
       include: [
         {
           model: User,
           as: "user",
-          required: true,
           attributes: ["firstName", "lastName", "email"],
         },
         {
@@ -270,6 +280,11 @@ const createOrder = async (req, res) => {
             {
               model: Product,
               as: "product",
+              attributes: ["name"],
+            },
+            {
+              model: ProductVariant,
+              as: "variant",
               attributes: ["name", "price"],
             },
           ],
@@ -277,12 +292,14 @@ const createOrder = async (req, res) => {
       ],
     });
 
+    // I prepare the order items for the email template
     const orderItems = fullOrder.items.map((item) => ({
-      name: item.product.name,
+      name: `${item.product.name} (${item.variant.name})`,
       qty: item.quantity,
-      price: item.product.price.toFixed(2),
+      price: item.variant.price.toFixed(2),
     }));
 
+    // I add the email job to the queue
     await emailQueue.add(
       {
         to: req.user.email,
@@ -301,13 +318,14 @@ const createOrder = async (req, res) => {
       },
       {
         attempts: 3,
-        backoff: 5000, // 5 seconds between retries
+        backoff: 5000,
       }
     );
 
-    return res
-      .status(201)
-      .json({ message: "Order placed successfully", order: result });
+    return res.status(201).json({
+      message: "Order placed successfully",
+      order: result,
+    });
   } catch (err) {
     console.error("Order creation failed:", err);
     return res

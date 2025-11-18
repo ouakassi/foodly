@@ -106,7 +106,9 @@ export default function CreateUserPage({ onUserCreated = () => {} }) {
         toast.success("User created successfully");
       }, 500);
     } catch (error) {
+      console.log(error?.response?.data?.error);
       const message =
+        error?.response?.data?.error[0].toString() ||
         error?.response?.data?.message ||
         error?.response?.data?.error ||
         "Failed to create new user";
