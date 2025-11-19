@@ -68,8 +68,8 @@ const SORT_FIELDS = {
 };
 
 const SORT_DIRECTIONS = {
-  ASC: "asc",
-  DESC: "desc",
+  ASC: "ASC",
+  DESC: "DESC",
 };
 
 const sortOptions = [
@@ -82,7 +82,6 @@ const sortOptions = [
         <MdOutlineDateRange />
       </>
     ),
-    className: "bg-red-100",
   },
   {
     value: `${SORT_FIELDS.CREATED_AT}_${SORT_DIRECTIONS.ASC}`,
@@ -93,7 +92,6 @@ const sortOptions = [
         <MdOutlineDateRange />
       </>
     ),
-    className: "bg-yellow-100",
   },
   {
     value: `${SORT_FIELDS.TOTAL_AMOUNT}_${SORT_DIRECTIONS.ASC}`,
@@ -104,7 +102,6 @@ const sortOptions = [
         <MdOutlineAttachMoney />
       </>
     ),
-    className: "bg-green-100",
   },
   {
     value: `${SORT_FIELDS.TOTAL_AMOUNT}_${SORT_DIRECTIONS.DESC}`,
@@ -115,7 +112,6 @@ const sortOptions = [
         <MdOutlineAttachMoney />
       </>
     ),
-    className: "bg-blue-100",
   },
 ];
 
