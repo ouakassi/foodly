@@ -64,7 +64,7 @@ import {
 import { FaCcStripe, FaPaypal } from "react-icons/fa";
 
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
 import { TableBtns } from "../../../components/Table/TableBtns";
 import {
@@ -80,6 +80,7 @@ import { sortOptions, statusOptions } from "../../../constants/orderFilters";
 import {
   API_ENDPOINTS,
   APP_CONFIG,
+  APP_LINKS,
   LINKS_WITH_ICONS,
 } from "../../../constants/index";
 
@@ -93,6 +94,7 @@ import {
 import PageTitle from "../../../components/Dashboard/PageTitle";
 import OrdersOverview from "./OrdersOverview";
 import { ORDER_STATUSES } from "../../../constants/orderStatus";
+import { BsPlusCircleFill } from "react-icons/bs";
 
 const orderColumns = [
   "Order ID",
@@ -221,11 +223,22 @@ export default function OrdersPage() {
 
   return (
     <section className="page orders-page">
-      <PageTitle
-        icon={React.createElement(LINKS_WITH_ICONS.orders.icon)}
-        title={LINKS_WITH_ICONS.orders.label}
-        badge={totalOrders || 0}
-      />
+      <header>
+        <PageTitle
+          icon={React.createElement(LINKS_WITH_ICONS.orders.icon)}
+          title={LINKS_WITH_ICONS.orders.label}
+          badge={totalOrders || 0}
+        />
+
+        <Link to={APP_LINKS.ORDER_CREATE}>
+          <CustomButton
+            className="add-order-button"
+            scaleOnHover={1}
+            text="Add Order"
+            icon={<BsPlusCircleFill />}
+          />
+        </Link>
+      </header>
       <div className="order-boxes">
         <OrdersOverview />
       </div>

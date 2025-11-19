@@ -395,7 +395,12 @@ const FilterTabsList = ({ tabs, handleTabChange }) => {
   );
 };
 
-const ProductsTable = ({ isLoading, error, products, handleDeleteProduct }) => {
+export const ProductsTable = ({
+  isLoading,
+  error,
+  products,
+  handleDeleteProduct,
+}) => {
   let navigate = useNavigate();
 
   return (

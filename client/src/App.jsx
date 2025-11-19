@@ -39,6 +39,7 @@ import EditProductPage from "./pages/Dashboard/Products/EditProductPage";
 import CreateUserPage from "./pages/Dashboard/Users/CreateUserPage";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import { ROLES } from "./constants";
+import CreateorderPage from "./pages/Dashboard/Orders/CreateorderPage";
 
 const LazyAbout = lazy(() => import("./pages/About/AboutPage"));
 
@@ -84,7 +85,10 @@ function App() {
         >
           <Route index element={<Navigate to="overview" replace />} />
           <Route path="overview" element={<OverviewPage />} />
-          <Route path="orders" element={<OrdersPage />} />
+          <Route path="orders" element={<PageLayout />}>
+            <Route index element={<OrdersPage />} />
+            <Route path="create" element={<CreateorderPage />} />
+          </Route>
 
           <Route path="products" element={<PageLayout />}>
             <Route index element={<ProductsPage />} />

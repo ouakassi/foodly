@@ -31,208 +31,207 @@ const createRoles = async () => {
   }
 };
 
-const createRandomProducts = async () => {
-  try {
-    const productCount = await Product.count();
-    if (productCount === 0) {
-      console.log("No products found. Seeding database...");
-
-      const randomProducts = Array.from({ length: 100 }).map(() => ({
-        name: `Product ${Math.random().toString(36).substring(7)}`,
-        imgUrl:
-          "http://res.cloudinary.com/djfsxp9z0/image/upload/v1763120964/products/dddddddd/54e336f3c39a63234ee2d8f4ec507fd0.png", // Default placeholder image
-        price: (Math.random() * 100).toFixed(2),
-        stock: Math.floor(Math.random() * 50) + 1,
-        discount: Math.floor(Math.random() * 30), // Random discount between 0-30%
-        category: ["Electronics", "Clothing", "Books", "Furniture"][
-          Math.floor(Math.random() * 4)
-        ],
-        status: Math.random() > 0.5, // Random true/false
-      }));
-
-      await Product.bulkCreate(randomProducts);
-      console.log("✅ 10 Random Products Inserted!");
-    }
-  } catch (error) {
-    console.error("Error initializing database:", error);
-  }
+// I create a small helper to generate random integers
+const randomInt = (min, max) => {
+  // I want a random number in a range, inclusive
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const createRandomOrdersFor60Days = async () => {
+// I use this to generate random words (just for testing)
+const randomWord = () => {
+  const words = ["Premium", "Organic", "Deluxe", "Natural", "Classic", "Fresh"];
+  return words[randomInt(0, words.length - 1)];
+};
+
+// I use this to generate SKU-like strings
+const randomSKU = () => `SKU-${uuidv4().slice(0, 8).toUpperCase()}`;
+
+// -----------------------------------------------
+// MAIN SEED FUNCTION
+// -----------------------------------------------
+export const seedProductsWithVariants = async (count = 10) => {
+  // I create an array to store all products with their variants
+  const seededProducts = [];
+
+  for (let i = 0; i < count; i++) {
+    // I create a fake product name
+    const productName = `${randomWord()} Product ${i + 1}`;
+
+    // I create the product first
+    const product = await Product.create({
+      id: uuidv4(),
+      name: productName,
+      basePrice: randomInt(50, 500),
+      stock: 0, // I will update stock after generating variants
+      category: "General",
+    });
+
+    // I decide how many variants this product will have
+    const variantsCount = randomInt(1, 5);
+
+    let totalStock = 0;
+    const variants = [];
+
+    for (let j = 0; j < variantsCount; j++) {
+      // I create variant price by adding a small difference
+      const priceModifier = randomInt(-20, 20);
+
+      const variantStock = randomInt(5, 50);
+      totalStock += variantStock;
+
+      // I create the variant
+      const variant = await Variant.create({
+        id: uuidv4(),
+        productId: product.id,
+        name: `${productName} - Variant ${j + 1}`,
+        price: product.basePrice + priceModifier,
+        sku: randomSKU(),
+        stock: variantStock,
+        isDefault: j === 0, // I make the first variant default
+      });
+
+      variants.push(variant);
+    }
+
+    // I update product stock based on all variant stock summed together
+    await product.update({ stock: totalStock });
+
+    // I push final result so orders can use it later
+    seededProducts.push({
+      product,
+      variants,
+    });
+  }
+
+  return seededProducts;
+};
+
+const ORDER_STATUSES = {
+  PENDING: "pending",
+  PROCESSING: "processing",
+  SHIPPED: "shipped",
+  DELIVERED: "delivered",
+  CANCELLED: "cancelled",
+};
+
+const PAYMENT_METHODS = ["Credit Card", "PayPal", "Cash on Delivery"];
+
+/**
+ * Seed function to create sample orders with random data
+ * @param {number} numberOfOrders - Number of orders to create (default: 10)
+ */
+export const seedOrders = async (numberOfOrders = 10) => {
   try {
+    console.log("🌱 Starting order seeding...");
+
+    // Fetch all users, products, and variants from the database
     const users = await User.findAll();
+    const products = await Product.findAll();
     const variants = await ProductVariant.findAll({
-      where: { isDeleted: false },
-      include: ["product"],
+      include: [{ model: Product, as: "product" }],
     });
 
     if (users.length === 0 || variants.length === 0) {
-      console.log("❌ Not enough users or variants to create orders.");
-      return;
+      throw new Error("Please seed users and products first!");
     }
 
-    const orderStatuses = [
-      "completed",
-      "pending",
-      "processing",
-      "shipped",
-      "delivered",
-      "cancelled",
-      "failed",
-      "refunded",
-    ];
+    const createdOrders = [];
 
-    const now = new Date();
-    const currentMonth = now.getMonth() + 1;
-    const currentYear = now.getFullYear();
+    for (let i = 0; i < numberOfOrders; i++) {
+      await sequelize.transaction(async (t) => {
+        // Pick a random user
+        const randomUser = users[Math.floor(Math.random() * users.length)];
 
-    let previousMonth = currentMonth - 1;
-    let previousYear = currentYear;
+        // Pick 1-5 random items for the order
+        const numberOfItems = Math.floor(Math.random() * 5) + 1;
+        const selectedVariants = [];
+        const orderItems = [];
 
-    if (previousMonth === 0) {
-      previousMonth = 12;
-      previousYear = currentYear - 1;
-    }
+        // Select random variants ensuring no duplicates
+        for (let j = 0; j < numberOfItems; j++) {
+          let variant;
+          do {
+            variant = variants[Math.floor(Math.random() * variants.length)];
+          } while (selectedVariants.includes(variant.id));
 
-    console.log(`🚀 Creating random orders for: 
-      → ${previousMonth}/${previousYear}
-      → ${currentMonth}/${currentYear}`);
+          selectedVariants.push(variant.id);
 
-    await generateOrdersForMonth(
-      previousYear,
-      previousMonth,
-      users,
-      variants,
-      orderStatuses
-    );
-    await generateOrdersForMonth(
-      currentYear,
-      currentMonth,
-      users,
-      variants,
-      orderStatuses
-    );
+          // Random quantity between 1-5, but not more than available stock
+          const maxQuantity = Math.min(variant.stock, 5);
+          const quantity = Math.floor(Math.random() * maxQuantity) + 1;
 
-    console.log("🎉 Orders generated successfully for 60 days.");
-  } catch (error) {
-    console.error("❌ Error generating orders:", error);
-  }
-};
-
-const generateOrdersForMonth = async (
-  year,
-  month,
-  users,
-  variants,
-  orderStatuses
-) => {
-  const daysInMonth = new Date(year, month, 0).getDate();
-  console.log(
-    `📅 Generating orders for ${month}/${year} (${daysInMonth} days)`
-  );
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const ordersToday = Math.floor(Math.random() * 6) + 1; // 1–6 orders per day
-
-    for (let i = 0; i < ordersToday; i++) {
-      const user = users[Math.floor(Math.random() * users.length)];
-      const status =
-        orderStatuses[Math.floor(Math.random() * orderStatuses.length)];
-
-      // Pick 1–4 random variants
-      const countVariants = Math.floor(Math.random() * 4) + 1;
-      const pickedVariants = [];
-
-      while (pickedVariants.length < countVariants) {
-        const randomVariant =
-          variants[Math.floor(Math.random() * variants.length)];
-
-        if (!pickedVariants.includes(randomVariant)) {
-          pickedVariants.push(randomVariant);
+          orderItems.push({
+            variant,
+            quantity,
+            price: variant.price,
+          });
         }
-      }
 
-      const orderItems = [];
-      let totalAmount = 0;
-
-      for (const variant of pickedVariants) {
-        const qty = Math.floor(Math.random() * 3) + 1;
-        const itemTotal = variant.price * qty;
-
-        totalAmount += itemTotal;
-
-        orderItems.push({
-          productId: variant.productId,
-          variantId: variant.id,
-          quantity: qty,
-          price: variant.price,
-        });
-      }
-
-      const randomHour = Math.floor(Math.random() * 24);
-      const randomMinute = Math.floor(Math.random() * 60);
-
-      const createdAt = new Date(
-        year,
-        month - 1,
-        day,
-        randomHour,
-        randomMinute
-      );
-
-      // Shipping → delivered timing
-      let shippedAt = null;
-      let deliveredAt = null;
-
-      if (status === "shipped" || status === "delivered") {
-        shippedAt = new Date(
-          createdAt.getTime() +
-            (Math.floor(Math.random() * 3) + 1) * 24 * 60 * 60 * 1000
+        // Calculate total amount
+        const totalAmount = orderItems.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
         );
-      }
 
-      if (status === "delivered") {
-        deliveredAt = new Date(
-          shippedAt.getTime() +
-            (Math.floor(Math.random() * 6) + 2) * 24 * 60 * 60 * 1000
+        // Generate random shipping address
+        const shippingAddress = generateRandomAddress();
+
+        // Pick random payment method
+        const paymentMethod =
+          PAYMENT_METHODS[Math.floor(Math.random() * PAYMENT_METHODS.length)];
+
+        // Pick random order status
+        const statusKeys = Object.keys(ORDER_STATUSES);
+        const randomStatus =
+          ORDER_STATUSES[
+            statusKeys[Math.floor(Math.random() * statusKeys.length)]
+          ];
+
+        // Create the order
+        const order = await Order.create(
+          {
+            userId: randomUser.id,
+            totalAmount: parseFloat(totalAmount.toFixed(2)),
+            status: randomStatus,
+            shippingAddress,
+            paymentMethod,
+            createdAt: generateRandomDate(),
+          },
+          { transaction: t }
         );
-      }
 
-      const trackingNumber =
-        status === "shipped" || status === "delivered"
-          ? `TRK-${Math.floor(100000000 + Math.random() * 900000000)}`
-          : null;
+        // Create order items and update variant stock
+        for (const item of orderItems) {
+          await OrderItem.create(
+            {
+              orderId: order.id,
+              productId: item.variant.productId,
+              variantId: item.variant.id,
+              quantity: item.quantity,
+              price: item.price,
+            },
+            { transaction: t }
+          );
 
-      // Create order
-      const order = await Order.create({
-        id: uuidv4(),
-        userId: user.id,
-        totalAmount: totalAmount.toFixed(2),
-        shippingAddress: `Street ${Math.floor(Math.random() * 100)}, Test City`,
-        status,
-        paymentMethod: ["stripe", "paypal", "cash"][
-          Math.floor(Math.random() * 3)
-        ],
-        trackingNumber,
-        shippedAt,
-        deliveredAt,
-        createdAt,
-        updatedAt: createdAt,
+          // Update variant stock
+          item.variant.stock -= item.quantity;
+          await item.variant.save({ transaction: t });
+        }
+
+        createdOrders.push(order);
+        console.log(
+          `✅ Order #${order.id} created for ${randomUser.email} (${
+            orderItems.length
+          } items, $${totalAmount.toFixed(2)})`
+        );
       });
-
-      await Promise.all(
-        orderItems.map((item) =>
-          OrderItem.create({
-            orderId: order.id,
-            ...item,
-          })
-        )
-      );
-
-      console.log(
-        `✔ Order ${order.id} (${status}) created on ${createdAt.toISOString()}`
-      );
     }
+
+    console.log(`\n🎉 Successfully seeded ${createdOrders.length} orders!`);
+    return createdOrders;
+  } catch (error) {
+    console.error("❌ Order seeding failed:", error);
+    throw error;
   }
 };
 
@@ -495,7 +494,12 @@ const connectDb = async () => {
     await createNormalUser();
     await createModeratorUser();
 
-    await createRandomOrdersFor60Days();
+    (async () => {
+      // const products = await seedProductsWithVariants(15);
+      await seedOrders();
+
+      console.log("Seeding finished successfully!");
+    })();
 
     // await createCategories();
     await seedCategoriesAndProducts();

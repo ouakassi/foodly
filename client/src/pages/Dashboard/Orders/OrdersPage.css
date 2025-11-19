@@ -9,6 +9,12 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
 }
+
+.orders-page header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 /* --------------- Order Boxes -------------------*/
 .order-boxes {
   display: grid;
@@ -16,7 +22,7 @@
   gap: 1rem;
 }
 
-/* --------------- Orders header -------------------*/
+/* --------------- Orders Table header -------------------*/
 
 .orders-page-container header {
   display: flex;
