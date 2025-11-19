@@ -92,7 +92,7 @@ const getAllOrders = async (req, res) => {
         },
       ],
       order:
-        sort && ORDER_SORT_OPTIONS[sort]
+        sort && ORDER_SORT_OPTIONS[sort.uppercase()]
           ? [ORDER_SORT_OPTIONS[sort]]
           : [["createdAt", "DESC"]],
       limit,
